@@ -46,15 +46,11 @@ sanity()
 {
   log "I: linux sanity check"
 
-  SVN=`which svn`
-  [ -z "${SVN}" ] && log "E: couldn't find svn" && return 1;
-  log "I:  check svn: OK"
-
   GIT=`which git`
   [ -z "${GIT}" ]  && log "E: couldn't find git" && return 1;
   log "I:  check git: OK"
 
-  export SVN GIT
+  export GIT
 
   return 0
 }
@@ -68,7 +64,7 @@ get_from_git()
 
   log "I: get ${name}"
 
-  local target_dir="${WORKDIR}/${name}"
+  local target_dir="${name}"
 
   if [ -d "${target_dir}" -a -d "${target_dir}/.git" ]; then
     log "I:  updating ${name}"
@@ -117,12 +113,14 @@ get_from_git()
 update_bblayers_conf()
 {
   # update layer conf
-  BB_LAYER_CONF="${WORKDIR}/${OE_CONF_NAME}/conf/bblayers.conf"
+  BB_LAYER_CONF="build/conf/bblayers.conf"
 
   log "I: updating ${BB_LAYER_CONF}"
 
+  "${GIT}" checkout ${BB_LAYER_CONF}
+
   echo "BBLAYERS = \" \\" >> ${BB_LAYER_CONF}
-  echo "${BASE}/${OE_HIDAV_LAYER_NAME} \\" >> ${BB_LAYER_CONF}
+  echo "${BASE}/meta-hidav \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/${META_TI_NAME} \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/${META_ANGSTROM_NAME} \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/${META_OE_NAME}/meta-oe \\" >> ${BB_LAYER_CONF}
@@ -139,7 +137,7 @@ init()
   get_from_git ${META_ANGSTROM_NAME} ${META_ANGSTROM_URI} ${META_ANGSTROM_BRANCH} ${META_ANGSTROM_COMMIT_ID}
   get_from_git ${BITBAKE_NAME} ${BITBAKE_URI} ${BITBAKE_BRANCH} ${BITBAKE_COMMIT_ID}
 
-  BB_LINK="${WORKDIR}/${OE_CORE_NAME}/bitbake"
+  BB_LINK="${OE_CORE_NAME}/bitbake"
 
   if [ ! -h "${BB_LINK}" ]; then
     ln -s "../bitbake" "${BB_LINK}"
@@ -154,8 +152,6 @@ init()
   return 0
 }
 
-WORKDIR=oe_work
-
 echo -e "***"
 echo -e '***    $Id: hidav-init.sh 86429 2011-12-08 07:43:35Z nilius $'
 echo -e "***"
@@ -164,24 +160,7 @@ if [ "`basename $0`" = "bash" ]; then
   SOURCED=1
 fi
 
-if [ -n "$1" ]; then
-  WORKDIR="$1"
-else
-  echo -e "***    Will use \e[01;32m$WORKDIR\e[00m as build dir. To specifiy a custom build dir use:"
-  echo -e "***"
-  echo -e "***    $ hidav-init.sh \e[00;36m<build-dir>\e[00m"
-  echo -e "***"
-fi
-
-BASE="`pwd`/${WORKDIR}"
-
-log "I: workdir: ${WORKDIR}"
-
-mkdir -p "${WORKDIR}"
-if [ "$?" -ne "0" ]; then
-  log "E: cannot mkdir ${WORKDIR}"
-  exit 1
-fi
+BASE="`pwd`"
 
 sanity
 if [ "$?" -ne "0" ]; then
@@ -197,11 +176,11 @@ fi
 
 INIT_SCRIPT="init.sh"
 
-echo "source ${BASE}/${OE_CORE_NAME}/oe-init-build-env ${BASE}/${OE_CONF_NAME}" > "${WORKDIR}/${INIT_SCRIPT}"
-chmod +x ${WORKDIR}/${INIT_SCRIPT}
+echo "source ${BASE}/${OE_CORE_NAME}/oe-init-build-env ${BASE}/build" > "${INIT_SCRIPT}"
+chmod +x ${INIT_SCRIPT}
 
 if [ "${SOURCED}" = "1" ]; then
-  . ${WORKDIR}/${INIT_SCRIPT}
+  . ${INIT_SCRIPT}
 
   echo -e "***"
   echo -e "***"

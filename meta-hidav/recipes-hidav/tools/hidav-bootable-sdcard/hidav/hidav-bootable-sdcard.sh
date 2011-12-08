@@ -1,7 +1,4 @@
 #! /bin/sh
-# mk3PartSDCard.sh v0.3
-# Licensed under terms of GPLv2
-# found at http://processors.wiki.ti.com/index.php/How_to_Make_3_Partition_SD_Card
 
 if ! [ -b "$1" ]; then
     echo -e "\nUsage: $0 <block device>   Generate bootable SD Card on <block device>."

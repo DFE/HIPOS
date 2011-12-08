@@ -28,14 +28,6 @@ BITBAKE_URI=git://git.openembedded.org/bitbake
 BITBAKE_BRANCH=master
 BITBAKE_COMMIT_ID=
 
-OE_CONF_NAME=build
-OE_CONF_URI=https://dresearchfe.jira.com/svn/HYP/trunk/OE-HidaV/CONF
-OE_CONF_SVN_REV=
-
-OE_HIDAV_LAYER_NAME=meta-hidav
-OE_HIDAV_LAYER_URI=https://dresearchfe.jira.com/svn/HYP/trunk/OE-HidaV/meta-hidav
-OE_HIDAV_LAYER_SVN_REV=
-
 log()
 {
   local TIMESTAMP=`date -u +%Y-%m-%d-%H:%M:%S`
@@ -122,50 +114,6 @@ get_from_git()
   fi
 }
 
-get_from_svn()
-{
-  local name=$1
-  local uri=$2
-  local svn_rev=$3
-
-  log "I: get ${name}"
-
-  local target_dir="${WORKDIR}/${name}"
-
-  if [ -d "${target_dir}" -a -d "${target_dir}/.svn" ]; then
-    log "I:  updating ${name}"
-
-    pushd "${target_dir}" > /dev/null
-
-    # revert local changes
-    log "I:  reverting local changes"
-    "${SVN}" revert -R .
-   
-    # checkout specific rev if requested
-    if [ -n "${svn_rev}" ]; then
-      log "I:  checking out rev ${svn_rev}"
-      "${SVN}" update -r "${svn_rev}"
-    else
-      # update
-      "${SVN}" update -r HEAD
-    fi
-    popd > /dev/null
-  else
-    log "I:  checking out from ${uri}"
-
-    rm -rf "${target_dir}/conf"
-    "${SVN}" checkout ${uri} "${target_dir}"
-    pushd "${target_dir}" > /dev/null
-
-    # checkout specific commit if requested
-    if [ -n "${svn_rev}" ]; then
-      "${SVN}" update -r ${svn_rev}
-    fi
-
-    popd > /dev/null
-  fi
-}
-
 update_bblayers_conf()
 {
   # update layer conf
@@ -200,9 +148,6 @@ init()
       return 1
     fi
   fi
-
-  get_from_svn ${OE_CONF_NAME} ${OE_CONF_URI} ${OE_CONF_SVN_REV}
-  get_from_svn ${OE_HIDAV_LAYER_NAME} ${OE_HIDAV_LAYER_URI} ${OE_HIDAV_LAYER_SVN_REV}
 
   update_bblayers_conf
 

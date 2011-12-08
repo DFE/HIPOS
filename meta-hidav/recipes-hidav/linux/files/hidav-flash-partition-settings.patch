@@ -1,0 +1,177 @@
+diff --git a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
+index 4e4b92c..a89a930 100644
+--- a/arch/arm/mach-omap2/board-ti8168evm.c
++++ b/arch/arm/mach-omap2/board-ti8168evm.c
+@@ -61,44 +61,7 @@ static struct omap2_hsmmc_info mmc[] = {
+ 	{}	/* Terminator */
+ };
+ 
+-static struct mtd_partition ti816x_evm_norflash_partitions[] = {
+-	/* bootloader (U-Boot, etc) in first 5 sectors */
+-	{
+-		.name		= "bootloader",
+-		.offset		= 0,
+-		.size		= 2 * SZ_128K,
+-		.mask_flags	= MTD_WRITEABLE, /* force read-only */
+-	},
+-	/* bootloader params in the next 1 sectors */
+-	{
+-		.name		= "env",
+-		.offset		= MTDPART_OFS_APPEND,
+-		.size		= SZ_128K,
+-		.mask_flags	= 0,
+-	},
+-	/* kernel */
+-	{
+-		.name		= "kernel",
+-		.offset		= MTDPART_OFS_APPEND,
+-		.size		= 2 * SZ_2M,
+-		.mask_flags	= 0
+-	},
+-	/* file system */
+-	{
+-		.name		= "filesystem",
+-		.offset		= MTDPART_OFS_APPEND,
+-		.size		= 25 * SZ_2M,
+-		.mask_flags	= 0
+-	},
+-	/* reserved */
+-	{
+-		.name		= "reserved",
+-		.offset		= MTDPART_OFS_APPEND,
+-		.size		= MTDPART_SIZ_FULL,
+-		.mask_flags	= 0
+-	}
+-};
+-
++static struct mtd_partition ti816x_evm_norflash_partitions[] = {};
+ 
+ /* Maximum ports supported by the PCF8575 */
+ #define VPS_PCF8575_MAX_PORTS           (2u)
+@@ -135,33 +98,48 @@ static struct mtd_partition ti816x_evm_norflash_partitions[] = {
+ #define VR_GPIO_INSTANCE	0
+ 
+ static struct mtd_partition ti816x_nand_partitions[] = {
+-/* All the partition sizes are listed in terms of NAND block size */
+-	{
+-		.name           = "U-Boot",
+-		.offset         = 0,    /* Offset = 0x0 */
+-		.size           = 19 * NAND_BLOCK_SIZE,
+-		.mask_flags     = MTD_WRITEABLE,        /* force read-only */
+-	},
+-	{
+-		.name           = "U-Boot Env",
+-		.offset         = MTDPART_OFS_APPEND,   /* Offset = 0x260000 */
+-		.size           = 1 * NAND_BLOCK_SIZE,
+-	},
+-	{
+-		.name           = "Kernel",
+-		.offset         = MTDPART_OFS_APPEND,   /* Offset = 0x280000 */
+-		.size           = 34 * NAND_BLOCK_SIZE,
+-	},
+-	{
+-		.name           = "File System",
+-		.offset         = MTDPART_OFS_APPEND,   /* Offset = 0x6C0000 */
+-		.size           = 1601 * NAND_BLOCK_SIZE,
+-	},
+-	{
+-		.name           = "Reserved",
+-		.offset         = MTDPART_OFS_APPEND,   /* Offset = 0xCEE0000 */
+-		.size           = MTDPART_SIZ_FULL,
+-	},
++    /* bootloader       -       0x0 */
++    {
++        .name		= "bootloader",
++        .offset		= 0,
++        .size		= 1 * SZ_1M,
++    },
++    /* first kernel     -   0x100000 */
++    {
++        .name		= "kernel1",
++        .offset		= MTDPART_OFS_APPEND,
++        .size		= 10 * SZ_1M,
++        .mask_flags	= 0,
++    },
++    /* second kernel    -   0xb00000 */
++    {
++        .name		= "kernel2",
++        .offset		= MTDPART_OFS_APPEND,
++        .size		= 10 * SZ_1M,
++        .mask_flags	= 0
++    },
++    /* root file system -   0x1500000 */
++    {
++        .name		= "rootfs1",
++        .offset		= MTDPART_OFS_APPEND,
++        .size		= 100 * SZ_1M,
++        .mask_flags	= 0
++    },
++    /* root file system -   0x7900000 */
++    {
++        .name		= "rootfs2",
++        .offset		= MTDPART_OFS_APPEND,
++        .size		= 100 * SZ_1M,
++        .mask_flags	= 0
++    },
++    /* appfs;           -   0xdd00000
++     * => 36 MBytes w/ 256 MByte nand; 292 MBytes w/ 512 MByte NAND */
++    {
++        .name		= "application_fs",
++        .offset		= MTDPART_OFS_APPEND,
++        .size		= MTDPART_SIZ_FULL,
++        .mask_flags	= 0
++    }
+ };
+ 
+ static struct at24_platform_data eeprom_info = {
+@@ -445,30 +423,7 @@ static int __init ti816x_evm_i2c_init(void)
+ }
+ 
+ /* SPI fLash information */
+-struct mtd_partition ti816x_spi_partitions[] = {
+-	/* All the partition sizes are listed in terms of NAND block size */
+-	{
+-		.name		= "U-Boot",
+-		.offset		= 0,	/* Offset = 0x0 */
+-		.size		= 64 * SZ_4K,
+-		.mask_flags	= MTD_WRITEABLE,	/* force read-only */
+-	},
+-	{
+-		.name		= "U-Boot Env",
+-		.offset		= MTDPART_OFS_APPEND,	/* Offset = 0x40000 */
+-		.size		= 2 * SZ_4K,
+-	},
+-	{
+-		.name		= "Kernel",
+-		.offset		= MTDPART_OFS_APPEND,	/* Offset = 0x42000 */
+-		.size		= 640 * SZ_4K,
+-	},
+-	{
+-		.name		= "File System",
+-		.offset		= MTDPART_OFS_APPEND,	/* Offset = 0x2C2000 */
+-		.size		= MTDPART_SIZ_FULL,	/* size = 1.24 MiB */
+-	}
+-};
++struct mtd_partition ti816x_spi_partitions[] = {};
+ 
+ const struct flash_platform_data ti816x_spi_flash = {
+ 	.type		= "w25x32",
+@@ -610,14 +565,16 @@ static void __init ti8168_evm_init(void)
+ 	ti816x_evm_i2c_init();
+ 	i2c_add_driver(&ti816xevm_cpld_driver);
+ 	ti81xx_register_mcasp(0, &ti8168_evm_snd_data);
+-	ti816x_spi_init();
++    /* tfm: we don't need no SPI support; breaks mtd partitioning
++	ti816x_spi_init(); */
+ 	/* initialize usb */
+ 	usb_musb_init(&musb_board_data);
+ 	board_nand_init(ti816x_nand_partitions,
+ 		ARRAY_SIZE(ti816x_nand_partitions), 0, NAND_BUSWIDTH_16);
+ 	omap2_hsmmc_init(mmc);
++    /* tfm: we don't need no NOR partition mappings
+ 	board_nor_init(ti816x_evm_norflash_partitions,
+-		ARRAY_SIZE(ti816x_evm_norflash_partitions), 0);
++		ARRAY_SIZE(ti816x_evm_norflash_partitions), 0); */
+ 	ti816x_vpss_init();
+ 	ti816x_gpio_vr_init();
+ 	ti816x_hdmi_init();

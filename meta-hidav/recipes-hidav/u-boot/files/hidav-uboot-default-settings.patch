@@ -1,0 +1,235 @@
+diff --git a/Makefile b/Makefile
+index 0050ee1..8ddb7b3 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3294,6 +3294,7 @@ ti8168_evm_min_sd:	unconfig
+ 	else	\
+ 		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+ 		echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
++		echo "#define TI8168_SECOND_STAGE"    >>$(obj)include/config.h ; \
+ 		echo "Setting up TI8168 default build with NAND..." ; \
+ 	fi;
+ 	@$(MKCONFIG) -a ti8168_evm arm arm_cortexa8 ti8168 ti ti81xx
+diff --git a/common/image.c b/common/image.c
+index 247c49e..4ea9431 100644
+--- a/common/image.c
++++ b/common/image.c
+@@ -450,8 +450,10 @@ phys_size_t getenv_bootm_size(void)
+ 
+ void memmove_wd (void *to, void *from, size_t len, ulong chunksz)
+ {
+-	if (to == from)
++	if (to == from) {
++        puts("Skipped (already there)\n");
+ 		return;
++    }
+ 
+ #if defined(CONFIG_HW_WATCHDOG) || defined(CONFIG_WATCHDOG)
+ 	while (len > 0) {
+@@ -465,6 +467,7 @@ void memmove_wd (void *to, void *from, size_t len, ulong chunksz)
+ #else	/* !(CONFIG_HW_WATCHDOG || CONFIG_WATCHDOG) */
+ 	memmove (to, from, len);
+ #endif	/* CONFIG_HW_WATCHDOG || CONFIG_WATCHDOG */
++		puts("OK\n");
+ }
+ #endif /* !USE_HOSTCC */
+ 
+diff --git a/drivers/mtd/nand/ti81xx_nand.c b/drivers/mtd/nand/ti81xx_nand.c
+index 23448ba..b9a97be 100644
+--- a/drivers/mtd/nand/ti81xx_nand.c
++++ b/drivers/mtd/nand/ti81xx_nand.c
+@@ -871,7 +871,8 @@ int board_nand_init(struct nand_chip *nand)
+ 		nand->options |= NAND_BUSWIDTH_16;
+ 	}
+ 
+-	nand->chip_delay = 100;
++    /* tfm: datasheet of evm eval board's NAND says 25 us */
++	nand->chip_delay = 25;
+ 
+ 	/* fallback ecc info, this will be overridden by 
+ 	 * ti81xx_nand_switch_ecc() below to 1-bit h/w ecc
+diff --git a/include/configs/ti8168_evm.h b/include/configs/ti8168_evm.h
+index 249d0ca..d83965c 100644
+--- a/include/configs/ti8168_evm.h
++++ b/include/configs/ti8168_evm.h
+@@ -20,9 +20,6 @@
+ /* U-Boot default commands */
+ #include <config_cmd_default.h>
+ 
+-/* Display CPU info */
+-#define CONFIG_DISPLAY_CPUINFO		1
+-
+ //#define CONFIG_SETUP_1V
+ /*
+  * Size of malloc() pool
+@@ -37,7 +34,6 @@
+ //#define CONFIG_TI816X_EVM_DDR2				/* Configure DDR2 in U-Boot */
+ #define CONFIG_TI816X_TWO_EMIF		1
+ #define CONFIG_MISC_INIT_R		1
+-#define CONFIG_TI816X_ASCIIART		1	/* The eye */
+ 
+ #define CONFIG_CMDLINE_TAG		1	/* enable passing of ATAGs  */
+ #define CONFIG_SETUP_MEMORY_TAGS	1
+@@ -47,69 +43,91 @@
+ #define CONFIG_VERSION_VARIABLE
+ #define CONFIG_CMD_ECHO
+ 
+-/* By default, any image built will have MMC, NAND, SPI and I2C support */
+ #define CONFIG_MMC			1
+-#define CONFIG_NAND			1
+-#define CONFIG_SPI			1
+-#define CONFIG_I2C			1
+ 
+-/* Minimal image which runs out of internal memory */
++// #define CONFIG_SPI			1
++// #define CONFIG_I2C			1
++
++/* Minimal image which runs out of internal memory 
+ #ifdef CONFIG_MINIMAL
+ # undef CONFIG_MMC
+ # undef CONFIG_NAND
+ # undef CONFIG_SPI
+ # undef CONFIG_I2C
+ # define CONFIG_NO_ETH
+-#endif
+-
+-
++#endif */
+ 
+ /* Due to size restrictions in RBL while in SD Boot mode, NAND/NOR support
+  * cannot co-exist in the same u-boot image that is loaded by the RBL from
+  * MMC/SD card.
+  */
+-#ifdef CONFIG_SD_BOOT
++
++# undef CONFIG_CRC32_VERIFY
++
++
++//#define CONFIG_SKIP_RELOCATE_UBOOT 1
++
+ # undef CONFIG_TI816X_ASCIIART
+ # undef CONFIG_DISPLAY_CPUINFO
+-# undef CONFIG_NAND
+ # undef CONFIG_SPI
+ # undef CONFIG_I2C
+-# undef CONFIG_SYS_HUSH_PARSER
+-# define CONFIG_NO_ETH
++
+ # define CONFIG_BOOTDELAY	0
+-# define CONFIG_SYS_AUTOLOAD	"yes"
+-# define CONFIG_BOOTCOMMAND	"mmc init;fatload mmc 1 0x80800000 u-boot.bin;go 0x80800000"
+-# define CONFIG_ENV_IS_NOWHERE
+-#else
++# define CONFIG_SYS_AUTOLOAD	"no"
+ # define CONFIG_SYS_HUSH_PARSER		/* Use HUSH parser to allow command parsing */
+ # define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
+-# define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
+-# define CONFIG_SYS_AUTOLOAD		"no"
++
++/*
++ * tfm TODO:
++ * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
++ * - figure which filesystem to use (timestamp)
++ * - boot the right kernel with the freshest rootfs
++ */
+ # define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootfile=uImage\0" \
+-	"ramdisk_file=ramdisk.gz\0" \
+-	"loadaddr=0x81000000\0" \
+-	"script_addr=0x80900000\0" \
+-	"loadbootscript=fatload mmc 1 ${script_addr} boot.scr\0" \
+-	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
+-		"source ${script_addr}\0" \
+-
+-#define CONFIG_BOOTCOMMAND \
+-	"if mmc init; then " \
+-		"if run loadbootscript; then " \
+-			"run bootscript; " \
+-		"else " \
+-			"echo In case ENV on MMC/SD is required; "\
+-			"echo Please put a valid script named boot.scr on the card; " \
+-			"echo Refer to the User Guide on how to generate the image; " \
+-		"fi; " \
+-	"else " \
+-		"echo Please set bootargs and bootcmd before booting the kernel; " \
+-		"echo If that has already been done please ignore this message; "\
+-	"fi"
++    "boot2nd=mmc init; "\
++                    "fatload mmc 1 0x80800000 u-boot-2nd.sd;"\
++                    "go 0x80800000\0" \
++    "bootsd=mmc init;setenv verify no; "\
++                            "setenv bootargs "\
++                                "'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                            "fatload mmc 1 0x80007FC0 uImage;"\
++                            "bootm 0x80007FC0\0" \
++    "bootnand=setenv verify no; setenv bootargs "\
++                    "'console=ttyO2,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                "nboot 0x80007FC0 0 0x100000; bootm;\0"\
++    "flash_uboot=mmc init;mw.b 0x82000000 0xFF 0x100000;"\
++                "fatload mmc 0 0x82000000 MLO.nand;"\
++                "nandecc hw 2;"\
++                "nand erase 0x0 0x100000;"\
++                "nand write.i 0x82000000 0x0 0x100000;"\
++                "nandecc hw 0\0"\
++    "flash_kernel=mmc init;"\
++                "mw.b 0x82000000 0xFF 0xa00000;"\
++                "fatload mmc 0 0x82000000 uImage;"\
++                "nand erase 0x100000 0xa00000;"\
++                "nand write.i 0x82000000 0x100000 0xa00000\0"\
++    "flash_rootfs=mmc init;"\
++                "mw.b 0x82000000 0xFF 0x6400000;"\
++                "fatload mmc 0 0x82000000 hidav-root-fs.squashfs;"\
++                "nand erase clean 0x1500000 0x6400000;"\
++                "nand write.i 0x82000000 0x1500000 0x6400000;\0"\
++    "flash_system=run flash_uboot;run flash_kernel;run flash_rootfs;"\
+ 
++#ifdef CONFIG_SD_BOOT
++#undef CONFIG_NAND
++#define CONFIG_BOOTCOMMAND "run boot2nd"
++#define CONFIG_ENV_IS_NOWHERE /* no "saveenv" for you! */
++#else
++#define CONFIG_NAND			1
++#define CONFIG_BOOTCOMMAND "run bootnand"
++#endif
+ 
++#ifdef TI8168_SECOND_STAGE
++#undef CONFIG_BOOTCOMMAND
++#undef CONFIG_BOOTDELAY
++#define CONFIG_BOOTCOMMAND "run bootsd"
++#define CONFIG_BOOTDELAY 5
++#define CONFIG_ENV_IS_NOWHERE /* no "saveenv" for you! */
+ #endif
+ 
+ /*
+@@ -144,11 +162,11 @@
+ /**
+  * Physical Memory Map
+  */
+-#define CONFIG_NR_DRAM_BANKS		2		/* we have 2 banks of DRAM */
+-#define PHYS_DRAM_1			0x80000000	/* DRAM Bank #1 */
+-#define PHYS_DRAM_1_SIZE		0x40000000	/* 1 GB */
+-#define PHYS_DRAM_2			0xC0000000	/* DRAM Bank #2 */
+-#define PHYS_DRAM_2_SIZE		0x40000000	/* 1 GB */
++#define CONFIG_NR_DRAM_BANKS             2  /* we have 2 banks of DRAM */
++#define PHYS_DRAM_1             0x80000000	/* DRAM Bank #1 */
++#define PHYS_DRAM_1_SIZE        0x20000000	/* 512 MB */
++#define PHYS_DRAM_2	            0xC0000000	/* DRAM Bank #2 */
++#define PHYS_DRAM_2_SIZE        0x20000000	/* 512 MB */
+ 
+ 
+ /**
+@@ -321,5 +339,13 @@ extern unsigned int boot_flash_type;
+ /* Unsupported features */
+ #undef CONFIG_USE_IRQ
+ 
++/* tfm: yeah, we really don't want any persistent u-boot env anywhere */
++#ifdef CONFIG_NAND_ENV
++#undef CONFIG_NAND_ENV
++#undef CONFIG_ENV_IS_IN_FLASH
++#undef CONFIG_ENV_IS_IN_NAND
++#define CONFIG_ENV_IS_NOWHERE
++#endif
++
+ #endif	  /* ! __CONFIG_TI816X_EVM_H */
+ 

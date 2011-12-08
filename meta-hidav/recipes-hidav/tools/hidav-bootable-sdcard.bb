@@ -2,7 +2,9 @@ DESCRIPTION = "HidaV make bootable sd card with dev image"
 
 LICENSE = "MIT"
 
-PR = "r3"
+PR = "r4"
+
+DEPENDS = "hydraip-image hydraip-devimage"
 
 SRC_URI = "file://hidav-bootable-sdcard.sh \
           "

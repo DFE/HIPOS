@@ -1,8 +1,6 @@
 require hydraip-image.bb
 
-DEPENDS = "hydraip-image hidav-bootable-sdcard"
-
-PR = "r3"
+PR = "r4"
 
 export IMAGE_BASENAME = "hydraip-devimage"
 

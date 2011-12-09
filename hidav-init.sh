@@ -51,8 +51,8 @@ update_bblayers_conf()
 
 update_submodules()
 {
-    ${GIT} submodules init
-    ${GIT} submodules update
+    ${GIT} submodule init
+    ${GIT} submodule update
 }
 
 init()

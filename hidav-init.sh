@@ -49,6 +49,12 @@ update_bblayers_conf()
   echo "\"" >> ${BB_LAYER_CONF}
 }
 
+update_submodules()
+{
+    ${GIT} submodules init
+    ${GIT} submodules update
+}
+
 init()
 {
   BB_LINK="openembedded-core/bitbake"
@@ -61,6 +67,7 @@ init()
     fi
   fi
 
+  update_submodules
   update_bblayers_conf
 
   return 0

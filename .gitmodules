@@ -1,0 +1,15 @@
+[submodule "openembedded-core"]
+	path = openembedded-core
+	url = git://git.openembedded.org/openembedded-core
+[submodule "meta-angstrom"]
+	path = meta-angstrom
+	url = http://git.angstrom-distribution.org/cgi-bin/cgit.cgi/meta-angstrom
+[submodule "bitbake"]
+	path = bitbake
+	url = git://git.openembedded.org/bitbake
+[submodule "meta-texasinstruments"]
+	path = meta-texasinstruments
+	url = http://git.angstrom-distribution.org/cgi-bin/cgit.cgi/meta-texasinstruments
+[submodule "meta-openembedded"]
+	path = meta-openembedded
+	url = http://cgit.openembedded.org/cgit.cgi/meta-openembedded

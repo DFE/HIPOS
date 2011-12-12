@@ -51,8 +51,8 @@ update_bblayers_conf()
 
 update_submodules()
 {
-    ${GIT} submodule init
-    ${GIT} submodule update
+   "${GIT}" submodule init
+   "${GIT}" submodule update
 }
 
 init()
@@ -82,6 +82,12 @@ if [ "`basename $0`" = "bash" ]; then
 fi
 
 BASE="`pwd`"
+
+sanity
+if [ "$?" -ne "0" ]; then
+log "E: sanity check failed"
+  exit 1
+fi
 
 init
 if [ "$?" -ne "0" ]; then

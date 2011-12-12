@@ -51,13 +51,15 @@ update_bblayers_conf()
 
 update_submodules()
 {
-    ${GIT} submodule init
-    ${GIT} submodule update
+   "${GIT}" submodule init
+   "${GIT}" submodule update
 }
 
 init()
 {
   BB_LINK="openembedded-core/bitbake"
+
+  update_submodules
 
   if [ ! -h "${BB_LINK}" ]; then
     ln -s "../bitbake" "${BB_LINK}"
@@ -67,7 +69,6 @@ init()
     fi
   fi
 
-  update_submodules
   update_bblayers_conf
 
   return 0
@@ -82,6 +83,12 @@ if [ "`basename $0`" = "bash" ]; then
 fi
 
 BASE="`pwd`"
+
+sanity
+if [ "$?" -ne "0" ]; then
+log "E: sanity check failed"
+  exit 1
+fi
 
 init
 if [ "$?" -ne "0" ]; then

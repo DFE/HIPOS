@@ -1,3 +1,7 @@
+Remove all non-NAND partitions and initialization.
+Create static HidaV NAND partition layout (refer to 
+ <https://github.com/DFE/HidaV/wiki> for more information).
+
 diff --git a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
 index 4e4b92c..a89a930 100644
 --- a/arch/arm/mach-omap2/board-ti8168evm.c

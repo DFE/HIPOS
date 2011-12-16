@@ -5,8 +5,9 @@ DEPENDS += " lzop-native "
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI += " 	  git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs" \
-		  file://hidav-flash-partition-settings.patch \
-                  file://btrfs-kobject-include.patch "
+                  file://hidav-flash-partition-settings.patch \
+                  file://btrfs-kobject-include.patch \ 
+                  file://hidav-flash-enable-prefetch.patch "
 
 SRCREV = "${AUTOREV}"
 SRCREV_aufs = "${AUTOREV}"

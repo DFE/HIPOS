@@ -3,14 +3,14 @@ SECTION = "base"
 LICENSE = "GPLv2"
 PACKAGE_ARCH = all
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
-PR = "r4"
+PR = "r5"
 
 SRC_URI=" file://rootfs-overlay-sources/* "
 
 PV = "0.1"
 S = "${WORKDIR}/rootfs-overlay-sources"
 
-CONFFILES_${PN} = " ${D}${sysconfdir}/default/rootfs-overlay "
+CONFFILES_${PN} = " ${sysconfdir}/default/rootfs-overlay "
 
 
 do_install() {
@@ -25,7 +25,7 @@ do_install() {
     install -d ${D}/overlays/overlays-data ${D}/overlays/overlay-rootfs ${D}/overlays/original-rootfs
 }
 
-FILES_${PN} += "    ${D}/overlays \
-                    ${D}/overlays/overlays-data \
-                    ${D}/overlays/overlay-rootfs \
-                    ${D}/overlays/original-rootfs "
+FILES_${PN} +="/overlays \
+               /overlays/overlays-data \
+               /overlays/overlay-rootfs \
+               /overlays/original-rootfs "

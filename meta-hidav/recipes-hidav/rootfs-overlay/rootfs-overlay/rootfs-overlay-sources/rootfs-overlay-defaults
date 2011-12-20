@@ -1,0 +1,24 @@
+# rootfs overlay default settings used by all rootfs overlay scripts
+# 
+# The package rootfs-overlay provides a r/w overlay on top of a (possibly r/o)
+# root file system. It also provides rootfs snapshot capabilities.
+#
+
+
+# MTD to store overlay data in
+application_fs_mtd="/dev/mtd5"
+# UBI device for attaching the MTD to
+appfs_ubi_device="/dev/ubi0"
+# UBI dynamic volume number to store overlay data in
+appfs_ubi_volume="${appfs_ubi_device}_0"
+
+
+# mount point of the overlays UBIFS
+overlays_data_mountpoint="/overlays/overlays-data"
+# (temporary) mount point of the writeable overlay 
+# within the original root fs
+pivot_root_mountpoint="/overlays/overlay-rootfs"
+
+# mount point of the original root fs
+# in the writeable overlay
+original_root_mountpoint="overlays/original-rootfs"    # <- DO NOT add a leading "/". It is missing by purpose.

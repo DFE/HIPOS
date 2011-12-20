@@ -3,15 +3,25 @@ SECTION = "base"
 LICENSE = "GPLv2"
 PACKAGE_ARCH = all
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
-PR = "r1"
+PR = "r2"
 
 SRC_URI=" file://rootfs-overlay-sources/* "
 
 PV = "0.1"
 S = "${WORKDIR}/rootfs-overlay-sources"
 
+CONFFILES = " ${sysconfdir}/default/rootfs-overlay "
+
+
 do_install() {
     install -d ${D}${sbindir}
     install -m 0755 ${WORKDIR}/rootfs-overlay-sources/mount-rootfs-overlay.sh ${D}${sbindir}/
+    install -d ${D}${sysconfdir}/default
+    install -m 0644 ${WORKDIR}/rootfs-overlay-sources/rootfs-overlay-defaults ${D}${sysconfdir}/default/rootfs-overlay
+
+    #
+    # You need to update rootfs-overlay-defaults if you change these directories
+    #
+    install -d ${D}/overlays/overlays-data ${D}/overlays/overlay-rootfs ${D}/overlays/original-rootfs
 }
 

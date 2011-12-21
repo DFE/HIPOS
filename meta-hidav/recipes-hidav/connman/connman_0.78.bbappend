@@ -1,3 +1,3 @@
 # do not generate rc-links
-PRINC = 2
+PRINC := "${@int(PRINC) + 1}"
 INITSCRIPT_PARAMS = "remove"

@@ -21,4 +21,4 @@ pivot_root_mountpoint="/overlays/overlay-rootfs"
 
 # mount point of the original root fs
 # in the writeable overlay
-original_root_mountpoint="overlays/original-rootfs"    # <- DO NOT add a leading "/". It is missing by purpose.
+original_root_mountpoint="/overlays/original-rootfs"

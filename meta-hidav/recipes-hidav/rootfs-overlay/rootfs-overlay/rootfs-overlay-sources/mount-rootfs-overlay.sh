@@ -16,7 +16,7 @@
 # which will serve as aufs' write backend.
 # Then all filesystems mounted into the original root will be moved
 # to the new root. Finally the script will pivot_root into the new AUFS overlay,
-# leaving the original root read-only at /${original_root_mountpoint}.
+# leaving the original root read-only at ${original_root_mountpoint}.
 #
 # The script supports many layers. Each layer is a directory in UBIFS.
 #
@@ -91,22 +91,28 @@ mkdir -p ${pivot_root_mountpoint}/${overlays_data_mountpoint}
 cd ${pivot_root_mountpoint}
 old=""
 for fs in `mount | cut -d " " -f 3 | sort` ; do
-    # skip sub-mounts
-    [ ! -z "$old" ] && echo "$fs" | grep -qE "^\\$old" && continue
-    # skip root and writeable overlay mount
+
+    # TODO: Use /proc/mounts and a clever grep -E | sort instead of this to handle special mounts
+    # skip root fs and sub-mounts (mounts below other mounts)
     [ "$fs" = "/" ] && continue
+    [ ! -z "$old" ] && echo "$fs" | grep -qE "^\\$old" && continue
+
+    # skip writeable overlay, original root (if present), and overlay data mounts
     echo "${pivot_root_mountpoint}" | grep -qE "^\\$fs" && continue
+    echo "${original_root_mountpoint}" | grep -qE "^\\$fs" && continue
+    echo "${overlays_data_mountpoint}" | grep -qE "^\\$fs" && continue
+    # TODO ends
 
     mount --move "$fs" "${pivot_root_mountpoint}${fs}"
 
     old="$fs"
 done
 
-# now make aufs the new root
-mkdir -p ${original_root_mountpoint}
-pivot_root . ${original_root_mountpoint}
+# now make aufs the new root; 
+#  remove leading "/" to make this a relative pathname (see man pivot_root)
+pivot_root . ${original_root_mountpoint#/}
 
-mount -o remount,ro /${original_root_mountpoint}
+mount -o remount,ro ${original_root_mountpoint}
 
 exec <dev/console >dev/console 2>&1
 

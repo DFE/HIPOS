@@ -14,6 +14,9 @@
 # This script will mount a writeable AUFS overlay on top of /.
 # First te script prepares, and, if necessary, formats an UBI / UBIFS partition
 # which will serve as aufs' write backend.
+# Then all filesystems mounted into the original root will be moved
+# to the new root. Finally the script will pivot_root into the new AUFS overlay,
+# leaving the original root read-only at /${original_root_mountpoint}.
 #
 # The script supports many layers. Each layer is a directory in UBIFS.
 #
@@ -27,7 +30,7 @@ cd /
 # prerequisites check 
 source /etc/default/rootfs-overlay
 modprobe ubifs
-mkdir -p ${overlays_data_mountpoint} ${pivot_root_mountpoint} /${original_root_mountpoint}
+mkdir -p ${overlays_data_mountpoint} ${pivot_root_mountpoint}
 test -e /proc/mounts
 test -e ${application_fs_mtd}
 
@@ -47,7 +50,6 @@ if ! test -e $appfs_ubi_volume ; then
 fi
 
 # mount ubifs to get access to the overlay directories
-mkdir -p $overlays_data_mountpoint
 mount -t ubifs $appfs_ubi_volume $overlays_data_mountpoint
 
 if ! test -d ${overlays_data_mountpoint}/rootfs/0 ; then
@@ -79,14 +81,13 @@ done
 aufs_mnt_opt="${aufs_mnt_opt}:/=rr"
 
 #mount aufs
-mkdir -p ${pivot_root_mountpoint}
 mount -t aufs -o "$aufs_mnt_opt" aufs ${pivot_root_mountpoint}
 
 #make sure our important mount points exist in the writeable overlay
 mkdir -p ${pivot_root_mountpoint}/${original_root_mountpoint}
 mkdir -p ${pivot_root_mountpoint}/${overlays_data_mountpoint}
  
-# bind-mount all other mounted FS to ${pivot_root_mountpoint} 
+# move all other mounted FS to ${pivot_root_mountpoint} 
 cd ${pivot_root_mountpoint}
 old=""
 for fs in `mount | cut -d " " -f 3 | sort` ; do

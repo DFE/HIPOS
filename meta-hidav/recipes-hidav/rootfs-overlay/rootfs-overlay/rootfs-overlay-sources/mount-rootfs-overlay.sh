@@ -22,6 +22,7 @@
 
 # exit upon error
 set -e
+cd /
 
 # prerequisites check 
 source /etc/default/rootfs-overlay
@@ -31,11 +32,11 @@ test -e /proc/mounts
 test -e ${application_fs_mtd}
 
 # attach MTD, format to UBI if device is "raw"
-if ! ubiattach -O 2048 -p $application_fs_mtd ; then
+if ! ubiattach -p $application_fs_mtd ; then
     logger -s -p syslog.notice -t rootfs-overlay \
         "Initialising empty UBIFS at $application_fs_mtd."
-    ubiformat -O 2048 $application_fs_mtd
-    ubiattach -O 2048 -p $application_fs_mtd
+    ubiformat $application_fs_mtd
+    ubiattach -p $application_fs_mtd
 fi
 
 # check for ubi volume; create dynamic volume if not present

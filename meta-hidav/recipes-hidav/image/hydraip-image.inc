@@ -6,8 +6,6 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=3f40d7994397109285ec7b81fdeb3
 
 IMAGE_PREPROCESS_COMMAND = "rootfs_update_timestamp"
 
-IMAGE_FSTYPES = "tar.bz2 squashfs"
-
 IMAGE_INSTALL += " \
 	angstrom-task-boot \
 	task-basic \
@@ -23,13 +21,18 @@ IMAGE_LOGIN_MANAGER = "tinylogin shadow"
 
 inherit image
 
-export IMAGE_BASENAME = "hydraip-image"
-
 IMAGE_INSTALL += " \
   kernel-modules \
   htop \
   bash \
   rootfs-overlay \
+"
+
+# systemd-analyze depends
+IMAGE_INSTALL += " \
+  python \
+  python-dbus \
+  python-pycairo \
 "
 
 # helpers

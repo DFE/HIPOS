@@ -1,8 +1,6 @@
-require hydraip-image.bb
+require hydraip-image.inc
 
 PR = "r4"
-
-export IMAGE_BASENAME = "hydraip-devimage"
 
 IMAGE_FSTYPES = "tar.bz2"
 

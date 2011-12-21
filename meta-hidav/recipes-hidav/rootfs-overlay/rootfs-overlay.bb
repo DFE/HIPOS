@@ -3,14 +3,9 @@ SECTION = "base"
 LICENSE = "GPLv2"
 PACKAGE_ARCH = all
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
-PR = "r6"
+PR = "r7"
 
 COMPATIBLE_MACHINE = "hidav"
-
-#inherit systemd
-
-#SYSTEMD_PACKAGES = "${PN}-systemd"
-#SYSTEMD_SERVICE_${PN}-systemd = "mount-rootfs-overlay.service"
 
 SRC_URI=" file://rootfs-overlay-sources/* \
 	  file://mount-rootfs-overlay.service   \
@@ -31,6 +26,7 @@ CONFFILES_${PN} = " ${sysconfdir}/default/rootfs-overlay "
 do_install() {
     install -d ${D}${sbindir}
     install -m 0755 ${WORKDIR}/rootfs-overlay-sources/mount-rootfs-overlay.sh ${D}${sbindir}/
+    install -m 0755 ${WORKDIR}/rootfs-overlay-sources/umount-rootfs-overlay.sh ${D}${sbindir}/
 
     install -d ${D}${sysconfdir}/default
     install -m 0644 ${WORKDIR}/rootfs-overlay-sources/rootfs-overlay-defaults ${D}${sysconfdir}/default/rootfs-overlay

@@ -26,7 +26,7 @@ set -e
 # prerequisites check 
 source /etc/default/rootfs-overlay
 modprobe ubifs
-mkdir -p ${overlays_data_mountpoint} ${pivot_root_mountpoint} ${original_root_mountpoint}
+mkdir -p ${overlays_data_mountpoint} ${pivot_root_mountpoint} /${original_root_mountpoint}
 test -e /proc/mounts
 test -e ${application_fs_mtd}
 

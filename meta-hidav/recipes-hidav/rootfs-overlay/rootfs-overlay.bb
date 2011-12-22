@@ -48,4 +48,3 @@ do_install() {
     ln -s '../mount-rootfs-overlay.service' 'mount-rootfs-overlay.service'
     cd -
 }
-

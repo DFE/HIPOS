@@ -1,4 +1,4 @@
-PR = "r13"
+PR = "r14"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -9,10 +9,8 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-enable-icache.patch \
                    file://hidav-nand-do-not-use-bad_block_table.patch "
 
-BRANCH = "ti81xx-master"
-SRCREV = "${AUTOREV}"
-
-SRC_URI = "git://arago-project.org/git/projects/u-boot-omap3.git;branch=${BRANCH};protocol=git"
+BRANCH = ${BRANCH_ti816x}
+SRCREV = ${SRCREV_pn-${PN}_ti816x}
 
 do_configure() {
     # tfm: do nothing; we re-configure and re-compile u-boot at least ttwwiiccee in the "compile" stage.

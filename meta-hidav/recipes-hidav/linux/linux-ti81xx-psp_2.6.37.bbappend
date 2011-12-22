@@ -4,17 +4,10 @@ DEPENDS += " lzop-native "
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-SRC_URI += " 	  git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs" \
-                  file://hidav-flash-partition-settings.patch \
-                  file://btrfs-kobject-include.patch \ 
-                  file://hidav-flash-enable-prefetch.patch "
-
-SRCREV = "${AUTOREV}"
-SRCREV_aufs = "${AUTOREV}"
-
-SRCREV_FORMAT = "${AUTOREV}"
-
-MACHINE_KERNEL_PR_append = ""
+SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=4323b3a87dde5b9e2364cd7e51412055dd778a34 \
+                   file://hidav-flash-partition-settings.patch \
+                   file://btrfs-kobject-include.patch \ 
+                   file://hidav-flash-enable-prefetch.patch "
 
 do_configure_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}

@@ -1,8 +1,6 @@
 require hydraip-image.inc
 
-PR = "r3"
-
-export IMAGE_BASENAME = "hydraip-image"
+PR = "r4"
 
 IMAGE_FSTYPES = "tar.bz2 squashfs"
 

@@ -1,6 +1,8 @@
 # hidav image
 
-PR = "r3"
+PR = "r4"
+
+export IMAGE_BASENAME = "hydraip-image"
 
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=3f40d7994397109285ec7b81fdeb3b58"
 
@@ -25,7 +27,6 @@ IMAGE_INSTALL += " \
   kernel-modules \
   htop \
   bash \
-  rootfs-overlay \
 "
 
 # systemd-analyze depends

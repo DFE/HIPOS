@@ -35,7 +35,7 @@ test -e /proc/mounts
 test -e ${application_fs_mtd}
 
 # attach MTD, format to UBI if device is "raw"
-if ! test -e ${appfs_ubi_device} && ubiattach -p $application_fs_mtd ; then
+if ! test -e ${appfs_ubi_device} && ! ubiattach -p $application_fs_mtd ; then
     logger -s -p syslog.notice -t rootfs-overlay \
         "Initialising empty UBIFS at $application_fs_mtd."
     ubiformat $application_fs_mtd

@@ -8,5 +8,4 @@ Before=machineid.service opkg.service systemd-random-seed-load.service systemd-t
 [Service]
 Type=oneshot
 ExecStart=/usr/sbin/mount-rootfs-overlay.sh
-ExecStop=/usr/sbin/umount-rootfs-overlay.sh
 RemainAfterExit=yes

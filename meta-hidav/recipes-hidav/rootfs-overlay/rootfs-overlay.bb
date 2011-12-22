@@ -3,7 +3,7 @@ SECTION = "base"
 LICENSE = "GPLv2"
 PACKAGE_ARCH = all
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
-PR = "r9"
+PR = "r11"
 
 # ubi tooling from mtd-utils
 RDEPENDS = " mtd-utils "
@@ -14,6 +14,7 @@ COMPATIBLE_MACHINE = "hidav"
 
 SRC_URI=" file://rootfs-overlay-sources/* \
 	  file://mount-rootfs-overlay.service   \
+	  file://umount-rootfs-overlay.service   \
 "
 
 FILES_${PN} += "${base_libdir}/systemd \
@@ -42,9 +43,13 @@ do_install() {
     install -d ${D}/overlays/overlays-data ${D}/overlays/overlay-rootfs ${D}/overlays/original-rootfs
 
     install -d ${D}${base_libdir}/systemd/system
-    install -m 644 ${WORKDIR}//mount-rootfs-overlay.service ${D}${base_libdir}/systemd/system
+    install -m 644 ${WORKDIR}/mount-rootfs-overlay.service ${D}${base_libdir}/systemd/system
+    install -m 644 ${WORKDIR}/umount-rootfs-overlay.service ${D}${base_libdir}/systemd/system
     install -d ${D}${base_libdir}/systemd/system/local-fs.target.wants
+    install -d ${D}${base_libdir}/systemd/system/shutdown.target.wants
     cd '${D}${base_libdir}/systemd/system/local-fs.target.wants'
     ln -s '../mount-rootfs-overlay.service' 'mount-rootfs-overlay.service'
     cd -
+    cd '${D}${base_libdir}/systemd/system/shutdown.target.wants'
+    ln -s '../umount-rootfs-overlay.service' 'umount-rootfs-overlay.service'
 }

@@ -77,17 +77,16 @@ killprocs=`fuser -m ${pivot_root_mountpoint}`
 umount -l ${pivot_root_mountpoint}
 umount -l ${overlays_data_mountpoint}
 
-# if this script has been started from the overlay root
-# in an interactive shell then this will most probably 
-# kill the script itself
-exec chroot . sh -c "
-    cd /
-    trap \"\" SIGTERM
-    kill -TERM ${killprocs}
-    sleep 1
-    kill -KILL ${killprocs}
-" <dev/console >dev/console 2>&1
-
-
-
+if [ "$1" != "shutdown" ] ; then
+    # if this script has been started from the overlay root
+    # in an interactive shell then this will most probably 
+    # kill the script itself.
+    exec chroot . sh -c "
+        cd /
+        trap \"\" SIGTERM
+        kill -TERM ${killprocs}
+        sleep 1
+        kill -KILL ${killprocs}
+    " <dev/console >dev/console 2>&1
+fi
 

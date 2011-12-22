@@ -89,23 +89,39 @@ mkdir -p ${pivot_root_mountpoint}/${overlays_data_mountpoint}
  
 # move all other mounted FS to ${pivot_root_mountpoint} 
 cd ${pivot_root_mountpoint}
-old=""
-for fs in `mount | cut -d " " -f 3 | sort` ; do
+for mount in `awk \
+    -v original_root=${original_root_mountpoint} \
+    -v overlay_data=${overlays_data_mountpoint}  \
+    -v pivot_root=${pivot_root_mountpoint} \
+' {
+    mounted_fs=$2
 
-    # TODO: Use /proc/mounts and a clever grep -E | sort instead of this to handle special mounts
-    # skip root fs and sub-mounts (mounts below other mounts)
-    [ "$fs" = "/" ] && continue
-    [ ! -z "$old" ] && echo "$fs" | grep -qE "^\\$old" && continue
+    if ( mounted_fs == "/" )
+        next;
 
-    # skip writeable overlay, original root (if present), and overlay data mounts
-    echo "${pivot_root_mountpoint}" | grep -qE "^\\$fs" && continue
-    echo "${original_root_mountpoint}" | grep -qE "^\\$fs" && continue
-    echo "${overlays_data_mountpoint}" | grep -qE "^\\$fs" && continue
-    # TODO ends
+    # check if we have seen a parent mount or a sub-mount before
+    for ( d in mounts_seen ) {
+        if ( 1 == index( mounted_fs, d ) )
+            next; 
+        if ( 1 == index( d, mounted_fs ) )
+            delete mounts_seen[ d ];
+    }
 
-    mount --move "$fs" "${pivot_root_mountpoint}${fs}"
+    # check whether this is a special mount
+    if (    ( 1 == index( mounted_fs, original_root ) ) \
+        ||  ( 1 == index( mounted_fs, overlay_data ) )  \
+        ||  ( 1 == index( mounted_fs, pivot_root ) ) )
+        next;
+    
+    # add it to the list of mounts to be processed
+    mounts_seen[ mounted_fs ]
 
-    old="$fs"
+} 
+    END {
+        for (m in mounts_seen)
+            print m
+} ' /proc/mounts` ; do
+    mount --move "$mount" "${pivot_root_mountpoint}${mount}" 
 done
 
 # now make aufs the new root; 

@@ -35,7 +35,7 @@ test -e /proc/mounts
 test -e ${application_fs_mtd}
 
 # attach MTD, format to UBI if device is "raw"
-if ! ubiattach -p $application_fs_mtd ; then
+if ! test -e ${appfs_ubi_device} && ubiattach -p $application_fs_mtd ; then
     logger -s -p syslog.notice -t rootfs-overlay \
         "Initialising empty UBIFS at $application_fs_mtd."
     ubiformat $application_fs_mtd
@@ -112,8 +112,10 @@ done
 #  remove leading "/" to make this a relative pathname (see man pivot_root)
 pivot_root . ${original_root_mountpoint#/}
 
-mount -o remount,ro ${original_root_mountpoint}
+exec chroot . sh -lc "
+    mount -o remount,ro ${original_root_mountpoint} " \
+    <dev/console >dev/console 2>&1
 
-exec <dev/console >dev/console 2>&1
+
 
 

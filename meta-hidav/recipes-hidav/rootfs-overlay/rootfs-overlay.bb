@@ -3,7 +3,12 @@ SECTION = "base"
 LICENSE = "GPLv2"
 PACKAGE_ARCH = all
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
-PR = "r7"
+PR = "r8"
+
+# ubi tooling from mtd-utils
+RDEPENDS = " mtd-utils "
+# no -dbg, -dev, -locale
+PACKAGES = " ${PN} " 
 
 COMPATIBLE_MACHINE = "hidav"
 

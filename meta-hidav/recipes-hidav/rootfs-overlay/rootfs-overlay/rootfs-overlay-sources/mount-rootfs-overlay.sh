@@ -35,7 +35,7 @@ test -e /proc/mounts
 test -e ${application_fs_mtd}
 
 # attach MTD, format to UBI if device is "raw"
-if ! test -e ${appfs_ubi_device} && ! ubiattach -p $application_fs_mtd ; then
+if ! ubinfo ${appfs_ubi_device} >/dev/null 2>&1 && ! ubiattach -p $application_fs_mtd ; then
     logger -s -p syslog.notice -t rootfs-overlay \
         "Initialising empty UBIFS at $application_fs_mtd."
     ubiformat $application_fs_mtd
@@ -43,7 +43,7 @@ if ! test -e ${appfs_ubi_device} && ! ubiattach -p $application_fs_mtd ; then
 fi
 
 # check for ubi volume; create dynamic volume if not present
-if ! test -e $appfs_ubi_volume ; then
+if ! ubinfo ${appfs_ubi_volume} >/dev/null 2>&1 ; then
     logger -s -p syslog.notice -t rootfs-overlay \
         "Creating dynamic UBIFS partition 'application_fs' on $appfs_ubi_device."
     ubimkvol -m -N application_fs $appfs_ubi_device

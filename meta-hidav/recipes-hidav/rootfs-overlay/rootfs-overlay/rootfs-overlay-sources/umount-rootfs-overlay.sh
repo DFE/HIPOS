@@ -28,7 +28,7 @@ test -d ${overlays_data_mountpoint} \
          -a -d ${pivot_root_mountpoint} \
          -a -d ${original_root_mountpoint} \
          -a -d ${original_root_mountpoint}/${pivot_root_mountpoint}
-test -e ${appfs_ubi_volume}
+ubinfo ${appfs_ubi_volume} >/dev/null 2>&1
 
 if ! grep -q 'aufs / aufs' /proc/mounts ; then
     logger -s -p syslog.warn -t rootfs-overlay \

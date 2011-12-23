@@ -74,19 +74,18 @@ list_moveable_mounts() {
 
 check_prerequisites
 
+# make original root mount writeable; ignore result. 
+# I.e. we don't care if it was a readonly fs originally and therefore cannot be mounted r/w.
+mount -o remount,rw ${original_root_mountpoint} || \
+        logger -s -p syslog.notice -t rootfs-overlay \
+            "Failed to remount ${original_root_mountpoint} read-write. That's OK if your original root is read-only. Continuing."
+
 # move-mount everything
 for mount in `list_moveable_mounts`; do
     mount --move "${mount}" "${original_root_mountpoint}${mount}" || \
         logger -s -p syslog.warn -t rootfs-overlay \
             "Failed to move-mount ${fs} to ${original_root_mountpoint}${fs}. Ignoring and continuing anyway."
 done
-
-
-# make original root mount writeable; ignore result. 
-# I.e. we don't care if it was a readonly fs originally and therefore cannot be mounted r/w.
-mount -o remount,rw ${original_root_mountpoint} || \
-        logger -s -p syslog.notice -t rootfs-overlay \
-            "Failed to remount ${original_root_mountpoint} read-write. That's OK if your original root is read-only. Continuing."
 
 cd ${original_root_mountpoint}
 

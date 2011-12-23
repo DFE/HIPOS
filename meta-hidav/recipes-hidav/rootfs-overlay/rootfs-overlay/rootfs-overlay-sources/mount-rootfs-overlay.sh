@@ -23,104 +23,130 @@
 # Prerequisites: /dev and /proc are mounted.
 #
 
-# exit upon error
+# exit upon error: 
 set -e
 cd /
-
-# prerequisites check 
 source /etc/default/rootfs-overlay
 modprobe ubifs
-mkdir -p ${overlays_data_mountpoint} ${pivot_root_mountpoint}
-test -e /proc/mounts
-test -e ${application_fs_mtd}
 
-# attach MTD, format to UBI if device is "raw"
-if ! ubinfo ${appfs_ubi_device} >/dev/null 2>&1 && ! ubiattach -p $application_fs_mtd ; then
+
+check_prerequisites() {
+    mkdir -p ${overlays_data_mountpoint} ${pivot_root_mountpoint}
+    test -e /proc/mounts
+    mtdinfo ${application_fs_mtd} >/dev/null 2>&1
+}
+# ----
+
+
+initialize_ubi() {
     logger -s -p syslog.notice -t rootfs-overlay \
         "Initialising empty UBIFS at $application_fs_mtd."
     ubiformat $application_fs_mtd
     ubiattach -p $application_fs_mtd
-fi
+}
+# ----
 
-# check for ubi volume; create dynamic volume if not present
-if ! ubinfo ${appfs_ubi_volume} >/dev/null 2>&1 ; then
+
+mkubifs() {
     logger -s -p syslog.notice -t rootfs-overlay \
         "Creating dynamic UBIFS partition 'application_fs' on $appfs_ubi_device."
     ubimkvol -m -N application_fs $appfs_ubi_device
-fi
+}
+# ----
 
-# mount ubifs to get access to the overlay directories
-mount -t ubifs $appfs_ubi_volume $overlays_data_mountpoint
 
-if ! test -d ${overlays_data_mountpoint}/rootfs/0 ; then
+initialize_aufs_storage() {
     logger -s -p syslog.notice -t rootfs-overlay \
         "Creating writeable overlays directory."
 
     # discard stale overlays >0 if #0 is not present
     rm -rf ${overlays_data_mountpoint}/rootfs/
     mkdir -p ${overlays_data_mountpoint}/rootfs/0/
-fi
+}
+# ----
 
+
+generate_aufs_mount_opts() {
 # assemble aufs writeable overlay mount string from snapshot directories
-aufs_mnt_opt=""
-cd ${overlays_data_mountpoint}/rootfs
-for dir in `find -type d -maxdepth 1 | sort -n -t / -k 2 -r | cut -b 3-` ; do
+    local aufs_mnt_opt=""
+    cd ${overlays_data_mountpoint}/rootfs
+    for dir in `find -type d -maxdepth 1 | sort -n -t / -k 2 -r | cut -b 3-` ; do
+        overlay="${overlays_data_mountpoint}/rootfs/$dir"
 
-    overlay="${overlays_data_mountpoint}/rootfs/$dir"
+        # the last overlay (which is processed first in this loop)
+        # is r/w, all the others are r/o
+        if test -z "$aufs_mnt_opt" ; then
+            aufs_mnt_opt="br:${overlay}=rw"
+        else
+            aufs_mnt_opt="${aufs_mnt_opt}:${overlay}=ro"
+        fi
+    done
 
-    # the last overlay (which is processed first in this loop)
-    # is r/w, all the others are r/o
-    if test -z "$aufs_mnt_opt" ; then
-        aufs_mnt_opt="br:${overlay}=rw"
-    else
-        aufs_mnt_opt="${aufs_mnt_opt}:${overlay}=ro"
-    fi
-done
+    # finally add fs root (which is a readonly fs), the first overlay
+    aufs_mnt_opt="${aufs_mnt_opt}:/=rr"
 
-# finally add fs root (which is a readonly fs), the first overlay
-aufs_mnt_opt="${aufs_mnt_opt}:/=rr"
+    echo "$aufs_mnt_opt"
+}
+# ----
 
-#mount aufs
-mount -t aufs -o "$aufs_mnt_opt" aufs ${pivot_root_mountpoint}
+list_moveable_mounts() {
+    awk -v original_root=${original_root_mountpoint} \
+        -v overlay_data=${overlays_data_mountpoint}  \
+        -v pivot_root=${pivot_root_mountpoint} \
+        ' {
+                mounted_fs=$2
+
+                if ( mounted_fs == "/" )
+                    next;
+
+                # check if we have seen a parent mount or a sub-mount before
+                for ( d in mounts_seen ) {
+                    if ( 1 == index( mounted_fs, d ) )
+                        next; 
+                    if ( 1 == index( d, mounted_fs ) )
+                        delete mounts_seen[ d ];
+                }
+
+                # check whether this is a special mount
+                if (    ( 1 == index( mounted_fs, original_root ) ) \
+                        ||  ( 1 == index( mounted_fs, overlay_data ) )  \
+                        ||  ( 1 == index( mounted_fs, pivot_root ) ) )
+                    next;
+
+                # add it to the list of mounts to be processed
+                mounts_seen[ mounted_fs ]
+
+            } 
+        END {
+            for (m in mounts_seen)
+                print m
+        } ' /proc/mounts
+}
+
+#
+#  M A I N
+#
+
+check_prerequisites
+
+# get ubifs storage back-end up and running
+ubinfo ${appfs_ubi_device} >/dev/null 2>&1 || ubiattach -p $application_fs_mtd  || initialize_ubi
+ubinfo ${appfs_ubi_volume} >/dev/null 2>&1 || mkubifs
+
+# mount ubifs to get access to the overlay directories
+mount -t ubifs $appfs_ubi_volume $overlays_data_mountpoint
+
+test -d ${overlays_data_mountpoint}/rootfs/0  || initialize_aufs_storage
+mount -t aufs -o "`generate_aufs_mount_opts`" aufs ${pivot_root_mountpoint}
 
 #make sure our important mount points exist in the writeable overlay
 mkdir -p ${pivot_root_mountpoint}/${original_root_mountpoint}
 mkdir -p ${pivot_root_mountpoint}/${overlays_data_mountpoint}
- 
-# move all other mounted FS to ${pivot_root_mountpoint} 
+
 cd ${pivot_root_mountpoint}
-for mount in `awk \
-    -v original_root=${original_root_mountpoint} \
-    -v overlay_data=${overlays_data_mountpoint}  \
-    -v pivot_root=${pivot_root_mountpoint} \
-' {
-    mounted_fs=$2
 
-    if ( mounted_fs == "/" )
-        next;
-
-    # check if we have seen a parent mount or a sub-mount before
-    for ( d in mounts_seen ) {
-        if ( 1 == index( mounted_fs, d ) )
-            next; 
-        if ( 1 == index( d, mounted_fs ) )
-            delete mounts_seen[ d ];
-    }
-
-    # check whether this is a special mount
-    if (    ( 1 == index( mounted_fs, original_root ) ) \
-        ||  ( 1 == index( mounted_fs, overlay_data ) )  \
-        ||  ( 1 == index( mounted_fs, pivot_root ) ) )
-        next;
-    
-    # add it to the list of mounts to be processed
-    mounts_seen[ mounted_fs ]
-
-} 
-    END {
-        for (m in mounts_seen)
-            print m
-} ' /proc/mounts` ; do
+# now move everything mounted on the old root to the new root
+for mount in `list_moveable_mounts` ; do
     mount --move "$mount" "${pivot_root_mountpoint}${mount}" 
 done
 
@@ -131,7 +157,5 @@ pivot_root . ${original_root_mountpoint#/}
 exec chroot . sh -lc "
     mount -o remount,ro ${original_root_mountpoint} " \
     <dev/console >dev/console 2>&1
-
-
 
 

@@ -1,17 +1,15 @@
-# hidav image
+# common stuff for all HydraIP images
 
-PR = "r4"
-
-export IMAGE_BASENAME = "hydraip-image"
+INC_PR = "r5"
 
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=3f40d7994397109285ec7b81fdeb3b58"
 
 IMAGE_PREPROCESS_COMMAND = "rootfs_update_timestamp"
 
 IMAGE_INSTALL += " \
-	angstrom-task-boot \
-	task-basic \
-	${CONMANPKGS} \
+  angstrom-task-boot \
+  task-basic \
+  ${CONMANPKGS} \
 "
 CONMANPKGS = "connman connman-plugin-loopback connman-plugin-ethernet connman-plugin-wifi connman-systemd"
 CONMANPKGS_libc-uclibc = ""
@@ -42,4 +40,9 @@ IMAGE_INSTALL += " \
   mtd-utils \
   mc \
   nano \  
+"
+
+# SDK
+IMAGE_INSTALL_hidav += " \
+  rootfs-overlay \
 "

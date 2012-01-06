@@ -1,6 +1,6 @@
 require hydraip-image.inc
 
-PR = "r5"
+PR = "${INC_PR}.1"
 
 export IMAGE_BASENAME = "hydraip-devimage"
 

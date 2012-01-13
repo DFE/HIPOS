@@ -1,8 +1,13 @@
 # common stuff for all HydraIP images
 
-INC_PR = "r5"
+INC_PR = "r6"
 
+LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=3f40d7994397109285ec7b81fdeb3b58"
+
+DEPENDS += "task-base-extended \
+	   "
+IMAGE_INSTALL += "task-base-extended \
 
 IMAGE_PREPROCESS_COMMAND = "rootfs_update_timestamp"
 

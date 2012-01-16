@@ -1,14 +1,10 @@
-Remove all non-NAND partitions and initialization.
-Create static HidaV NAND partition layout (refer to 
- <https://github.com/DFE/HidaV/wiki> for more information).
-
 diff --git a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
-index 4e4b92c..a89a930 100644
+index 2919555..ab49b91 100644
 --- a/arch/arm/mach-omap2/board-ti8168evm.c
 +++ b/arch/arm/mach-omap2/board-ti8168evm.c
-@@ -61,44 +61,7 @@ static struct omap2_hsmmc_info mmc[] = {
- 	{}	/* Terminator */
- };
+@@ -73,44 +73,7 @@ static struct omap2_hsmmc_info mmc[] = {
+ #define VPS_VC_IO_EXP_THS7368_FILTER2_MASK  (0x80u)
+ #define VPS_VC_IO_EXP_THS7368_FILTER_SHIFT  (0x06u)
  
 -static struct mtd_partition ti816x_evm_norflash_partitions[] = {
 -	/* bootloader (U-Boot, etc) in first 5 sectors */
@@ -52,7 +48,7 @@ index 4e4b92c..a89a930 100644
  
  /* Maximum ports supported by the PCF8575 */
  #define VPS_PCF8575_MAX_PORTS           (2u)
-@@ -135,33 +98,48 @@ static struct mtd_partition ti816x_evm_norflash_partitions[] = {
+@@ -147,33 +110,48 @@ static struct mtd_partition ti816x_evm_norflash_partitions[] = {
  #define VR_GPIO_INSTANCE	0
  
  static struct mtd_partition ti816x_nand_partitions[] = {
@@ -128,7 +124,7 @@ index 4e4b92c..a89a930 100644
  };
  
  static struct at24_platform_data eeprom_info = {
-@@ -445,30 +423,7 @@ static int __init ti816x_evm_i2c_init(void)
+@@ -655,30 +633,7 @@ static int __init ti816x_evm_i2c_init(void)
  }
  
  /* SPI fLash information */
@@ -160,19 +156,21 @@ index 4e4b92c..a89a930 100644
  
  const struct flash_platform_data ti816x_spi_flash = {
  	.type		= "w25x32",
-@@ -610,14 +565,16 @@ static void __init ti8168_evm_init(void)
+@@ -850,7 +805,8 @@ static void __init ti8168_evm_init(void)
  	ti816x_evm_i2c_init();
  	i2c_add_driver(&ti816xevm_cpld_driver);
  	ti81xx_register_mcasp(0, &ti8168_evm_snd_data);
 -	ti816x_spi_init();
-+    /* tfm: we don't need no SPI support; breaks mtd partitioning
++    /* tfm: disable SPI. No SPI NAND on HidaV
 +	ti816x_spi_init(); */
  	/* initialize usb */
  	usb_musb_init(&musb_board_data);
- 	board_nand_init(ti816x_nand_partitions,
+ 
+@@ -869,8 +825,9 @@ static void __init ti8168_evm_init(void)
  		ARRAY_SIZE(ti816x_nand_partitions), 0, NAND_BUSWIDTH_16);
+ 
  	omap2_hsmmc_init(mmc);
-+    /* tfm: we don't need no NOR partition mappings
++    /* tfm: disable NOR. No NOR flash on HidaV
  	board_nor_init(ti816x_evm_norflash_partitions,
 -		ARRAY_SIZE(ti816x_evm_norflash_partitions), 0);
 +		ARRAY_SIZE(ti816x_evm_norflash_partitions), 0); */

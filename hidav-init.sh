@@ -3,6 +3,21 @@
 # $Id: hidav-init.sh 86429 2011-12-08 07:43:35Z nilius $
 #
 
+
+#############################
+#                           #
+#  D A N G E R    Z O N E   #
+#                           #
+#############################
+#
+# This must _always_ be set to the name of this script 
+#  or "sourceing" detection will fail. 
+
+script_name="hidav-init.sh"
+
+
+#############################
+
 log()
 {
   local TIMESTAMP=`date -u +%Y-%m-%d-%H:%M:%S`
@@ -80,7 +95,7 @@ echo -e "***"
 echo -e '***    $Id: hidav-init.sh 86429 2011-12-08 07:43:35Z nilius $'
 echo -e "***"
 
-if [ "`basename $0`" = "bash" ]; then
+if [ "`basename $0`" != "$script_name" ]; then
   SOURCED=1
 fi
 

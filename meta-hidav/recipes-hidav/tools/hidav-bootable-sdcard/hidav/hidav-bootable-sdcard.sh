@@ -1,5 +1,7 @@
 #! /bin/sh
 
+export LANG=c
+
 if ! [ -b "$1" ]; then
     echo -e "\nUsage: $0 <block device>   Generate bootable SD Card on <block device>."
     exit
@@ -22,6 +24,11 @@ esac
 
 DRIVE=$1
 
+umount ${DRIVE}1
+umount ${DRIVE}2
+
+set -e
+
 dd if=/dev/zero of=$DRIVE bs=1024 count=1024
 
 SIZE=`fdisk -l $DRIVE | grep Disk | awk '{print $5}'`
@@ -39,11 +46,9 @@ sfdisk -D -H 255 -S 63 -C $CYLINDERS $DRIVE << EOF
 EOF
 
 echo -e "----\nFormatting FAT Partition\n--"
-umount ${DRIVE}1
 mkfs.vfat -F 32 -n "boot" ${DRIVE}1
 
 echo -e "----\nFormatting EXT4 (root) Partition\n--"
-umount ${DRIVE}2
 mkfs.ext4 -L "rootfs" ${DRIVE}2
 
 mkdir -p tmp_mnt

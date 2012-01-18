@@ -1,12 +1,20 @@
 diff --git a/Makefile b/Makefile
-index 0050ee1..8ddb7b3 100644
+index b344046..2e29fbb 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -3294,6 +3294,7 @@ ti8168_evm_min_sd:	unconfig
+@@ -3259,6 +3259,7 @@ ti8148_evm_min_sd:	unconfig
+ 		elif [ "$(findstring sd,$@)" ] ; then \
+ 			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
+ 			echo "#define CONFIG_MMC_ENV"    >>$(obj)include/config.h ; \
++			echo "#define TI81XX_SECOND_STAGE"    >>$(obj)include/config.h ; \
+ 			echo "Setting up TI8148 default build with ENV in MMC..." ; \
+ 		else	\
+ 			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
+@@ -3330,6 +3331,7 @@ ti8168_evm_min_sd:	unconfig
  	else	\
  		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
  		echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
-+		echo "#define TI8168_SECOND_STAGE"    >>$(obj)include/config.h ; \
++		echo "#define TI81XX_SECOND_STAGE"    >>$(obj)include/config.h ; \
  		echo "Setting up TI8168 default build with NAND..." ; \
  	fi;
  	@$(MKCONFIG) -a ti8168_evm arm arm_cortexa8 ti8168 ti ti81xx
@@ -48,8 +56,211 @@ index 23448ba..b9a97be 100644
  
  	/* fallback ecc info, this will be overridden by 
  	 * ti81xx_nand_switch_ecc() below to 1-bit h/w ecc
+diff --git a/include/configs/ti8148_evm.h b/include/configs/ti8148_evm.h
+index 2504954..b359f92 100644
+--- a/include/configs/ti8148_evm.h
++++ b/include/configs/ti8148_evm.h
+@@ -21,21 +21,13 @@
+  *#define CONFIG_TI814X_NO_RUNTIME_PG_DETECT
+  */
+ 
++/* U-Boot default commands */
++#include <config_cmd_default.h>
++
+ /* Display CPU info */
+ #define CONFIG_DISPLAY_CPUINFO          1
+ 
+-/* In the 1st stage we have just 110K, so cut down wherever possible */
+-#ifdef CONFIG_TI814X_MIN_CONFIG
+-
+ # define CONFIG_CMD_MEMORY	/* for mtest */
+-# undef CONFIG_GZIP
+-# undef CONFIG_ZLIB
+-//# undef CONFIG_BOOTM_LINUX
+-//# undef CONFIG_BOOTM_NETBSD
+-//# undef CONFIG_BOOTM_RTEMS
+-//# undef CONFIG_SREC
+-//# undef CONFIG_XYZMODEM
+-# undef CONFIG_SYS_HUSH_PARSER
+ # define CONFIG_CMD_LOADB	/* loadb			*/
+ # define CONFIG_CMD_LOADY	/* loady */
+ # define CONFIG_SETUP_PLL
+@@ -44,102 +36,103 @@
+ /*
+  * # define CONFIG_TI814X_EVM_DDR2
+  */ 
+-# define CONFIG_ENV_SIZE		0x400
+-# define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (8 * 1024))
+-# define CONFIG_SYS_PROMPT		"TI-MIN#"
+-/* set to negative value for no autoboot */
+-# define CONFIG_BOOTDELAY		0
+-# if defined(CONFIG_SPI_BOOT)		/* Autoload the 2nd stage from SPI */
+-#  define CONFIG_SPI			1
+-#  define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootcmd=sf probe 0; sf read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
++#define CONFIG_ENV_SIZE			0x2000
++# define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
+ 
+-# elif defined(CONFIG_NAND_BOOT)		/* Autoload the 2nd stage from NAND */
+-#  define CONFIG_NAND			1
+-#  define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootcmd=nand read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
+ 
+-# elif defined(CONFIG_SD_BOOT)		/* Autoload the 2nd stage from SD */
+-#  define CONFIG_MMC			1
+-#  define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootcmd=mmc rescan 0; fatload mmc 0 0x80800000 u-boot.bin; go 0x80800000\0" \
++#define CONFIG_CMDLINE_TAG		1	/* enable passing of ATAGs  */
++#define CONFIG_SETUP_MEMORY_TAGS	1
++#define CONFIG_INITRD_TAG		1	/* Required for ramdisk support */
+ 
+-#elif defined(CONFIG_UART_BOOT)                /* stop in the min prompt */
+-#define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootcmd=\0" \
++#define CONFIG_CMD_ASKENV
++#define CONFIG_VERSION_VARIABLE
++#define CONFIG_CMD_ECHO
+ 
+-# endif
++#define CONFIG_MMC			1
+ 
+-#else
++# undef CONFIG_CRC32_VERIFY
+ 
+-# include <config_cmd_default.h>
+-# define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */
+-# define CONFIG_ENV_SIZE			0x2000
+-# define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
+-# define CONFIG_ENV_OVERWRITE
+-# define CONFIG_SYS_LONGHELP
+-# define CONFIG_SYS_PROMPT		"TI8148_EVM#"
++# undef CONFIG_DISPLAY_CPUINFO
++# undef CONFIG_SPI
++# undef CONFIG_I2C
++
++# define CONFIG_BOOTDELAY	0
++# define CONFIG_SYS_AUTOLOAD	"no"
+ # define CONFIG_SYS_HUSH_PARSER		/* Use HUSH parser to allow command parsing */
+ # define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
+-# define CONFIG_CMDLINE_TAG        	1	/* enable passing of ATAGs  */
+-# define CONFIG_SETUP_MEMORY_TAGS  	1
+-# define CONFIG_INITRD_TAG	  	1	/* Required for ramdisk support */
+-# define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
+-/* By default, 2nd stage will have MMC, NAND, SPI and I2C support */
+-# define CONFIG_MMC			1
+-# define CONFIG_NAND			1
+-# define CONFIG_SPI			1
+-# define CONFIG_I2C			1
+-# define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootfile=uImage\0" \
+-	"ramdisk_file=ramdisk.gz\0" \
+-	"loadaddr=0x81000000\0" \
+-	"script_addr=0x80900000\0" \
+-	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
+-	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
+-		"source ${script_addr}\0" \
+ 
+-# define CONFIG_BOOTCOMMAND \
+-	"if mmc rescan 0; then " \
+-		"if run loadbootscript; then " \
+-			"run bootscript; " \
+-		"else " \
+-			"echo In case ENV on MMC/SD is required; "\
+-			"echo Please put a valid script named boot.scr on the card; " \
+-			"echo Refer to the User Guide on how to generate the image; " \
+-		"fi; " \
+-	"else " \
+-		"echo Please set bootargs and bootcmd before booting the kernel; " \
+-		"echo If that has already been done please ignore this message; "\
+-	"fi"
++/*
++ * tfm TODO:
++ * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
++ * - figure which filesystem to use (timestamp)
++ * - boot the right kernel with the freshest rootfs
++ */
++# define CONFIG_EXTRA_ENV_SETTINGS \
++    "boot2nd=mmc rescan 0; "\
++                    "fatload mmc 0 0x80800000 u-boot-2nd.sd;"\
++                    "go 0x80800000\0" \
++    "bootsd=mmc rescan 0;setenv verify no; "\
++                            "setenv bootargs "\
++                                "'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                            "fatload mmc 0 0x80007FC0 uImage;"\
++                            "bootm 0x80007FC0\0" \
++    "bootnand=setenv verify no; setenv bootargs "\
++                    "'console=ttyO2,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                "nboot 0x80007FC0 0 0x100000; bootm;\0"\
++    "flash_uboot=mmc rescan 0;mw.b 0x82000000 0xFF 0x100000;"\
++                "fatload mmc 0 0x82000000 MLO.nand;"\
++                "nandecc hw 2;"\
++                "nand erase 0x0 0x100000;"\
++                "nand write.i 0x82000000 0x0 0x100000;"\
++                "nandecc hw 0\0"\
++    "flash_kernel=mmc rescan 0;"\
++                "mw.b 0x82000000 0xFF 0xa00000;"\
++                "fatload mmc 0 0x82000000 uImage;"\
++                "nand erase 0x100000 0xa00000;"\
++                "nand write.i 0x82000000 0x100000 0xa00000\0"\
++    "flash_rootfs=mmc rescan 0;"\
++                "mw.b 0x82000000 0xFF 0x6400000;"\
++                "fatload mmc 0 0x82000000 hidav-root-fs.squashfs;"\
++                "nand erase clean 0x1500000 0x6400000;"\
++                "nand write.i 0x82000000 0x1500000 0x6400000;\0"\
++    "flash_system=run flash_uboot;run flash_kernel;run flash_rootfs;"\
+ 
++#ifdef CONFIG_SD_BOOT
++#undef CONFIG_NAND
++#define CONFIG_BOOTCOMMAND "run boot2nd"
++#define CONFIG_ENV_IS_NOWHERE /* no "saveenv" for you! */
++#else
++#define CONFIG_NAND			1
++#define CONFIG_BOOTCOMMAND "run bootnand"
++#endif
+ 
++#ifdef TI81XX_SECOND_STAGE
++#undef CONFIG_BOOTCOMMAND
++#undef CONFIG_BOOTDELAY
++#define CONFIG_BOOTCOMMAND "run bootsd"
++#define CONFIG_BOOTDELAY 5
++#define CONFIG_ENV_IS_NOWHERE /* no "saveenv" for you! */
+ #endif
+ 
++
++
++
+ #define CONFIG_SYS_GBL_DATA_SIZE	128	/* size in bytes reserved for
+ 						   initial data */
+-
+ #define CONFIG_MISC_INIT_R		1
+-#ifndef CONFIG_TI814X_MIN_CONFIG
+-# define CONFIG_TI814X_ASCIIART		1	/* The centaur */
+-#endif
+-#define CONFIG_SYS_AUTOLOAD		"yes"
+ #define CONFIG_CMD_CACHE
+-#define CONFIG_CMD_ECHO
+ 
+ /*
+  * Miscellaneous configurable options
+  */
+ 
++# define CONFIG_SYS_LONGHELP
+ /* max number of command args */
+ #define CONFIG_SYS_MAXARGS		32
+ /* Console I/O Buffer Size */
+ #define CONFIG_SYS_CBSIZE		512
++/* Monitor Command Prompt */
++#define CONFIG_SYS_PROMPT		"HidaV boot on 814x#"
+ /* Print Buffer Size */
+ #define CONFIG_SYS_PBSIZE		(CONFIG_SYS_CBSIZE \
+ 					+ sizeof(CONFIG_SYS_PROMPT) + 16)
 diff --git a/include/configs/ti8168_evm.h b/include/configs/ti8168_evm.h
-index 249d0ca..d83965c 100644
+index c615e9a..b3541f9 100644
 --- a/include/configs/ti8168_evm.h
 +++ b/include/configs/ti8168_evm.h
 @@ -20,9 +20,6 @@
@@ -125,14 +336,7 @@ index 249d0ca..d83965c 100644
  # define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 -# define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
 -# define CONFIG_SYS_AUTOLOAD		"no"
-+
-+/*
-+ * tfm TODO:
-+ * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
-+ * - figure which filesystem to use (timestamp)
-+ * - boot the right kernel with the freshest rootfs
-+ */
- # define CONFIG_EXTRA_ENV_SETTINGS \
+-# define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootfile=uImage\0" \
 -	"ramdisk_file=ramdisk.gz\0" \
@@ -141,7 +345,7 @@ index 249d0ca..d83965c 100644
 -	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 -	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 -		"source ${script_addr}\0" \
--
+ 
 -#define CONFIG_BOOTCOMMAND \
 -	"if mmc rescan 0; then " \
 -		"if run loadbootscript; then " \
@@ -155,29 +359,36 @@ index 249d0ca..d83965c 100644
 -		"echo Please set bootargs and bootcmd before booting the kernel; " \
 -		"echo If that has already been done please ignore this message; "\
 -	"fi"
-+    "boot2nd=mmc init; "\
-+                    "fatload mmc 1 0x80800000 u-boot-2nd.sd;"\
++/*
++ * tfm TODO:
++ * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
++ * - figure which filesystem to use (timestamp)
++ * - boot the right kernel with the freshest rootfs
++ */
++# define CONFIG_EXTRA_ENV_SETTINGS \
++    "boot2nd=mmc rescan 0; "\
++                    "fatload mmc 0 0x80800000 u-boot-2nd.sd;"\
 +                    "go 0x80800000\0" \
-+    "bootsd=mmc init;setenv verify no; "\
++    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
 +                                "'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
-+                            "fatload mmc 1 0x80007FC0 uImage;"\
++                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    "bootnand=setenv verify no; setenv bootargs "\
 +                    "'console=ttyO2,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
 +                "nboot 0x80007FC0 0 0x100000; bootm;\0"\
-+    "flash_uboot=mmc init;mw.b 0x82000000 0xFF 0x100000;"\
++    "flash_uboot=mmc rescan 0;mw.b 0x82000000 0xFF 0x100000;"\
 +                "fatload mmc 0 0x82000000 MLO.nand;"\
 +                "nandecc hw 2;"\
 +                "nand erase 0x0 0x100000;"\
 +                "nand write.i 0x82000000 0x0 0x100000;"\
 +                "nandecc hw 0\0"\
-+    "flash_kernel=mmc init;"\
++    "flash_kernel=mmc rescan 0;"\
 +                "mw.b 0x82000000 0xFF 0xa00000;"\
 +                "fatload mmc 0 0x82000000 uImage;"\
 +                "nand erase 0x100000 0xa00000;"\
 +                "nand write.i 0x82000000 0x100000 0xa00000\0"\
-+    "flash_rootfs=mmc init;"\
++    "flash_rootfs=mmc rescan 0;"\
 +                "mw.b 0x82000000 0xFF 0x6400000;"\
 +                "fatload mmc 0 0x82000000 hidav-root-fs.squashfs;"\
 +                "nand erase clean 0x1500000 0x6400000;"\
@@ -193,7 +404,7 @@ index 249d0ca..d83965c 100644
 +#define CONFIG_BOOTCOMMAND "run bootnand"
 +#endif
  
-+#ifdef TI8168_SECOND_STAGE
++#ifdef TI81XX_SECOND_STAGE
 +#undef CONFIG_BOOTCOMMAND
 +#undef CONFIG_BOOTDELAY
 +#define CONFIG_BOOTCOMMAND "run bootsd"
@@ -202,6 +413,15 @@ index 249d0ca..d83965c 100644
  #endif
  
  /*
+@@ -120,7 +138,7 @@
+ /* Undef to save memory */
+ #define CONFIG_SYS_LONGHELP
+ /* Monitor Command Prompt */
+-#define CONFIG_SYS_PROMPT		"TI8168_EVM#"
++#define CONFIG_SYS_PROMPT		"HidaV boot on 816x#"
+ /* Console I/O Buffer Size */
+ #define CONFIG_SYS_CBSIZE		512
+ /* Print Buffer Size */
 @@ -144,11 +162,11 @@
  /**
   * Physical Memory Map

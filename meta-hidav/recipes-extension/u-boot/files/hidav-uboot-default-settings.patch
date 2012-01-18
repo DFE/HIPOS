@@ -117,7 +117,7 @@ index 249d0ca..d83965c 100644
 +
  # define CONFIG_BOOTDELAY	0
 -# define CONFIG_SYS_AUTOLOAD	"yes"
--# define CONFIG_BOOTCOMMAND	"mmc init;fatload mmc 1 0x80800000 u-boot.bin;go 0x80800000"
+-# define CONFIG_BOOTCOMMAND	"mmc rescan 0;fatload mmc 0 0x80800000 u-boot.bin;go 0x80800000"
 -# define CONFIG_ENV_IS_NOWHERE
 -#else
 +# define CONFIG_SYS_AUTOLOAD	"no"
@@ -138,12 +138,12 @@ index 249d0ca..d83965c 100644
 -	"ramdisk_file=ramdisk.gz\0" \
 -	"loadaddr=0x81000000\0" \
 -	"script_addr=0x80900000\0" \
--	"loadbootscript=fatload mmc 1 ${script_addr} boot.scr\0" \
+-	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 -	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 -		"source ${script_addr}\0" \
 -
 -#define CONFIG_BOOTCOMMAND \
--	"if mmc init; then " \
+-	"if mmc rescan 0; then " \
 -		"if run loadbootscript; then " \
 -			"run bootscript; " \
 -		"else " \
@@ -219,7 +219,36 @@ index 249d0ca..d83965c 100644
  
  
  /**
-@@ -321,5 +339,13 @@ extern unsigned int boot_flash_type;
+@@ -268,17 +286,6 @@ extern unsigned int boot_flash_type;
+ # endif
+ #endif /* SPI support */
+ 
+-/* ENV in MMC */
+-#if defined(CONFIG_MMC_ENV)
+-#undef CONFIG_ENV_IS_NOWHERE
+-#define CONFIG_ENV_IS_IN_MMC		1
+-#define CONFIG_SYS_MMC_ENV_DEV		0
+-#undef CONFIG_ENV_SIZE
+-#undef CONFIG_ENV_OFFSET
+-#define CONFIG_ENV_OFFSET		(6 * 64 * 1024)
+-#define CONFIG_ENV_SIZE			(8 * 1024)
+-#endif /* MMC support */
+-
+ /* NOR support */
+ #if defined(CONFIG_NOR)
+ # undef CONFIG_CMD_NAND			/* Remove NAND support */
+@@ -323,9 +330,8 @@ extern unsigned int boot_flash_type;
+ 
+ /* HSMMC Definitions */
+ #ifdef CONFIG_MMC
++# define CONFIG_OMAP3_MMC	1
+ # define CONFIG_CMD_MMC		1
+-#define CONFIG_GENERIC_MMC
+-#define CONFIG_OMAP_HSMMC
+ # define CONFIG_DOS_PARTITION	1
+ # define CONFIG_CMD_FAT		1
+ #endif
+@@ -333,5 +339,13 @@ extern unsigned int boot_flash_type;
  /* Unsupported features */
  #undef CONFIG_USE_IRQ
  

@@ -4,10 +4,10 @@ COMPATIBLE_MACHINE = "hidav"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-#SRC_URI_append = " file://hidav-uboot-default-settings.patch \
-#                   file://hidav-fast-flash-settings.patch \
-#                   file://hidav-enable-icache.patch \
-#                   file://hidav-nand-do-not-use-bad_block_table.patch "
+SRC_URI_append = " file://hidav-uboot-default-settings.patch \
+                   file://hidav-fast-flash-settings.patch \
+                   file://hidav-enable-icache.patch \
+                   file://hidav-nand-do-not-use-bad_block_table.patch "
 
 BRANCH_ti814x = "ti81xx-master"
 SRCREV_pn-${PN}_ti814x  = "456a38217871f9184b65efd42e010a264b4d65e1"

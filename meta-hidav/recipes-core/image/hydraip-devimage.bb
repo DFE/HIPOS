@@ -1,6 +1,6 @@
 require hydraip-image.inc
 
-PR = "${INC_PR}.1"
+PR_append = ".2"
 
 export IMAGE_BASENAME = "hydraip-devimage"
 
@@ -15,3 +15,4 @@ IMAGE_INSTALL += " \
   subversion \
   git \ 
 "
+

@@ -1,4 +1,4 @@
-PR = "r15"
+PR = "r16"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -61,9 +61,6 @@ do_compile() {
 
 do_install() { 
     install -d ${D}/boot
-    install ${S}/MLO_ti816x ${D}/boot/
-    install ${S}/MLO.nand_ti816x ${D}/boot/
-    install ${S}/u-boot-2nd.sd_ti816x ${D}/boot/
     install ${S}/MLO ${D}/boot/
     install ${S}/MLO.nand ${D}/boot/
     install ${S}/u-boot-2nd.sd ${D}/boot/
@@ -74,9 +71,10 @@ do_install() {
 
 do_deploy () {
     install -d ${DEPLOY_DIR_IMAGE}
-    install ${S}/MLO_ti816x ${DEPLOY_DIR_IMAGE}/
-    install ${S}/MLO.nand_ti816x ${DEPLOY_DIR_IMAGE}/
-    install ${S}/u-boot-2nd.sd_ti816x ${DEPLOY_DIR_IMAGE}/
+    install -d ${DEPLOY_DIR_IMAGE}/ti816x
+    install ${S}/MLO_ti816x ${DEPLOY_DIR_IMAGE}/ti816x/MLO
+    install ${S}/MLO.nand_ti816x ${DEPLOY_DIR_IMAGE}/ti816x/MLO.nand
+    install ${S}/u-boot-2nd.sd_ti816x ${DEPLOY_DIR_IMAGE}/ti816x/u-boot-2nd.sd
     install ${S}/MLO ${DEPLOY_DIR_IMAGE}/
     install ${S}/MLO.nand ${DEPLOY_DIR_IMAGE}/
     install ${S}/u-boot-2nd.sd ${DEPLOY_DIR_IMAGE}/

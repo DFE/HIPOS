@@ -1,7 +1,8 @@
 require hydraip-image.inc
 
-PR = "${INC_PR}.1"
+PR_append = ".2"
 
 export IMAGE_BASENAME = "hydraip-image"
 
 IMAGE_FSTYPES = "tar.bz2 squashfs"
+

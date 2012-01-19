@@ -1,4 +1,4 @@
-PR = "r21"
+PR = "r22"
 
 COMPATIBLE_MACHINE = "hidav"
 

@@ -175,7 +175,7 @@ index 2504954..c970d77 100644
 +                    "go 0x80800000\0" \
 +    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
-+                                "'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw rootfstype=ext4 mem=1024M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                                "'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
 +                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    "bootnand=setenv verify no; setenv bootargs "\

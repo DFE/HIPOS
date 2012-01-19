@@ -1,4 +1,4 @@
-PR = "r19"
+PR = "r20"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -67,12 +67,7 @@ do_compile() {
 }
 
 do_install() { 
-    install -d ${D}/boot
-    install ${S}/MLO ${D}/boot/
-    install ${S}/MLO.nand ${D}/boot/
-    install ${S}/u-boot-2nd.sd ${D}/boot/
-
-    # TODO: add boot loader flash write when firmware flash layout has been defined
+    true
 }
 
 

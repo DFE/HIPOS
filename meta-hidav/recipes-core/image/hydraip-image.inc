@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/console-image.bb
 
-PR_append = "+r6"
+PR_append = "+r7"
 
 IMAGE_INSTALL += " \
   kernel-modules \
@@ -23,10 +23,5 @@ IMAGE_INSTALL += " \
   mtd-utils \
   mc \
   nano \  
-"
-
-# SDK
-IMAGE_INSTALL_append_hidav += " \
-  rootfs-overlay \
 "
 

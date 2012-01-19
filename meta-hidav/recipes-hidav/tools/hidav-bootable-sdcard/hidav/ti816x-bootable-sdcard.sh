@@ -41,8 +41,7 @@ echo -e "----\nCreating Partitions\n--"
 
 sfdisk -D -H 255 -S 63 -C $CYLINDERS $DRIVE << EOF
 ,9,0x0C,*
-10,115,,-
-126,,,-
+10,,,-
 EOF
 
 echo -e "----\nFormatting FAT Partition\n--"
@@ -62,9 +61,9 @@ rm -rf tmp_mnt
 echo -e "----\nCopying bootloader and kernel\n--"
 mkdir -p tmp_mnt
 mount ${1}1 tmp_mnt
-cp _boot_ti814x/MLO tmp_mnt/
-cp _boot_ti814x/u-boot-2nd.sd tmp_mnt/
-cp _boot_ti814x/MLO.nand tmp_mnt/
+cp _boot_ti816x/MLO tmp_mnt/
+cp _boot_ti816x/u-boot-2nd.sd tmp_mnt/
+cp _boot_ti816x/MLO.nand tmp_mnt/
 cp uImage-hidav.bin tmp_mnt/uImage
 cp hydraip-image-hidav.squashfs tmp_mnt/hidav-root-fs.squashfs
 umount tmp_mnt

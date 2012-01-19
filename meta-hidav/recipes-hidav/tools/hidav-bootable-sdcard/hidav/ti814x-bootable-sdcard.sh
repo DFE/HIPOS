@@ -41,8 +41,7 @@ echo -e "----\nCreating Partitions\n--"
 
 sfdisk -D -H 255 -S 63 -C $CYLINDERS $DRIVE << EOF
 ,9,0x0C,*
-10,115,,-
-126,,,-
+10,,,-
 EOF
 
 echo -e "----\nFormatting FAT Partition\n--"

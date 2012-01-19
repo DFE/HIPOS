@@ -1,4 +1,4 @@
-PR = "r18"
+PR = "r19"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -22,41 +22,48 @@ do_compile() {
     unset CFLAGS
     unset CPPFLAGS
 
+    rm   -rf _hidav_814x _hidav_816x
+    mkdir -p _hidav_814x _hidav_816x
 
     rm -f MLO_ti816x MLO.nand_ti816x u-boot-2nd.sd_ti816x
 
     bbnote "Building first stage SD card loader (MLO) ti816x"
     oe_runmake distclean
     oe_runmake ti8168_evm_min_sd
-    oe_runmake -j 8 u-boot.ti TI_IMAGE=MLO_ti816x
+    oe_runmake -j 8 u-boot.ti TI_IMAGE=MLO
+    mv MLO _hidav_816x/
 
     bbnote "Building first stage NAND loader (MLO.nand) ti816x"
     oe_runmake distclean
     oe_runmake ti8168_evm_config_nand
-    oe_runmake -j 8 u-boot.ti TI_IMAGE=MLO.nand_ti816x
+    oe_runmake -j 8 u-boot.ti TI_IMAGE=MLO.nand
+    mv MLO.nand _hidav_816x/
 
     bbnote "Building second stage SD card loader (u-boot-2nd.sd) ti816x"
     oe_runmake distclean
     oe_runmake ti8168_evm_config
-    oe_runmake -j 8 u-boot.ti TI_IMAGE=u-boot-2nd.sd_ti816x
+    oe_runmake -j 8 u-boot.ti TI_IMAGE=u-boot-2nd.sd
+    mv u-boot-2nd.sd _hidav_816x/
 
 
-    rm -f MLO MLO.nand u-boot-2nd.sd
 
     bbnote "Building first stage SD card loader (MLO) ti814x"
     oe_runmake distclean
     oe_runmake ti8148_evm_min_sd
     oe_runmake -j 8 u-boot.ti TI_IMAGE=MLO
+    mv MLO _hidav_814x/
 
     bbnote "Building first stage NAND loader (MLO.nand) ti814x"
     oe_runmake distclean
     oe_runmake ti8148_evm_config_nand
     oe_runmake -j 8 u-boot.ti TI_IMAGE=MLO.nand
+    mv MLO.nand _hidav_814x/
 
     bbnote "Building second stage SD card loader (u-boot-2nd.sd) ti814x"
     oe_runmake distclean
-    oe_runmake ti8148_evm_config
+    oe_runmake ti8148_evm_config_sd
     oe_runmake -j 8 u-boot.ti TI_IMAGE=u-boot-2nd.sd
+    mv u-boot-2nd.sd _hidav_814x/
 }
 
 do_install() { 
@@ -71,12 +78,10 @@ do_install() {
 
 do_deploy () {
     install -d ${DEPLOY_DIR_IMAGE}
-    install -d ${DEPLOY_DIR_IMAGE}/ti816x
-    install ${S}/MLO_ti816x ${DEPLOY_DIR_IMAGE}/ti816x/MLO
-    install ${S}/MLO.nand_ti816x ${DEPLOY_DIR_IMAGE}/ti816x/MLO.nand
-    install ${S}/u-boot-2nd.sd_ti816x ${DEPLOY_DIR_IMAGE}/ti816x/u-boot-2nd.sd
-    install ${S}/MLO ${DEPLOY_DIR_IMAGE}/
-    install ${S}/MLO.nand ${DEPLOY_DIR_IMAGE}/
-    install ${S}/u-boot-2nd.sd ${DEPLOY_DIR_IMAGE}/
+    install -d ${DEPLOY_DIR_IMAGE}/_boot_ti816x/
+    install -d ${DEPLOY_DIR_IMAGE}/_boot_ti814x/
+
+    install ${S}/_hidav_816x/* ${DEPLOY_DIR_IMAGE}/_boot_ti816x/
+    install ${S}/_hidav_814x/* ${DEPLOY_DIR_IMAGE}/_boot_ti814x/
 }
 

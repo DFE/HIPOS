@@ -62,9 +62,9 @@ rm -rf tmp_mnt
 echo -e "----\nCopying bootloader and kernel\n--"
 mkdir -p tmp_mnt
 mount ${1}1 tmp_mnt
-cp MLO tmp_mnt/
-cp u-boot-2nd.sd tmp_mnt/
-cp MLO.nand tmp_mnt/
+cp _boot_ti814x/MLO tmp_mnt/
+cp _boot_ti814x/u-boot-2nd.sd tmp_mnt/
+cp _boot_ti814x/MLO.nand tmp_mnt/
 cp uImage-hidav.bin tmp_mnt/uImage
 cp hydraip-image-hidav.squashfs tmp_mnt/hidav-root-fs.squashfs
 umount tmp_mnt

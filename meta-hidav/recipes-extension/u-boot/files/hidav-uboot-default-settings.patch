@@ -1,16 +1,17 @@
 diff --git a/Makefile b/Makefile
-index b344046..2e29fbb 100644
+index b344046..cc31927 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -3259,6 +3259,7 @@ ti8148_evm_min_sd:	unconfig
+@@ -3258,7 +3258,7 @@ ti8148_evm_min_sd:	unconfig
+ 			echo "Setting up TI8148 default build with ENV in SPI..." ; \
  		elif [ "$(findstring sd,$@)" ] ; then \
  			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
- 			echo "#define CONFIG_MMC_ENV"    >>$(obj)include/config.h ; \
+-			echo "#define CONFIG_MMC_ENV"    >>$(obj)include/config.h ; \
 +			echo "#define TI81XX_SECOND_STAGE"    >>$(obj)include/config.h ; \
  			echo "Setting up TI8148 default build with ENV in MMC..." ; \
  		else	\
  			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
-@@ -3330,6 +3331,7 @@ ti8168_evm_min_sd:	unconfig
+@@ -3330,6 +3330,7 @@ ti8168_evm_min_sd:	unconfig
  	else	\
  		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
  		echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
@@ -57,22 +58,21 @@ index 23448ba..b9a97be 100644
  	/* fallback ecc info, this will be overridden by 
  	 * ti81xx_nand_switch_ecc() below to 1-bit h/w ecc
 diff --git a/include/configs/ti8148_evm.h b/include/configs/ti8148_evm.h
-index 2504954..b359f92 100644
+index 2504954..c970d77 100644
 --- a/include/configs/ti8148_evm.h
 +++ b/include/configs/ti8148_evm.h
-@@ -21,21 +21,13 @@
+@@ -21,21 +21,10 @@
   *#define CONFIG_TI814X_NO_RUNTIME_PG_DETECT
   */
  
-+/* U-Boot default commands */
-+#include <config_cmd_default.h>
-+
- /* Display CPU info */
- #define CONFIG_DISPLAY_CPUINFO          1
- 
+-/* Display CPU info */
+-#define CONFIG_DISPLAY_CPUINFO          1
+-
 -/* In the 1st stage we have just 110K, so cut down wherever possible */
 -#ifdef CONFIG_TI814X_MIN_CONFIG
--
++/* U-Boot default commands */
++#include <config_cmd_default.h>
+ 
  # define CONFIG_CMD_MEMORY	/* for mtest */
 -# undef CONFIG_GZIP
 -# undef CONFIG_ZLIB
@@ -85,12 +85,13 @@ index 2504954..b359f92 100644
  # define CONFIG_CMD_LOADB	/* loadb			*/
  # define CONFIG_CMD_LOADY	/* loady */
  # define CONFIG_SETUP_PLL
-@@ -44,102 +36,103 @@
+@@ -44,102 +33,111 @@
  /*
   * # define CONFIG_TI814X_EVM_DDR2
   */ 
 -# define CONFIG_ENV_SIZE		0x400
--# define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (8 * 1024))
++#define CONFIG_ENV_SIZE			0x2000
+ # define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (8 * 1024))
 -# define CONFIG_SYS_PROMPT		"TI-MIN#"
 -/* set to negative value for no autoboot */
 -# define CONFIG_BOOTDELAY		0
@@ -99,8 +100,6 @@ index 2504954..b359f92 100644
 -#  define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootcmd=sf probe 0; sf read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
-+#define CONFIG_ENV_SIZE			0x2000
-+# define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
  
 -# elif defined(CONFIG_NAND_BOOT)		/* Autoload the 2nd stage from NAND */
 -#  define CONFIG_NAND			1
@@ -155,7 +154,14 @@ index 2504954..b359f92 100644
 -# define CONFIG_NAND			1
 -# define CONFIG_SPI			1
 -# define CONFIG_I2C			1
--# define CONFIG_EXTRA_ENV_SETTINGS \
++
++/*
++ * tfm TODO:
++ * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
++ * - figure which filesystem to use (timestamp)
++ * - boot the right kernel with the freshest rootfs
++ */
+ # define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootfile=uImage\0" \
 -	"ramdisk_file=ramdisk.gz\0" \
@@ -164,27 +170,6 @@ index 2504954..b359f92 100644
 -	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 -	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 -		"source ${script_addr}\0" \
- 
--# define CONFIG_BOOTCOMMAND \
--	"if mmc rescan 0; then " \
--		"if run loadbootscript; then " \
--			"run bootscript; " \
--		"else " \
--			"echo In case ENV on MMC/SD is required; "\
--			"echo Please put a valid script named boot.scr on the card; " \
--			"echo Refer to the User Guide on how to generate the image; " \
--		"fi; " \
--	"else " \
--		"echo Please set bootargs and bootcmd before booting the kernel; " \
--		"echo If that has already been done please ignore this message; "\
--	"fi"
-+/*
-+ * tfm TODO:
-+ * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
-+ * - figure which filesystem to use (timestamp)
-+ * - boot the right kernel with the freshest rootfs
-+ */
-+# define CONFIG_EXTRA_ENV_SETTINGS \
 +    "boot2nd=mmc rescan 0; "\
 +                    "fatload mmc 0 0x80800000 u-boot-2nd.sd;"\
 +                    "go 0x80800000\0" \
@@ -213,7 +198,7 @@ index 2504954..b359f92 100644
 +                "nand erase clean 0x1500000 0x6400000;"\
 +                "nand write.i 0x82000000 0x1500000 0x6400000;\0"\
 +    "flash_system=run flash_uboot;run flash_kernel;run flash_rootfs;"\
- 
++
 +#ifdef CONFIG_SD_BOOT
 +#undef CONFIG_NAND
 +#define CONFIG_BOOTCOMMAND "run boot2nd"
@@ -222,13 +207,34 @@ index 2504954..b359f92 100644
 +#define CONFIG_NAND			1
 +#define CONFIG_BOOTCOMMAND "run bootnand"
 +#endif
- 
++
 +#ifdef TI81XX_SECOND_STAGE
+ 
+-# define CONFIG_BOOTCOMMAND \
+-	"if mmc rescan 0; then " \
+-		"if run loadbootscript; then " \
+-			"run bootscript; " \
+-		"else " \
+-			"echo In case ENV on MMC/SD is required; "\
+-			"echo Please put a valid script named boot.scr on the card; " \
+-			"echo Refer to the User Guide on how to generate the image; " \
+-		"fi; " \
+-	"else " \
+-		"echo Please set bootargs and bootcmd before booting the kernel; " \
+-		"echo If that has already been done please ignore this message; "\
+-	"fi"
 +#undef CONFIG_BOOTCOMMAND
-+#undef CONFIG_BOOTDELAY
 +#define CONFIG_BOOTCOMMAND "run bootsd"
++#undef CONFIG_BOOTDELAY
 +#define CONFIG_BOOTDELAY 5
++#undef CONFIG_SYS_MALLOC_LEN
++#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
+ 
++#define CONFIG_ENV_OVERWRITE
++#define CONFIG_SYS_LONGHELP
++# define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */
 +#define CONFIG_ENV_IS_NOWHERE /* no "saveenv" for you! */
+ 
  #endif
  
 +

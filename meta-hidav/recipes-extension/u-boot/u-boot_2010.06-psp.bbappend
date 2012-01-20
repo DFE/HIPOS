@@ -1,4 +1,4 @@
-PR = "r22"
+PR = "r23"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -55,7 +55,7 @@ do_compile() {
 
     bbnote "Building first stage NAND loader (MLO.nand) ti814x"
     oe_runmake distclean
-    oe_runmake ti8148_evm_config_nand
+    oe_runmake ti8148_evm_min_nand
     oe_runmake -j 8 u-boot.ti TI_IMAGE=MLO.nand
     mv MLO.nand _hidav_814x/
 

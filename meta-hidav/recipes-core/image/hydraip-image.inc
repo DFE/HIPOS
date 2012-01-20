@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/console-image.bb
 
-PR_append = "+r7"
+PR_append = "+r8"
 
 IMAGE_INSTALL += " \
   kernel-modules \
@@ -10,11 +10,9 @@ IMAGE_INSTALL += " \
   bash \
 "
 
-# systemd-analyze depends
+# profiling
 IMAGE_INSTALL += " \
-  python \
-  python-dbus \
-  python-pycairo \
+  systemd-analyze \
 "
 
 # helpers

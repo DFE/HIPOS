@@ -13,7 +13,9 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 
 SRCREV = "46f23670f6dd8186c32683e687e5dd6219084c2f"
 
-do_configure_prepend() {
+MACHINE_KERNEL_PR = "r16"
+
+do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
   cp -r ${WORKDIR}/aufs/fs ${S}
   cp ${WORKDIR}/aufs/include/linux/aufs_type.h ${S}/include/linux/

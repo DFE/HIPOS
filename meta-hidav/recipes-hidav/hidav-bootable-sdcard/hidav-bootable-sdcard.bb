@@ -6,12 +6,12 @@ PR = "r8"
 
 DEPENDS = "hydraip-image hydraip-devimage"
 
-SRC_URI = "file://hidav-bootable-sdcard.sh \
+SRC_URI = "file://ti814x-bootable-sdcard.sh \
            file://ti816x-bootable-sdcard.sh"
 
 do_install() {
 	install -d ${DEPLOY_DIR_IMAGE}
-	install -m 0555 ${WORKDIR}/hidav-bootable-sdcard.sh ${DEPLOY_DIR_IMAGE}
+	install -m 0555 ${WORKDIR}/ti814x-bootable-sdcard.sh ${DEPLOY_DIR_IMAGE}
 	install -m 0555 ${WORKDIR}/ti816x-bootable-sdcard.sh ${DEPLOY_DIR_IMAGE}
 }
 

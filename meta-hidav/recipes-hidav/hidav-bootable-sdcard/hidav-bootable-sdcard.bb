@@ -2,7 +2,7 @@ DESCRIPTION = "HidaV make bootable sd card with dev image"
 
 LICENSE = "MIT"
 
-PR = "r7"
+PR = "r8"
 
 DEPENDS = "hydraip-image hydraip-devimage"
 

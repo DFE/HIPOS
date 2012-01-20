@@ -64,7 +64,7 @@ mount ${1}1 tmp_mnt
 cp _boot_ti816x/MLO tmp_mnt/
 cp _boot_ti816x/u-boot-2nd.sd tmp_mnt/
 cp _boot_ti816x/MLO.nand tmp_mnt/
-cp uImage-hidav.bin tmp_mnt/uImage
+cp uImage-hidav.multi-config-ti816x.bin tmp_mnt/uImage
 cp hydraip-image-hidav.squashfs tmp_mnt/hidav-root-fs.squashfs
 umount tmp_mnt
 rm -rf tmp_mnt

@@ -7,13 +7,14 @@ RDEPENDS += " mtd-utils "
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=4323b3a87dde5b9e2364cd7e51412055dd778a34 \
-                   file://hidav-flash-partition-settings.patch \
+                   file://hidav-flash-partition-settings-ti814x.patch \
+		   file://hidav-flash-partition-settings-ti816x.patch \
                    file://btrfs-kobject-include.patch \ 
                    "
 
 SRCREV = "46f23670f6dd8186c32683e687e5dd6219084c2f"
 
-MACHINE_KERNEL_PR = "r16"
+MACHINE_KERNEL_PR = "r17"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}

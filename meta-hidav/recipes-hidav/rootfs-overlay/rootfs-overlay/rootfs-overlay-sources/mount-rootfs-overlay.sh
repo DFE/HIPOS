@@ -27,7 +27,7 @@
 set -e
 cd /
 source /etc/default/rootfs-overlay
-modprobe ubifs
+modprobe ubifs || true
 
 
 check_prerequisites() {

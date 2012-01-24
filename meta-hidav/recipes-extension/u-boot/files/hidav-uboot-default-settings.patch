@@ -168,12 +168,12 @@ index 2504954..c9b9c6d 100644
 +#ifdef TI81XX_SECOND_STAGE
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO0,115200n8 rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                    "'console=ttyO0,115200n8 rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd';" \
 +                "nboot 0x80007FC0 0 0x100000; bootm;\0"
 +#else 
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO0,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                    "'console=ttyO0,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd';" \
 +                "nboot 0x80007FC0 0 0x100000; bootm;\0"
 +#endif
  
@@ -189,7 +189,7 @@ index 2504954..c9b9c6d 100644
 +                    "go 0x80800000\0" \
 +    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
-+                                "'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                                "'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd';" \
 +                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    BOOTNAND_CMD \
@@ -407,12 +407,12 @@ index c615e9a..417f9ab 100644
 +#ifdef TI81XX_SECOND_STAGE
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO0,115200n8 rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                    "'console=ttyO2,115200n8 rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd';" \
 +                "nboot 0x80007FC0 0 0x100000; bootm;\0"
 +#else 
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO0,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                    "'console=ttyO2,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd';" \
 +                "nboot 0x80007FC0 0 0x100000; bootm;\0"
 +#endif
 +
@@ -423,7 +423,7 @@ index c615e9a..417f9ab 100644
 +                    "go 0x80800000\0" \
 +    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
-+                                "'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd';" \
++                                "'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ip=off noinitrd';" \
 +                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    BOOTNAND_CMD \

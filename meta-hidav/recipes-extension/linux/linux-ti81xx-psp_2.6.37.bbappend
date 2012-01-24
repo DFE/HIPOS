@@ -12,9 +12,9 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
                    file://btrfs-kobject-include.patch \ 
                    "
 
-SRCREV = "46f23670f6dd8186c32683e687e5dd6219084c2f"
+SRCREV = "3228b1d8e5270ee56002e7f59d839ed8b6b85606"
 
-MACHINE_KERNEL_PR = "r18"
+MACHINE_KERNEL_PR = "r19"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}

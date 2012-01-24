@@ -2,7 +2,7 @@ DESCRIPTION = "HidaV make bootable sd card with dev image"
 
 LICENSE = "MIT"
 
-PR = "r10"
+PR = "r11"
 
 SRC_URI = "file://ti814x-bootable-sdcard.sh \
            file://ti816x-bootable-sdcard.sh"

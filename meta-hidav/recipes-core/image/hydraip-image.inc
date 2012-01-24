@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/console-image.bb
 
-PR_append = "+r8"
+PR_append = "+r9"
 
 IMAGE_INSTALL += " \
   kernel-modules \
@@ -21,5 +21,10 @@ IMAGE_INSTALL += " \
   mtd-utils \
   mc \
   nano \  
+"
+
+# system / plumbing level tools
+IMAGE_INSTALL += "  \
+    ethtool         \
 "
 

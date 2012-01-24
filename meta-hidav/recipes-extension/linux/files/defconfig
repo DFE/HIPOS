@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux/arm 2.6.37 Kernel Configuration
-# Tue Jan 24 11:13:01 2012
+# Tue Jan 24 13:42:46 2012
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -1775,15 +1775,15 @@ CONFIG_SYSLINK_NOTIFY=y
 #
 # CONFIG_EXT2_FS is not set
 # CONFIG_EXT3_FS is not set
-CONFIG_EXT4_FS=m
+CONFIG_EXT4_FS=y
 CONFIG_EXT4_USE_FOR_EXT23=y
 CONFIG_EXT4_FS_XATTR=y
 # CONFIG_EXT4_FS_POSIX_ACL is not set
 # CONFIG_EXT4_FS_SECURITY is not set
 # CONFIG_EXT4_DEBUG is not set
-CONFIG_JBD2=m
+CONFIG_JBD2=y
 # CONFIG_JBD2_DEBUG is not set
-CONFIG_FS_MBCACHE=m
+CONFIG_FS_MBCACHE=y
 # CONFIG_REISERFS_FS is not set
 # CONFIG_JFS_FS is not set
 # CONFIG_FS_POSIX_ACL is not set

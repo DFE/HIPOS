@@ -13,3 +13,6 @@
 [submodule "meta-openembedded"]
 	path = meta-openembedded
 	url = http://cgit.openembedded.org/cgit.cgi/meta-openembedded
+[submodule "meta-java"]
+	path = meta-java
+	url = git://github.com/woglinde/meta-java.git

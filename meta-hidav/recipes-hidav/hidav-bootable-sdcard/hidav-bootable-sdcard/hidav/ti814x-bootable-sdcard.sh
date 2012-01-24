@@ -53,10 +53,12 @@ mkfs.ext4 -L "rootfs" ${DRIVE}2
 mkdir -p tmp_mnt
 mount ${1}2 tmp_mnt
 pushd tmp_mnt > /dev/null
-tar xjvf ../hydraip-devimage-hidav.tar.bz2
+tar xjf ../hydraip-devimage-hidav.tar.bz2
 popd > /dev/null
 umount tmp_mnt
 rm -rf tmp_mnt
+echo -e "----\nFlushing changes to device\n--"
+blockdev --flushbufs "${DRIVE}"
 
 echo -e "----\nCopying bootloader and kernel\n--"
 mkdir -p tmp_mnt
@@ -68,5 +70,7 @@ cp uImage-hidav.bin tmp_mnt/uImage
 cp hydraip-image-hidav.squashfs tmp_mnt/hidav-root-fs.squashfs
 umount tmp_mnt
 rm -rf tmp_mnt
+echo -e "----\nFlushing changes to device\n--"
+blockdev --flushbufs "${DRIVE}"
 
 echo -e "----\nDONE."

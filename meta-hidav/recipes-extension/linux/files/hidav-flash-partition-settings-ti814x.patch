@@ -1,8 +1,8 @@
 diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
-index 94b4f38..6bf43e6 100644
+index ada442b..8672b79 100644
 --- a/arch/arm/mach-omap2/board-ti8148evm.c
 +++ b/arch/arm/mach-omap2/board-ti8148evm.c
-@@ -530,112 +530,58 @@ static struct snd_platform_data ti8148_evm_snd_data = {
+@@ -530,110 +530,57 @@ static struct snd_platform_data ti8148_evm_snd_data = {
  };
  
  /* NOR Flash partitions */
@@ -43,22 +43,20 @@ index 94b4f38..6bf43e6 100644
 -		.mask_flags	= 0
 -	}
 -};
-+static struct mtd_partition ti814x_evm_norflash_partitions[] = {};
++static struct mtd_partition ti814x_evm_norflash_partitions[] = { };
  
  /* NAND flash information */
  static struct mtd_partition ti814x_nand_partitions[] = {
- /* All the partition sizes are listed in terms of NAND block size */
+-/* All the partition sizes are listed in terms of NAND block size */
 -	{
 -		.name           = "U-Boot-min",
 -		.offset         = 0,    /* Offset = 0x0 */
 -		.size           = SZ_128K,
--		.mask_flags     = MTD_WRITEABLE,        /* force read-only */
 -	},
 -	{
 -		.name           = "U-Boot",
 -		.offset         = MTDPART_OFS_APPEND,/* Offset = 0x0 + 128K */
 -		.size           = 18 * SZ_128K,
--		.mask_flags     = MTD_WRITEABLE,        /* force read-only */
 -	},
 -	{
 -		.name           = "U-Boot Env",
@@ -80,7 +78,6 @@ index 94b4f38..6bf43e6 100644
 -		.offset         = MTDPART_OFS_APPEND,   /* Offset = 0xCEE0000 */
 -		.size           = MTDPART_SIZ_FULL,
 -	},
-+
 +    /* bootloader       -       0x0 */
 +    {
 +        .name		= "bootloader",
@@ -123,6 +120,7 @@ index 94b4f38..6bf43e6 100644
 +        .size		= MTDPART_SIZ_FULL,
 +        .mask_flags	= 0
 +    }
++
  };
  
  /* SPI fLash information */
@@ -156,24 +154,22 @@ index 94b4f38..6bf43e6 100644
 -		.size		= MTDPART_SIZ_FULL, /* size ~= 1.1 MiB */
 -	}
 -};
-+struct mtd_partition ti8148_spi_partitions[] = {};
++struct mtd_partition ti8148_spi_partitions[] = { };
  
  const struct flash_platform_data ti8148_spi_flash = {
  	.type		= "w25x32",
-@@ -776,15 +722,17 @@ static void __init ti8148_evm_init(void)
+@@ -739,13 +686,15 @@ static void __init ti8148_evm_init(void)
  	/* initialize usb */
  	usb_musb_init(&musb_board_data);
  
 -	ti8148_spi_init();
-+	/* DNS: disable SPI. No SPI NAND on HidaV 
-+	ti8148_spi_init(); */
- 	ti814x_vpss_init();
- 	ti814x_hdmi_init();
++	/* tfm: disable SPI. No SPI NAND on hidav
++    ti8148_spi_init(); */
  #ifdef CONFIG_SND_SOC_TI81XX_HDMI
  	platform_add_devices(ti8148_devices, ARRAY_SIZE(ti8148_devices));
  #endif
  	regulator_use_dummy_regulator();
-+	/* DNS: disable NOR. No NOR flash on HidaV
++    /* tfm: disable NOR. No NOR flash on HidaV.
  	board_nor_init(ti814x_evm_norflash_partitions,
 -		ARRAY_SIZE(ti814x_evm_norflash_partitions), 0);
 +		ARRAY_SIZE(ti814x_evm_norflash_partitions), 0); */

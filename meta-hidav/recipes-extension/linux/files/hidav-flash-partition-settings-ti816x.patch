@@ -1,8 +1,8 @@
 diff --git a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
-index 2919555..ab49b91 100644
+index d0dfabf..404a7c7 100644
 --- a/arch/arm/mach-omap2/board-ti8168evm.c
 +++ b/arch/arm/mach-omap2/board-ti8168evm.c
-@@ -73,44 +73,7 @@ static struct omap2_hsmmc_info mmc[] = {
+@@ -73,43 +73,7 @@ static struct omap2_hsmmc_info mmc[] = {
  #define VPS_VC_IO_EXP_THS7368_FILTER2_MASK  (0x80u)
  #define VPS_VC_IO_EXP_THS7368_FILTER_SHIFT  (0x06u)
  
@@ -43,12 +43,11 @@ index 2919555..ab49b91 100644
 -		.mask_flags	= 0
 -	}
 -};
--
-+static struct mtd_partition ti816x_evm_norflash_partitions[] = {};
++static struct mtd_partition ti816x_evm_norflash_partitions[] = { };
+ 
  
  /* Maximum ports supported by the PCF8575 */
- #define VPS_PCF8575_MAX_PORTS           (2u)
-@@ -147,33 +110,48 @@ static struct mtd_partition ti816x_evm_norflash_partitions[] = {
+@@ -147,32 +111,48 @@ static struct mtd_partition ti816x_evm_norflash_partitions[] = {
  #define VR_GPIO_INSTANCE	0
  
  static struct mtd_partition ti816x_nand_partitions[] = {
@@ -57,7 +56,6 @@ index 2919555..ab49b91 100644
 -		.name           = "U-Boot",
 -		.offset         = 0,    /* Offset = 0x0 */
 -		.size           = 19 * NAND_BLOCK_SIZE,
--		.mask_flags     = MTD_WRITEABLE,        /* force read-only */
 -	},
 -	{
 -		.name           = "U-Boot Env",
@@ -124,7 +122,7 @@ index 2919555..ab49b91 100644
  };
  
  static struct at24_platform_data eeprom_info = {
-@@ -655,30 +633,7 @@ static int __init ti816x_evm_i2c_init(void)
+@@ -654,30 +634,7 @@ static int __init ti816x_evm_i2c_init(void)
  }
  
  /* SPI fLash information */
@@ -152,28 +150,28 @@ index 2919555..ab49b91 100644
 -		.size		= MTDPART_SIZ_FULL,	/* size = 1.24 MiB */
 -	}
 -};
-+struct mtd_partition ti816x_spi_partitions[] = {};
++struct mtd_partition ti816x_spi_partitions[] = { };
  
  const struct flash_platform_data ti816x_spi_flash = {
- 	.type		= "w25x32",
-@@ -850,7 +805,8 @@ static void __init ti8168_evm_init(void)
+ 	.name		= "spi_flash",
+@@ -812,7 +769,8 @@ static void __init ti8168_evm_init(void)
  	ti816x_evm_i2c_init();
  	i2c_add_driver(&ti816xevm_cpld_driver);
  	ti81xx_register_mcasp(0, &ti8168_evm_snd_data);
 -	ti816x_spi_init();
-+    /* tfm: disable SPI. No SPI NAND on HidaV
-+	ti816x_spi_init(); */
++	/* tfm: no SPI NAND on hidaV 
++    ti816x_spi_init(); */
  	/* initialize usb */
  	usb_musb_init(&musb_board_data);
  
-@@ -869,8 +825,9 @@ static void __init ti8168_evm_init(void)
+@@ -831,8 +789,9 @@ static void __init ti8168_evm_init(void)
  		ARRAY_SIZE(ti816x_nand_partitions), 0, NAND_BUSWIDTH_16);
  
  	omap2_hsmmc_init(mmc);
-+    /* tfm: disable NOR. No NOR flash on HidaV
++    /* tfm: no NOR on HidaV 
  	board_nor_init(ti816x_evm_norflash_partitions,
 -		ARRAY_SIZE(ti816x_evm_norflash_partitions), 0);
 +		ARRAY_SIZE(ti816x_evm_norflash_partitions), 0); */
- 	ti816x_vpss_init();
  	ti816x_gpio_vr_init();
- 	ti816x_hdmi_init();
+ #ifdef CONFIG_SND_SOC_TI81XX_HDMI
+ 	platform_add_devices(ti8168_devices, ARRAY_SIZE(ti8168_devices));

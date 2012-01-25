@@ -34,7 +34,9 @@ pkg_postinst_append() {
   if [ "x$D" != "x" ]; then
     exit 1	
   fi
-  
-  # flash kernel here...
+
+  # flash kernel
+    flash_eraseall /dev/mtd1 && nandwrite -m -p /dev/mtd1 /boot/uImage
+  exit $?
 }
 

@@ -1,8 +1,8 @@
 diff --git a/Makefile b/Makefile
-index b344046..cc31927 100644
+index 55363a2..3f2a737 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -3258,7 +3258,7 @@ ti8148_evm_min_sd:	unconfig
+@@ -3268,7 +3268,7 @@ ti8148_evm_min_sd:	unconfig
  			echo "Setting up TI8148 default build with ENV in SPI..." ; \
  		elif [ "$(findstring sd,$@)" ] ; then \
  			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
@@ -11,7 +11,7 @@ index b344046..cc31927 100644
  			echo "Setting up TI8148 default build with ENV in MMC..." ; \
  		else	\
  			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
-@@ -3330,6 +3330,7 @@ ti8168_evm_min_sd:	unconfig
+@@ -3340,6 +3340,7 @@ ti8168_evm_min_sd:	unconfig
  	else	\
  		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
  		echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
@@ -19,6 +19,22 @@ index b344046..cc31927 100644
  		echo "Setting up TI8168 default build with NAND..." ; \
  	fi;
  	@$(MKCONFIG) -a ti8168_evm arm arm_cortexa8 ti8168 ti ti81xx
+diff --git a/board/ti/ti8148/evm.c b/board/ti/ti8148/evm.c
+index 4a1436a..5206dde 100644
+--- a/board/ti/ti8148/evm.c
++++ b/board/ti/ti8148/evm.c
+@@ -194,6 +194,11 @@ int board_init(void)
+     */
+ 	gpmc_set_cs_buswidth(0, get_sysboot_bw());
+ #endif
++
++#ifdef TI814X_ENABLE_ICACHE
++    icache_enable();
++#endif
++
+ 	return 0;
+ }
+ 
 diff --git a/common/image.c b/common/image.c
 index 247c49e..4ea9431 100644
 --- a/common/image.c
@@ -44,10 +60,10 @@ index 247c49e..4ea9431 100644
  #endif /* !USE_HOSTCC */
  
 diff --git a/drivers/mtd/nand/ti81xx_nand.c b/drivers/mtd/nand/ti81xx_nand.c
-index 23448ba..b9a97be 100644
+index 6fc94b1..b286c11 100644
 --- a/drivers/mtd/nand/ti81xx_nand.c
 +++ b/drivers/mtd/nand/ti81xx_nand.c
-@@ -871,7 +871,8 @@ int board_nand_init(struct nand_chip *nand)
+@@ -884,7 +884,8 @@ int board_nand_init(struct nand_chip *nand)
  		nand->options |= NAND_BUSWIDTH_16;
  	}
  
@@ -57,27 +73,11 @@ index 23448ba..b9a97be 100644
  
  	/* fallback ecc info, this will be overridden by 
  	 * ti81xx_nand_switch_ecc() below to 1-bit h/w ecc
-diff --git a/board/ti/ti8148/evm.c b/board/ti/ti8148/evm.c
-index ea4fc24..86fadf7 100644
---- a/board/ti/ti8148/evm.c
-+++ b/board/ti/ti8148/evm.c
-@@ -194,6 +194,11 @@ int board_init(void)
-     */
- 	gpmc_set_cs_buswidth(0, get_sysboot_bw());
- #endif
-+
-+#ifdef TI814X_ENABLE_ICACHE
-+    icache_enable();
-+#endif
-+
- 	return 0;
- }
- 
 diff --git a/include/configs/ti8148_evm.h b/include/configs/ti8148_evm.h
-index 2504954..c9b9c6d 100644
+index 33f7bea..215209d 100644
 --- a/include/configs/ti8148_evm.h
 +++ b/include/configs/ti8148_evm.h
-@@ -17,129 +17,144 @@
+@@ -17,134 +17,137 @@
  #ifndef __CONFIG_TI8148_EVM_H
  #define __CONFIG_TI8148_EVM_H
  
@@ -141,18 +141,37 @@ index 2504954..c9b9c6d 100644
 -#  define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootcmd=sf probe 0; sf read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
-+# undef CONFIG_DISPLAY_CPUINFO
-+# undef CONFIG_SPI
-+# undef CONFIG_I2C
-+
-+# define CONFIG_BOOTDELAY	0
-+# define CONFIG_SYS_AUTOLOAD	"no"
- 
+-
 -# elif defined(CONFIG_NAND_BOOT)		/* Autoload the 2nd stage from NAND */
 -#  define CONFIG_NAND			1
 -#  define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootcmd=nand read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
+-
+-# elif defined(CONFIG_SD_BOOT)		/* Autoload the 2nd stage from SD */
+-#  define CONFIG_MMC			1
+-#  define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootcmd=mmc rescan 0; fatload mmc 0 0x80800000 u-boot.bin; go 0x80800000\0" \
+-
+-#elif defined(CONFIG_UART_BOOT)                /* stop in the min prompt */
+-#define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootcmd=\0" \
+-
+-#elif defined(CONFIG_ETH_BOOT)		/* Auto load 2nd stage from server */
+-#  define CONFIG_EXTRA_ENV_SETTINGS \
+-	"verify=yes\0" \
+-	"bootcmd=setenv autoload no;dhcp; tftp 0x81000000 u-boot.bin; go 0x81000000\0"
++# undef CONFIG_DISPLAY_CPUINFO
++# undef CONFIG_SPI
++# undef CONFIG_I2C
+ 
+-# endif
++# define CONFIG_BOOTDELAY	0
++# define CONFIG_SYS_AUTOLOAD	"no"
+ 
+-#else
 +/*
 + * tfm TODO:
 + * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
@@ -160,11 +179,20 @@ index 2504954..c9b9c6d 100644
 + * - boot the right kernel with the freshest rootfs
 + */
  
--# elif defined(CONFIG_SD_BOOT)		/* Autoload the 2nd stage from SD */
--#  define CONFIG_MMC			1
--#  define CONFIG_EXTRA_ENV_SETTINGS \
--	"verify=yes\0" \
--	"bootcmd=mmc rescan 0; fatload mmc 0 0x80800000 u-boot.bin; go 0x80800000\0" \
+-# include <config_cmd_default.h>
+-# define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */
+-# define CONFIG_ENV_SIZE			0x2000
+-# define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
+-# define CONFIG_ENV_OVERWRITE
+-# define CONFIG_SYS_LONGHELP
+-# define CONFIG_SYS_PROMPT		"TI8148_EVM#"
+-# define CONFIG_SYS_HUSH_PARSER		/* Use HUSH parser to allow command parsing */
+-# define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
+-# define CONFIG_CMDLINE_TAG        	1	/* enable passing of ATAGs  */
+-# define CONFIG_SETUP_MEMORY_TAGS  	1
+-# define CONFIG_INITRD_TAG	  	1	/* Required for ramdisk support */
+-# define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
+-/* By default, 2nd stage will have MMC, NAND, SPI and I2C support */
 +#ifdef TI81XX_SECOND_STAGE
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
@@ -176,13 +204,7 @@ index 2504954..c9b9c6d 100644
 +                    "'console=ttyO0,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
 +                "nboot 0x80007FC0 0 0x100000; bootm;\0"
 +#endif
- 
--#elif defined(CONFIG_UART_BOOT)                /* stop in the min prompt */
--#define CONFIG_EXTRA_ENV_SETTINGS \
--	"verify=yes\0" \
--	"bootcmd=\0" \
- 
--# endif
++
 +# define CONFIG_EXTRA_ENV_SETTINGS \
 +    "boot2nd=mmc rescan 0; "\
 +                    "fatload mmc 0 0x80800000 u-boot-2nd.sd;"\
@@ -210,48 +232,16 @@ index 2504954..c9b9c6d 100644
 +                "nand erase clean 0x1500000 0x6400000;"\
 +                "nand write.i 0x82000000 0x1500000 0x6400000;\0"\
 +    "flash_system=run flash_uboot;run flash_kernel;run flash_rootfs;"\
- 
++ 
 +#ifdef CONFIG_SD_BOOT
 +# undef CONFIG_NAND
 +# undef TI814X_ENABLE_ICACHE    /* tfm: enabling i-cache breaks second stage u-boot on 814x :-/ */
-+# define CONFIG_MMC			1
+ # define CONFIG_MMC			1
 +# define CONFIG_BOOTCOMMAND "run boot2nd"
 +# define CONFIG_ENV_IS_NOWHERE /* no "saveenv" for you! */
- #else
++#else
 +# undef CONFIG_MMC
-+# define CONFIG_NAND			1
-+# define CONFIG_BOOTCOMMAND "run bootnand"
-+# define TI814X_ENABLE_ICACHE
-+#endif
-+
-+
-+
-+#ifdef TI81XX_SECOND_STAGE
-+
-+#define CONFIG_CMD_ASKENV
-+#define CONFIG_MMC			1
-+
-+#define TI814X_ENABLE_ICACHE
-+
-+/* U-Boot default commands */
-+#include <config_cmd_default.h>
- 
--# include <config_cmd_default.h>
--# define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */
--# define CONFIG_ENV_SIZE			0x2000
--# define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
--# define CONFIG_ENV_OVERWRITE
--# define CONFIG_SYS_LONGHELP
--# define CONFIG_SYS_PROMPT		"TI8148_EVM#"
- # define CONFIG_SYS_HUSH_PARSER		/* Use HUSH parser to allow command parsing */
- # define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
--# define CONFIG_CMDLINE_TAG        	1	/* enable passing of ATAGs  */
--# define CONFIG_SETUP_MEMORY_TAGS  	1
--# define CONFIG_INITRD_TAG	  	1	/* Required for ramdisk support */
--# define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
--/* By default, 2nd stage will have MMC, NAND, SPI and I2C support */
--# define CONFIG_MMC			1
--# define CONFIG_NAND			1
+ # define CONFIG_NAND			1
 -# define CONFIG_SPI			1
 -# define CONFIG_I2C			1
 -# define CONFIG_EXTRA_ENV_SETTINGS \
@@ -263,7 +253,7 @@ index 2504954..c9b9c6d 100644
 -	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 -	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 -		"source ${script_addr}\0" \
- 
+-
 -# define CONFIG_BOOTCOMMAND \
 -	"if mmc rescan 0; then " \
 -		"if run loadbootscript; then " \
@@ -277,27 +267,40 @@ index 2504954..c9b9c6d 100644
 -		"echo Please set bootargs and bootcmd before booting the kernel; " \
 -		"echo If that has already been done please ignore this message; "\
 -	"fi"
++# define CONFIG_BOOTCOMMAND "run bootnand"
++# define TI814X_ENABLE_ICACHE
++#endif
+ 
++#ifdef TI81XX_SECOND_STAGE
+ 
+-#endif
++#define CONFIG_CMD_ASKENV
++#define CONFIG_MMC			1
+ 
+-#define CONFIG_SYS_GBL_DATA_SIZE	128	/* size in bytes reserved for
+-						   initial data */
++#define TI814X_ENABLE_ICACHE
++
++/* U-Boot default commands */
++# include <config_cmd_default.h>
++# define CONFIG_SYS_HUSH_PARSER		/* Use HUSH parser to allow command parsing */
++# define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 +#undef CONFIG_BOOTCOMMAND
 +#define CONFIG_BOOTCOMMAND "run bootsd"
 +#undef CONFIG_BOOTDELAY
 +#define CONFIG_BOOTDELAY 5
 +#undef CONFIG_SYS_MALLOC_LEN
 +#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
- 
++ 
 +#define CONFIG_ENV_OVERWRITE
 +#define CONFIG_SYS_LONGHELP
 +#define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */
 +#define CONFIG_ENV_IS_NOWHERE /* no "saveenv" for you! */
  
- #endif
- 
--#define CONFIG_SYS_GBL_DATA_SIZE	128	/* size in bytes reserved for
--						   initial data */
- 
 -#define CONFIG_MISC_INIT_R		1
 -#ifndef CONFIG_TI814X_MIN_CONFIG
 -# define CONFIG_TI814X_ASCIIART		1	/* The centaur */
--#endif
+ #endif
 -#define CONFIG_SYS_AUTOLOAD		"yes"
 -#define CONFIG_CMD_CACHE
 -#define CONFIG_CMD_ECHO
@@ -317,7 +320,7 @@ index 2504954..c9b9c6d 100644
  #define CONFIG_SYS_PBSIZE		(CONFIG_SYS_CBSIZE \
  					+ sizeof(CONFIG_SYS_PROMPT) + 16)
 diff --git a/include/configs/ti8168_evm.h b/include/configs/ti8168_evm.h
-index c615e9a..417f9ab 100644
+index c615e9a..7eb9bf1 100644
 --- a/include/configs/ti8168_evm.h
 +++ b/include/configs/ti8168_evm.h
 @@ -17,98 +17,125 @@
@@ -370,13 +373,13 @@ index c615e9a..417f9ab 100644
 -#define CONFIG_CMD_ASKENV
  #define CONFIG_VERSION_VARIABLE
 -#define CONFIG_CMD_ECHO
--
+ 
 -/* By default, any image built will have MMC, NAND, SPI and I2C support */
 -#define CONFIG_MMC			1
 -#define CONFIG_NAND			1
 -#define CONFIG_SPI			1
 -#define CONFIG_I2C			1
- 
+-
 -/* Minimal image which runs out of internal memory */
 -#ifdef CONFIG_MINIMAL
 -# undef CONFIG_MMC
@@ -487,7 +490,7 @@ index c615e9a..417f9ab 100644
 -	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 -	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 -		"source ${script_addr}\0" \
- 
+-
 -#define CONFIG_BOOTCOMMAND \
 -	"if mmc rescan 0; then " \
 -		"if run loadbootscript; then " \
@@ -501,6 +504,7 @@ index c615e9a..417f9ab 100644
 -		"echo Please set bootargs and bootcmd before booting the kernel; " \
 -		"echo If that has already been done please ignore this message; "\
 -	"fi"
+ 
 +#define CONFIG_MMC			1
 +#undef CONFIG_BOOTCOMMAND
 +#undef CONFIG_BOOTDELAY
@@ -508,7 +512,7 @@ index c615e9a..417f9ab 100644
 +#define CONFIG_BOOTDELAY 5
 +#undef CONFIG_SYS_MALLOC_LEN
 +#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
- 
++
 +#define CONFIG_ENV_OVERWRITE
 +#define CONFIG_SYS_LONGHELP
 +#define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */

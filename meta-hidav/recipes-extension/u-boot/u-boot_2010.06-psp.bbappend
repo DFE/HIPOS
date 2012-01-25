@@ -1,4 +1,4 @@
-PR = "r26"
+PR = "r27"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -10,7 +10,7 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-nand-do-not-use-bad_block_table.patch "
 
 BRANCH_ti814x = "ti81xx-master"
-SRCREV_pn-${PN}_ti814x  = "456a38217871f9184b65efd42e010a264b4d65e1"
+SRCREV_pn-${PN}_ti814x  = "2ec1a17817e422b9417289b91c027980b45c7d65"
 
 do_configure() {
     # tfm: do nothing; we re-configure and re-compile u-boot at least ttwwiiccee in the "compile" stage.

@@ -13,6 +13,6 @@ IMAGE_INSTALL += " \
   gdbserver \
   openssh-sftp-server \
   subversion \
-  git \ 
+  git \
+  openjdk-6-jdk \
 "
-

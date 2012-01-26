@@ -1,0 +1,5 @@
+PRINC = 1
+
+ANGSTROM_URI = "(URI)"
+FEED_BASEPATH = "(PATH)/"
+

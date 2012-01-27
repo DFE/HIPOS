@@ -43,7 +43,7 @@ pkg_postinst_append() {
 
   if [ "$flash_md5sum" != "$system_md5sum" ]; then
     # flash kernel
-      flash_eraseall /dev/mtd1 && nandwrite -m -p /dev/mtd1 /boot/uImage
+      flash_erase /dev/mtd1 0 0 && nandwrite -m -p /dev/mtd1 /boot/uImage
     exit $?
   else
     exit 0

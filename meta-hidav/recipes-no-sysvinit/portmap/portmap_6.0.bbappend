@@ -1,5 +1,6 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 1}"
+PRINC := "${@int(PRINC) + 2}"
+INITSCRIPT_NAME = "-f portmap"
 INITSCRIPT_PARAMS = "remove"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append = " file://portmap.service "

@@ -1,5 +1,6 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 1}"
+PRINC := "${@int(PRINC) + 2}"
+INITSCRIPT_NAME = "-f apmd"
 INITSCRIPT_PARAMS = "remove"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append = " file://apmd.service "

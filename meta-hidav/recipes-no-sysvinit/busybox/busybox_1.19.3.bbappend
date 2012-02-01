@@ -1,3 +1,10 @@
 # do not generate rc-links
-PRINC = 1
+PRINC := "${@int(PRINC) + 2}"
+INITSCRIPT_NAME = "-f busybox"
 INITSCRIPT_PARAMS = "remove"
+INITSCRIPT_NAME_${PN}-httpd = "-f busybox-httpd"
+INITSCRIPT_NAME_${PN}-syslog = "-f syslog"
+INITSCRIPT_NAME_${PN}-mdev = "-f mdev"
+INITSCRIPT_PARAMS_${PN}-mdev = "remove"
+INITSCRIPT_NAME_${PN}-udhcpd = "-f busybox-udhcpd" 
+INITSCRIPT_NAME_${PN}-udhcpc = "-f busybox-udhcpc" 

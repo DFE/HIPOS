@@ -1,5 +1,5 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 4}"
+PRINC := "${@int(PRINC) + 5}"
 INITSCRIPT_NAME = "-f portmap"
 INITSCRIPT_PARAMS = "remove"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
@@ -24,7 +24,7 @@ pkg_postinst_append() {
     exit 1	
   fi
 
-  ln -s '/lib/systemd/system/portmap.service' '/etc/systemd/system/multi-user.target.wants/portmap.service'
+  ln -f -s '/lib/systemd/system/portmap.service' '/etc/systemd/system/multi-user.target.wants/portmap.service'
 
 }
 

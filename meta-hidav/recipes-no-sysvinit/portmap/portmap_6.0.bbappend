@@ -1,5 +1,5 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 3}"
+PRINC := "${@int(PRINC) + 4}"
 INITSCRIPT_NAME = "-f portmap"
 INITSCRIPT_PARAMS = "remove"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"

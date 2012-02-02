@@ -1,10 +1,12 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 2}"
+PRINC := "${@int(PRINC) + 3}"
 INITSCRIPT_NAME = "-f portmap"
 INITSCRIPT_PARAMS = "remove"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append = " file://portmap.service "
-FILES_${PN} += " /lib/systemd/system/portmap.service "
+FILES_${PN}-systemd += " /lib/systemd/system/portmap.service "
+
+PACKAGES += "${PN}-systemd"
 
 do_install_append () {
 
@@ -14,6 +16,8 @@ do_install_append () {
 }
 
 pkg_postinst_append() {
+
+  rm -f $D/etc/init.d/portmap
 
   # don't run flash utils on image install
   if [ "x$D" != "x" ]; then

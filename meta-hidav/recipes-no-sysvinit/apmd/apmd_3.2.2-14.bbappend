@@ -1,5 +1,5 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 2}"
+PRINC := "${@int(PRINC) + 3}"
 INITSCRIPT_NAME = "-f apmd"
 INITSCRIPT_PARAMS = "remove"
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
@@ -15,9 +15,11 @@ install_append () {
 
 pkg_postinst_append() {
 
+  rm -f $D/etc/init.d/apmd
+
   # don't run flash utils on image install
   if [ "x$D" != "x" ]; then
-    exit 1	
+    exit 1
   fi
 
   #uncomment the following line to enable systemd service 

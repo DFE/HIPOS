@@ -1,0 +1,13 @@
+[Unit]
+Description=Network Connectivity
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/ifup -a
+ExecStop=/sbin/ifdown -a
+
+[Install]
+WantedBy=network.target
+WantedBy=multi-user.target
+

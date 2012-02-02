@@ -8,6 +8,8 @@ IMAGE_INSTALL += " \
   kernel-modules \
   htop \
   bash \
+  netbase-systemd \
+  portmap-systemd \
 "
 
 # profiling

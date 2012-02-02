@@ -4,7 +4,6 @@ After=syslog.target
 
 [Service]
 Type=forking
-ExecStartPre=/etc/init.d/portmap stop
 ExecStart=/sbin/portmap
 Sockets=portmap.socket
 StandardOutput=null

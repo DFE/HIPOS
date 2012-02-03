@@ -2,12 +2,16 @@
 
 require recipes-images/angstrom/console-image.bb
 
-PR_append = "+r9"
+PR_append = "+r10"
 
 IMAGE_INSTALL += " \
   kernel-modules \
   htop \
   bash \
+"
+
+# systemd
+IMAGE_INSTALL += " \
   netbase-systemd \
   portmap-systemd \
 "

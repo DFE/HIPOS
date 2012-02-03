@@ -1,3 +1,4 @@
+
 PR = "r2"
 
 URI = "http://hydraip-integration:8080/userContent/hidav-"
@@ -21,7 +22,7 @@ do_install () {
 RCONFLICTS_${PN} = "${PN}-${UNSTABLE}"
 RCONFLICTS_${PN}-${UNSTABLE} = "${PN}"
 
-PACKAGES =+ "${PN}-${UNSTABLE}"
+PACKAGES += "${PN}-${UNSTABLE}"
 
 FILES_${PN} = "${sysconfdir}/opkg/all-${STABLE}-feed.conf \
 			   ${sysconfdir}/opkg/${FEED_ARCH}-${STABLE}-feed.conf \
@@ -46,4 +47,3 @@ CONFFILES_${PN}-${UNSTABLE} = "${sysconfdir}/opkg/all-${UNSTABLE}-feed.conf \
 python populate_packages_prepend () {
 	etcdir = bb.data.expand('${sysconfdir}/opkg', d)
 }
-

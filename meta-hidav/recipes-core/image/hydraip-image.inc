@@ -1,8 +1,8 @@
 # common stuff for all HydraIP images
 
-require recipes-images/angstrom/console-image.bb
+require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r9"
+PR_append = "+r10"
 
 IMAGE_INSTALL += " \
   kernel-modules \

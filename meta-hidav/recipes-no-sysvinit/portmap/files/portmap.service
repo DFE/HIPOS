@@ -1,6 +1,6 @@
 [Unit]
 Description=port mapper service
-After=syslog.target
+Requires=connman.service
 
 [Service]
 Type=forking

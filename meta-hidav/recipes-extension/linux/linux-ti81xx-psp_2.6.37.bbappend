@@ -8,13 +8,13 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=4323b3a87dde5b9e2364cd7e51412055dd778a34 \
                    file://hidav-flash-partition-settings-ti814x.patch \
-		   file://hidav-flash-partition-settings-ti816x.patch \
+		   		   file://hidav-flash-partition-settings-ti816x.patch \
                    file://btrfs-kobject-include.patch \ 
                    "
 
-SRCREV = "42b3d4eedd82ff7a1af974bdcd0fc29a100d8df5"
+SRCREV = "757600ad1177e0b8a0c8ef48ea449470b3efae64"
 
-MACHINE_KERNEL_PR = "r24"
+MACHINE_KERNEL_PR = "r25"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}

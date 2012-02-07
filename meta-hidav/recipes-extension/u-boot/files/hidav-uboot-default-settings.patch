@@ -197,12 +197,12 @@ index 33f7bea..215209d 100644
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
 +                    "'console=ttyO0,115200n8 rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
-+                "nboot 0x80007FC0 0 0x100000; bootm;\0"
++                "nboot 0x80007FC0 0 0x200000; bootm;\0"
 +#else 
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
 +                    "'console=ttyO0,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
-+                "nboot 0x80007FC0 0 0x100000; bootm;\0"
++                "nboot 0x80007FC0 0 0x200000; bootm;\0"
 +#endif
 +
 +# define CONFIG_EXTRA_ENV_SETTINGS \
@@ -224,13 +224,13 @@ index 33f7bea..215209d 100644
 +    "flash_kernel=mmc rescan 0;"\
 +                "mw.b 0x82000000 0xFF 0xa00000;"\
 +                "fatload mmc 0 0x82000000 uImage;"\
-+                "nand erase 0x100000 0xa00000;"\
-+                "nand write.i 0x82000000 0x100000 0xa00000\0"\
++                "nand erase 0x200000 0xa00000;"\
++                "nand write.i 0x82000000 0x200000 0xa00000\0"\
 +    "flash_rootfs=mmc rescan 0;"\
 +                "mw.b 0x82000000 0xFF 0x6400000;"\
 +                "fatload mmc 0 0x82000000 hidav-root-fs.squashfs;"\
-+                "nand erase clean 0x1500000 0x6400000;"\
-+                "nand write.i 0x82000000 0x1500000 0x6400000;\0"\
++                "nand erase clean 0x1600000 0x6400000;"\
++                "nand write.i 0x82000000 0x1600000 0x6400000;\0"\
 +    "flash_system=run flash_uboot;run flash_kernel;run flash_rootfs;"\
 + 
 +#ifdef CONFIG_SD_BOOT
@@ -411,12 +411,12 @@ index c615e9a..7eb9bf1 100644
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
 +                    "'console=ttyO2,115200n8 rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
-+                "nboot 0x80007FC0 0 0x100000; bootm;\0"
++                "nboot 0x80007FC0 0 0x200000; bootm;\0"
 +#else 
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
 +                    "'console=ttyO2,115200n8 quiet rootwait root=/dev/mtdblock3 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
-+                "nboot 0x80007FC0 0 0x100000; bootm;\0"
++                "nboot 0x80007FC0 0 0x200000; bootm;\0"
 +#endif
 +
 +
@@ -439,13 +439,13 @@ index c615e9a..7eb9bf1 100644
 +    "flash_kernel=mmc rescan 0;"\
 +                "mw.b 0x82000000 0xFF 0xa00000;"\
 +                "fatload mmc 0 0x82000000 uImage;"\
-+                "nand erase 0x100000 0xa00000;"\
++                "nand erase 0x200000 0xa00000;"\
 +                "nand write.i 0x82000000 0x100000 0xa00000\0"\
 +    "flash_rootfs=mmc rescan 0;"\
 +                "mw.b 0x82000000 0xFF 0x6400000;"\
 +                "fatload mmc 0 0x82000000 hidav-root-fs.squashfs;"\
-+                "nand erase clean 0x1500000 0x6400000;"\
-+                "nand write.i 0x82000000 0x1500000 0x6400000;\0"\
++                "nand erase clean 0x1600000 0x6400000;"\
++                "nand write.i 0x82000000 0x1600000 0x6400000;\0"\
 +    "flash_system=run flash_uboot;run flash_kernel;run flash_rootfs;"\
 +
  #ifdef CONFIG_SD_BOOT

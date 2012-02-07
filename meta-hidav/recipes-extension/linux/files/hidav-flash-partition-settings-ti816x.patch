@@ -1,5 +1,5 @@
 diff --git a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
-index d0dfabf..404a7c7 100644
+index 23556f9..1cdfd41 100644
 --- a/arch/arm/mach-omap2/board-ti8168evm.c
 +++ b/arch/arm/mach-omap2/board-ti8168evm.c
 @@ -73,43 +73,7 @@ static struct omap2_hsmmc_info mmc[] = {
@@ -47,7 +47,7 @@ index d0dfabf..404a7c7 100644
  
  
  /* Maximum ports supported by the PCF8575 */
-@@ -147,32 +111,48 @@ static struct mtd_partition ti816x_evm_norflash_partitions[] = {
+@@ -147,32 +111,55 @@ static struct mtd_partition ti816x_evm_norflash_partitions[] = {
  #define VR_GPIO_INSTANCE	0
  
  static struct mtd_partition ti816x_nand_partitions[] = {
@@ -85,34 +85,41 @@ index d0dfabf..404a7c7 100644
 +    },
 +    /* first kernel     -   0x100000 */
 +    {
++        .name		= "bootinfo",
++        .offset		= MTDPART_OFS_APPEND,
++        .size		= 1 * SZ_1M,
++        .mask_flags	= 0,
++    },
++    /* first kernel     -   0x200000 */
++    {
 +        .name		= "kernel1",
 +        .offset		= MTDPART_OFS_APPEND,
 +        .size		= 10 * SZ_1M,
 +        .mask_flags	= 0,
 +    },
-+    /* second kernel    -   0xb00000 */
++    /* second kernel    -   0xc00000 */
 +    {
 +        .name		= "kernel2",
 +        .offset		= MTDPART_OFS_APPEND,
 +        .size		= 10 * SZ_1M,
 +        .mask_flags	= 0
 +    },
-+    /* root file system -   0x1500000 */
++    /* root file system -   0x1600000 */
 +    {
 +        .name		= "rootfs1",
 +        .offset		= MTDPART_OFS_APPEND,
 +        .size		= 100 * SZ_1M,
 +        .mask_flags	= 0
 +    },
-+    /* root file system -   0x7900000 */
++    /* root file system -   0x8000000 */
 +    {
 +        .name		= "rootfs2",
 +        .offset		= MTDPART_OFS_APPEND,
 +        .size		= 100 * SZ_1M,
 +        .mask_flags	= 0
 +    },
-+    /* appfs;           -   0xdd00000
-+     * => 36 MBytes w/ 256 MByte nand; 292 MBytes w/ 512 MByte NAND */
++    /* appfs;           -   0xde00000
++     * => 35 MBytes w/ 256 MByte nand; 291 MBytes w/ 512 MByte NAND */
 +    {
 +        .name		= "application_fs",
 +        .offset		= MTDPART_OFS_APPEND,
@@ -122,7 +129,7 @@ index d0dfabf..404a7c7 100644
  };
  
  static struct at24_platform_data eeprom_info = {
-@@ -654,30 +634,7 @@ static int __init ti816x_evm_i2c_init(void)
+@@ -654,30 +641,7 @@ static int __init ti816x_evm_i2c_init(void)
  }
  
  /* SPI fLash information */
@@ -154,7 +161,7 @@ index d0dfabf..404a7c7 100644
  
  const struct flash_platform_data ti816x_spi_flash = {
  	.name		= "spi_flash",
-@@ -812,7 +769,8 @@ static void __init ti8168_evm_init(void)
+@@ -812,7 +776,8 @@ static void __init ti8168_evm_init(void)
  	ti816x_evm_i2c_init();
  	i2c_add_driver(&ti816xevm_cpld_driver);
  	ti81xx_register_mcasp(0, &ti8168_evm_snd_data);
@@ -164,7 +171,7 @@ index d0dfabf..404a7c7 100644
  	/* initialize usb */
  	usb_musb_init(&musb_board_data);
  
-@@ -831,8 +789,9 @@ static void __init ti8168_evm_init(void)
+@@ -831,8 +796,9 @@ static void __init ti8168_evm_init(void)
  		ARRAY_SIZE(ti816x_nand_partitions), 0, NAND_BUSWIDTH_16);
  
  	omap2_hsmmc_init(mmc);

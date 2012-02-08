@@ -6,7 +6,7 @@
 
 
 # MTD to store overlay data in
-application_fs_mtd="/dev/mtd5"
+application_fs_mtd="/dev/mtd6"
 # UBI device for attaching the MTD to
 appfs_ubi_device="/dev/ubi0"
 # UBI dynamic volume number to store overlay data in

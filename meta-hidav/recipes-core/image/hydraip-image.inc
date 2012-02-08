@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r11"
+PR_append = "+r13"
 
 IMAGE_INSTALL += " \
   kernel-modules \
@@ -12,7 +12,7 @@ IMAGE_INSTALL += " \
 
 # systemd
 IMAGE_INSTALL += " \
-  portmap-systemd \
+  portmap \
 "
 
 # profiling

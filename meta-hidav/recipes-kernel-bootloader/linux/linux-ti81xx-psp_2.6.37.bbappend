@@ -14,7 +14,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 
 SRCREV = "b3e6c9fd4de6d5d450d6c2235024c4b48160bdad"
 
-MACHINE_KERNEL_PR = "r28"
+MACHINE_KERNEL_PR = "r29"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
@@ -36,7 +36,7 @@ pkg_postinst_append() {
   fi
 
   cp /boot/uImage /run/uImage_system
-  mtd_debug read /dev/mtd1 0 `ls -l /run/uImage_system | awk '{ printf("%s",$5) }'` /run/uImage_flash
+  mtd_debug read /dev/mtd2 0 `ls -l /run/uImage_system | awk '{ printf("%s",$5) }'` /run/uImage_flash
   flash_md5sum="`md5sum /run/uImage_flash | awk '{ printf("%s",$1) }'`"
   system_md5sum="`md5sum /run/uImage_system | awk '{ printf("%s",$1) }'`"
   rm /run/uImage_system /run/uImage_flash

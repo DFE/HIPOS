@@ -14,7 +14,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 
 SRCREV = "b3e6c9fd4de6d5d450d6c2235024c4b48160bdad"
 
-MACHINE_KERNEL_PR = "r27"
+MACHINE_KERNEL_PR = "r28"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
@@ -43,7 +43,7 @@ pkg_postinst_append() {
 
   if [ "$flash_md5sum" != "$system_md5sum" ]; then
     # flash kernel
-      flash_erase /dev/mtd1 0 0 && nandwrite -m -p /dev/mtd1 /boot/uImage
+      flash_erase /dev/mtd2 0 0 && nandwrite -m -p /dev/mtd2 /boot/uImage
     exit $?
   else
     exit 0

@@ -1,5 +1,4 @@
-
-PR = "r2"
+PR_append = "+r1"
 
 URI = "http://hydraip-integration:8080/userContent/hidav-"
 STABLE = "stable"

@@ -1,5 +1,5 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 4}"
+PR_append = "+r1"
 INITSCRIPT_NAME = "-f networking"
 INITSCRIPT_PARAMS = "remove"
 

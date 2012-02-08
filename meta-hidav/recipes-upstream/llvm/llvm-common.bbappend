@@ -1,5 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/llvm-common:"
 
+PR_append = "+r1"
+
 # provide native perl binaries via PATH
 inherit perlnative
 DEPENDS += "perl-native"

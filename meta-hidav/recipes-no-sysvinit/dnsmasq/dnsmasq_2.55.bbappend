@@ -1,4 +1,4 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 2}"
+PR_append = "+r1"
 INITSCRIPT_NAME = "-f dnsmasq"
 INITSCRIPT_PARAMS = "remove"

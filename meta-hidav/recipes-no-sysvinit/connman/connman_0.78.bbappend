@@ -1,11 +1,9 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 4}"
+PR_append = "+r1"
 INITSCRIPT_NAME = "-f connman"
 INITSCRIPT_PARAMS = "remove"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-
-SYSTEMD_SERVICE_${PN}-systemd = "connman.service"
 
 SRC_URI += "file://connman.service"
 

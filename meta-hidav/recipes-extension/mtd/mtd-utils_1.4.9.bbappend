@@ -1,4 +1,4 @@
-PRINC = "1"
+PR_append = "+r1"
 
 do_install_append() {
     # Texas Instruments MTD drivers are broken for subpage access, as can be pointed out

@@ -1,5 +1,5 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 1}"
+PR_append = "+r1"
 
 pkg_postinst_${PN}_append() {
 

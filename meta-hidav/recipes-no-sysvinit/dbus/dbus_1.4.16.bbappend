@@ -1,5 +1,5 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 3}"
+PR_append = "+r1"
 INITSCRIPT_NAME = "-f dbus-1"
 INITSCRIPT_PARAMS = "remove"
 

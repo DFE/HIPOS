@@ -1,0 +1,14 @@
+[Unit]
+Description=Connection service
+After=syslog.target
+
+[Service]
+Type=dbus
+BusName=net.connman
+ExecStart=/usr/sbin/connmand -d -n
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
+

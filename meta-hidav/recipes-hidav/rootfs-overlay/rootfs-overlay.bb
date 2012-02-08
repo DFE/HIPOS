@@ -1,12 +1,10 @@
-inherit systemd
-
 DESCRIPTION = "Script tools to use and maintain root fs snapshots by using AUFS writeable overlays."
 SECTION = "base"
 LICENSE = "GPLv2"
 PACKAGE_ARCH = all
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
-PR = "r17"
+PR = "r19"
 
 # ubi tooling from mtd-utils
 RDEPENDS = " mtd-utils "
@@ -57,4 +55,19 @@ do_install() {
     install -d ${D}${base_libdir}/systemd/system
     install -m 644 ${WORKDIR}/mount-rootfs-overlay.service ${D}${base_libdir}/systemd/system
     install -m 644 ${WORKDIR}/umount-rootfs-overlay.service ${D}${base_libdir}/systemd/system
+
+    #
+    # Now manually set the systemd links. This needs to be done manually because
+    #  - the root fs may be read-only ( w/ writeable overlay added later)
+    #  - so when rootfs-overlay postinst() runs (trying to create the links), it won't be able to write
+    #  - the links will never be created, because in order to create the links we need a writeable overlay,
+    #      but in order to get a writeable overlay we need the systemd links but in order to get them we needawriteableoverlaybutinordertogetthisweneedlinks AAAAARGH.
+    #
+    install -d ${D}${base_libdir}/systemd/system/local-fs.target.wants
+    install -d ${D}${base_libdir}/systemd/system/shutdown.target.wants
+    cd '${D}${base_libdir}/systemd/system/local-fs.target.wants'
+    ln -s '../mount-rootfs-overlay.service' 'mount-rootfs-overlay.service'
+    cd -
+    cd '${D}${base_libdir}/systemd/system/shutdown.target.wants'
+    ln -s '../umount-rootfs-overlay.service' 'umount-rootfs-overlay.service'
 }

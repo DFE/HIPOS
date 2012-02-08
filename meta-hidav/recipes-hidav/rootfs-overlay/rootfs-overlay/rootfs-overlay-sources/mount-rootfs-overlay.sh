@@ -134,7 +134,13 @@ ubinfo ${appfs_ubi_device} >/dev/null 2>&1 || ubiattach -p $application_fs_mtd  
 ubinfo ${appfs_ubi_volume} >/dev/null 2>&1 || mkubifs
 
 # mount ubifs to get access to the overlay directories
-mount -t ubifs $appfs_ubi_volume $overlays_data_mountpoint
+# re-format everything if mount fails, then try one more time
+mount -t ubifs $appfs_ubi_volume $overlays_data_mountpoint || \
+    { logger -s -p syslog.warning -t rootfs-overlay \
+        "Mounting $appfs_ubi_volume failed; re-formatting MTD partition."; \
+      ubidetach -p $application_fs_mtd || true; \
+      initialize_ubi; mkubifs; \
+      mount -t ubifs $appfs_ubi_volume $overlays_data_mountpoint; }
 
 test -d ${overlays_data_mountpoint}/rootfs/0  || initialize_aufs_storage
 mount -t aufs -o "`generate_aufs_mount_opts`" aufs ${pivot_root_mountpoint}
@@ -150,8 +156,9 @@ for mount in `list_moveable_mounts` ; do
     mount --move "$mount" "${pivot_root_mountpoint}${mount}" 
 done
 
-# now make aufs the new root; 
-#  remove leading "/" to make this a relative pathname (see man pivot_root)
+logger -s -p syslog.notice -t rootfs-overlay \
+    "Root fs overlay initialized. Now switching to new root."
+
 pivot_root . ${original_root_mountpoint#/}
 
 exec chroot . sh -lc "

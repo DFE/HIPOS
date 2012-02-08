@@ -14,7 +14,7 @@ IMAGE_INSTALL += " \
 
 # systemd
 IMAGE_INSTALL += " \
-  portmap \
+  portmap-systemd \
 "
 
 # profiling

@@ -9,7 +9,6 @@ update_layer()
 	git checkout master
 	git pull
 	popd
-	git add $1
 }
 
 update_layer bitbake

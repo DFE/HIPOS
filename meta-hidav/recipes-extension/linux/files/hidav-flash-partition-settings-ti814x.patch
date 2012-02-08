@@ -1,8 +1,8 @@
 diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
-index 8519842..da0ab91 100644
+index b26e81d..b172a9b 100644
 --- a/arch/arm/mach-omap2/board-ti8148evm.c
 +++ b/arch/arm/mach-omap2/board-ti8148evm.c
-@@ -531,110 +531,63 @@ static struct snd_platform_data ti8148_evm_snd_data = {
+@@ -530,110 +530,63 @@ static struct snd_platform_data ti8148_evm_snd_data = {
  };
  
  /* NOR Flash partitions */
@@ -164,22 +164,19 @@ index 8519842..da0ab91 100644
  
  const struct flash_platform_data ti8148_spi_flash = {
  	.type		= "w25x32",
-@@ -754,13 +707,15 @@ static void __init ti8148_evm_init(void)
+@@ -774,15 +727,12 @@ static void __init ti8148_evm_init(void)
  	/* initialize usb */
  	usb_musb_init(&musb_board_data);
  
 -	ti8148_spi_init();
-+	/* tfm: disable SPI. No SPI NAND on hidav
-+    ti8148_spi_init(); */
+ 	ti814x_vpss_init();
+ 	ti814x_hdmi_init();
  #ifdef CONFIG_SND_SOC_TI81XX_HDMI
  	platform_add_devices(ti8148_devices, ARRAY_SIZE(ti8148_devices));
  #endif
  	regulator_use_dummy_regulator();
 -	board_nor_init(ti814x_evm_norflash_partitions,
 -		ARRAY_SIZE(ti814x_evm_norflash_partitions), 0);
-+	/* tfm: disable NOR. No NOR flash on HidaV.
-+ 	board_nor_init(ti814x_evm_norflash_partitions,
-+	ARRAY_SIZE(ti814x_evm_norflash_partitions), 0); */
+ }
  
- 	/* LSI Gigabit Phy fixup */
- 	phy_register_fixup_for_uid(LSI_PHY_ID, LSI_PHY_MASK,
+ static void __init ti8148_evm_map_io(void)

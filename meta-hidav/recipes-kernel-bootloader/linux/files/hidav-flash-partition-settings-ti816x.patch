@@ -1,5 +1,5 @@
 diff --git a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
-index ff6b74a..2ffb529 100644
+index 23556f9..603f30c 100644
 --- a/arch/arm/mach-omap2/board-ti8168evm.c
 +++ b/arch/arm/mach-omap2/board-ti8168evm.c
 @@ -73,43 +73,7 @@ static struct omap2_hsmmc_info mmc[] = {
@@ -161,7 +161,7 @@ index ff6b74a..2ffb529 100644
  
  const struct flash_platform_data ti816x_spi_flash = {
  	.name		= "spi_flash",
-@@ -848,7 +812,6 @@ static void __init ti8168_evm_init(void)
+@@ -812,7 +776,6 @@ static void __init ti8168_evm_init(void)
  	ti816x_evm_i2c_init();
  	i2c_add_driver(&ti816xevm_cpld_driver);
  	ti81xx_register_mcasp(0, &ti8168_evm_snd_data);
@@ -169,12 +169,12 @@ index ff6b74a..2ffb529 100644
  	/* initialize usb */
  	usb_musb_init(&musb_board_data);
  
-@@ -867,8 +830,6 @@ static void __init ti8168_evm_init(void)
+@@ -831,8 +794,6 @@ static void __init ti8168_evm_init(void)
  		ARRAY_SIZE(ti816x_nand_partitions), 0, NAND_BUSWIDTH_16);
  
  	omap2_hsmmc_init(mmc);
 -	board_nor_init(ti816x_evm_norflash_partitions,
 -		ARRAY_SIZE(ti816x_evm_norflash_partitions), 0);
- 	ti816x_vpss_init();
  	ti816x_gpio_vr_init();
- 	ti816x_hdmi_init();
+ #ifdef CONFIG_SND_SOC_TI81XX_HDMI
+ 	platform_add_devices(ti8168_devices, ARRAY_SIZE(ti8168_devices));

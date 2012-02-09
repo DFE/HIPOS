@@ -2,7 +2,10 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r14"
+# temporary replace connman with networkmanager till it's more stable
+CONMANPKGS = "networkmanager"
+
+PR_append = "+r15"
 
 IMAGE_FEATURES += " package-management "
 

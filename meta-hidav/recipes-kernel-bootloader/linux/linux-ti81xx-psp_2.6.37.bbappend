@@ -14,7 +14,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 
 SRCREV = "b3e6c9fd4de6d5d450d6c2235024c4b48160bdad"
 
-MACHINE_KERNEL_PR = "r29"
+MACHINE_KERNEL_PR = "r30"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
@@ -35,6 +35,12 @@ pkg_postinst_append() {
     exit 1	
   fi
 
+  cat /proc/cmdline | awk '{ print $3 }' | grep mmcblk
+  if [ $? -eq 0  ]; then
+     echo skip nand flash write on sdcard boot
+     exit 0
+  fi
+
   cp /boot/uImage /run/uImage_system
   mtd_debug read /dev/mtd2 0 `ls -l /run/uImage_system | awk '{ printf("%s",$5) }'` /run/uImage_flash
   flash_md5sum="`md5sum /run/uImage_flash | awk '{ printf("%s",$1) }'`"
@@ -43,9 +49,11 @@ pkg_postinst_append() {
 
   if [ "$flash_md5sum" != "$system_md5sum" ]; then
     # flash kernel
+      echo "flash kernel to /dev/mtd2 ..."
       flash_erase /dev/mtd2 0 0 && nandwrite -m -p /dev/mtd2 /boot/uImage
     exit $?
   else
+      echo "no new kernel in /boot/uImage"
     exit 0
   fi
 

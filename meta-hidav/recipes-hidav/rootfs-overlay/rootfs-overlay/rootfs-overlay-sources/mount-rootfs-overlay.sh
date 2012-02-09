@@ -21,7 +21,6 @@
 # The script supports many layers. Each layer is a directory in UBIFS.
 #
 
-set -x
 # exit upon error: 
 set -e
 
@@ -35,7 +34,7 @@ check_prerequisites() {
         # make /dev and /tmp writeable 
         touch /dev/hidav-write-test || { mount -t tmpfs devtmpfs /dev; mdev -s; }
         touch /tmp/hidav-write-test || mount -t tmpfs tmpfs /tmp
-        rm /dev/hidav-write-test /tmp/hidav-write-test 
+        rm -f /dev/hidav-write-test /tmp/hidav-write-test 
     fi
 
     mtdinfo ${application_fs_mtd} >/dev/null 2>&1

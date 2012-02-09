@@ -20,23 +20,33 @@
 #
 # The script supports many layers. Each layer is a directory in UBIFS.
 #
-# Prerequisites: /dev and /proc are mounted.
-#
 
+set -x
 # exit upon error: 
 set -e
-cd /
-source /etc/default/rootfs-overlay
-modprobe ubifs || true
-
 
 check_prerequisites() {
     mkdir -p ${overlays_data_mountpoint} ${pivot_root_mountpoint}
-    test -e /proc/mounts
+
+    # make sure we have /proc
+    mount | grep '/proc type proc' || mount -t proc proc /proc
+
+    if [ "${rely_on_udev}" != "true" ]; then
+        # make /dev and /tmp writeable 
+        touch /dev/hidav-write-test || { mount -t tmpfs devtmpfs /dev; mdev -s; }
+        touch /tmp/hidav-write-test || mount -t tmpfs tmpfs /tmp
+        rm /dev/hidav-write-test /tmp/hidav-write-test 
+    fi
+
     mtdinfo ${application_fs_mtd} >/dev/null 2>&1
 }
 # ----
 
+update_dev() {
+    if [ "${rely_on_udev}" != "true" ]; then
+        mdev -s
+    fi
+}
 
 initialize_ubi() {
     logger -s -p syslog.notice -t rootfs-overlay \
@@ -127,11 +137,17 @@ list_moveable_mounts() {
 #  M A I N
 #
 
+cd /
+source /etc/default/rootfs-overlay
+modprobe ubifs || true
+
 check_prerequisites
 
-# get ubifs storage back-end up and running
-ubinfo ${appfs_ubi_device} >/dev/null 2>&1 || ubiattach -p $application_fs_mtd  || initialize_ubi
+# get ubifs storage back-end up and running; refresh /dev
+ubinfo ${appfs_ubi_device} >/dev/null 2>&1 || ubiattach -p $application_fs_mtd || initialize_ubi
+update_dev
 ubinfo ${appfs_ubi_volume} >/dev/null 2>&1 || mkubifs
+update_dev
 
 # mount ubifs to get access to the overlay directories
 # re-format everything if mount fails, then try one more time

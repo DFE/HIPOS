@@ -2,7 +2,11 @@ DESCRIPTION = "HidaV make bootable sd card with dev image"
 
 LICENSE = "MIT"
 
-PR = "r11"
+PR = "r12"
+
+PACKAGES = " ${PN} "
+
+DEPENDS = "hydraip-image hydraip-devimage virtual/kernel virtual/bootloader"
 
 SRC_URI = "file://ti814x-bootable-sdcard.sh \
            file://ti816x-bootable-sdcard.sh"
@@ -21,3 +25,4 @@ do_package[noexec] = "1"
 do_package_write_ipk[noexec] = "1"
 do_package_write_deb[noexec] = "1"
 do_package_write_rpm[noexec] = "1"
+

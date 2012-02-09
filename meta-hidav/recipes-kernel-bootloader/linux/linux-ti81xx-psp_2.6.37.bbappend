@@ -6,7 +6,7 @@ RDEPENDS += " mtd-utils gawk busybox "
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=4323b3a87dde5b9e2364cd7e51412055dd778a34 \
+SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=27da2e1df6d7f5bb33bb9d2569bba2fe0407adf7 \
                    file://hidav-flash-partition-settings-ti814x.patch \
 		   		   file://hidav-flash-partition-settings-ti816x.patch \
                    file://btrfs-kobject-include.patch \ 
@@ -14,7 +14,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 
 SRCREV = "b3e6c9fd4de6d5d450d6c2235024c4b48160bdad"
 
-MACHINE_KERNEL_PR = "r29"
+MACHINE_KERNEL_PR = "r30"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}

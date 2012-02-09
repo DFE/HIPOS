@@ -4,7 +4,7 @@ LICENSE = "GPLv2"
 PACKAGE_ARCH = all
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
-PR = "r19"
+PR = "r20"
 
 # ubi tooling from mtd-utils
 RDEPENDS = " mtd-utils "
@@ -71,3 +71,9 @@ do_install() {
     cd '${D}${base_libdir}/systemd/system/shutdown.target.wants'
     ln -s '../umount-rootfs-overlay.service' 'umount-rootfs-overlay.service'
 }
+
+do_patch[noexec] = "1"
+do_configure[noexec] = "1"
+do_build[noexec] = "1"
+do_compile[noexec] = "1"
+

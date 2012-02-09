@@ -3,7 +3,7 @@ Description=AUFS overlay file system mount over root-fs
 DefaultDependencies=no
 Conflicts=shutdown.target
 After=local-fs.target
-Before=machineid.service opkg.service systemd-random-seed-load.service systemd-tmpfiles-setup.service sysinit.target basic.target shutdown.target udev.service udev-trigger.service
+Before=machineid.service opkg.service systemd-random-seed-load.service systemd-tmpfiles-setup.service sysinit.target basic.target shutdown.target udev.service udev-trigger.service systemd-journald.service
 
 [Service]
 Type=oneshot

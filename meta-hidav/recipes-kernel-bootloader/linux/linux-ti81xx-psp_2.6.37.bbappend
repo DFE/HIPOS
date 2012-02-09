@@ -14,7 +14,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 
 SRCREV = "52752d53adda8c345650c5c7000856cffc638208"
 
-MACHINE_KERNEL_PR = "r31"
+MACHINE_KERNEL_PR = "r33"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
@@ -28,9 +28,11 @@ do_compileconfigs_prepend() {
   patch -p1 < ${WORKDIR}/aufs/aufs2-standalone.patch
 }
 
-pkg_postinst_append() {
+pkg_postinst_kernel-image-${KERNEL_VERSION}_append() {
 
   # don't run flash utils on image install
+  echo "start postinst append ${KERNEL_VERSION}"
+
   if [ "x$D" != "x" ]; then
     exit 1	
   fi
@@ -38,6 +40,11 @@ pkg_postinst_append() {
   cat /proc/cmdline | awk '{ print $3 }' | grep mmcblk
   if [ $? -eq 0  ]; then
      echo "skip write to nandflash on sdcard boot"
+     echo "copy /boot/uImage-${KERNEL_VERSION} to /dev/mmcblk0p1"
+     mkdir -p /tmp/boot
+     mount /dev/mmcblk0p1 /tmp/boot/
+     cp /boot/uImage-${KERNEL_VERSION} /tmp/boot/uImage
+     umount /tmp/boot/
      exit 0
   fi
 

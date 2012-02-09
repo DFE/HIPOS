@@ -37,7 +37,7 @@ pkg_postinst_append() {
 
   cat /proc/cmdline | awk '{ print $3 }' | grep mmcblk
   if [ $? -eq 0  ]; then
-     echo skip nand flash write on sdcard boot
+     echo "skip write to nandflash on sdcard boot"
      exit 0
   fi
 

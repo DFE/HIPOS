@@ -93,7 +93,6 @@ cd ${original_root_mountpoint}
 #  remove leading "/" to make old_root work across environments. See man pivot_root.
 pivot_root . ${pivot_root_mountpoint#/}
 cd /
-exec <dev/console >dev/console 2>&1
 
 # lazy umount the overlay, remember processes which have 
 # open FDs
@@ -101,16 +100,12 @@ killprocs=`fuser -m ${pivot_root_mountpoint}`
 umount -l ${pivot_root_mountpoint}
 umount -l ${overlays_data_mountpoint}
 
-if [ "$1" != "shutdown" ] ; then
-    # if this script has been started from the overlay root
-    # in an interactive shell then this will most probably 
-    # kill the script itself.
-    exec chroot . sh -c "
+exec chroot . sh -c "
         cd /
         trap \"\" SIGTERM
         kill -TERM ${killprocs}
         sleep 1
+        ubidetach ${application_fs_mtd}
         kill -KILL ${killprocs}
-    " <dev/console >dev/console 2>&1
-fi
+" <dev/console >dev/console 2>&1
 

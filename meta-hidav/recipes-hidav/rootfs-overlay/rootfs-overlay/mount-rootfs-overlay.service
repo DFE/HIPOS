@@ -2,7 +2,7 @@
 Description=AUFS overlay file system mount over root-fs
 DefaultDependencies=no
 Conflicts=shutdown.target
-Before=fsck-root.service local-fs-pre.target remount-rootfs.service systemd-remount-api-vfs.service media.mount systemd-remount-api-vfs.service var-lock.mount var-run.mount systemd-random-seed-load.service systemd-tmpfiles-setup.service
+Before=fsck-root.service local-fs-pre.target remount-rootfs.service systemd-remount-api-vfs.service media.mount systemd-remount-api-vfs.service var-lock.mount var-run.mount systemd-random-seed-load.service systemd-tmpfiles-setup.service systemd-journald.service
 Wants=local-fs-pre.target 
 
 

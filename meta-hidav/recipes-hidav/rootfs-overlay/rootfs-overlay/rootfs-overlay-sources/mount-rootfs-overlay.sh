@@ -33,9 +33,10 @@ check_prerequisites() {
     if [ "${rely_on_udev}" != "true" ]; then
         # make /dev and /tmp writeable 
         touch /dev/hidav-write-test || { mount -t tmpfs devtmpfs /dev; mdev -s; }
-        touch /tmp/hidav-write-test || mount -t tmpfs tmpfs /tmp
-        rm -f /dev/hidav-write-test /tmp/hidav-write-test 
     fi
+
+    touch /tmp/hidav-write-test || mount -t tmpfs tmpfs /tmp
+    rm -f /dev/hidav-write-test /tmp/hidav-write-test 
 
     mtdinfo ${application_fs_mtd} >/dev/null 2>&1
 }

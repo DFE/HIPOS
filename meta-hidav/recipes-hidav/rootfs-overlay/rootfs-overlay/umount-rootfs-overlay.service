@@ -2,8 +2,8 @@
 Description=AUFS overlay file system un-mount
 DefaultDependencies=no
 Conflicts=mount-rootfs-overlay.target
-After=systemd-random-seed-save.service systemd-update-utmp-shutdown.service
 Before=umount.target
+After=systemd-random-seed-save.service systemd-update-utmp-shutdown.service 
 
 [Service]
 Type=oneshot

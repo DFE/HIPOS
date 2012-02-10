@@ -14,7 +14,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 
 SRCREV = "52752d53adda8c345650c5c7000856cffc638208"
 
-MACHINE_KERNEL_PR = "r33"
+MACHINE_KERNEL_PR = "r34"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
@@ -31,11 +31,11 @@ do_compileconfigs_prepend() {
 pkg_postinst_kernel-image-${KERNEL_VERSION}_append() {
 
   # don't run flash utils on image install
-  echo "start postinst append ${KERNEL_VERSION}"
-
   if [ "x$D" != "x" ]; then
-    exit 1	
+    exit 0	# don't give an error code on image install
   fi
+
+  echo "start postinst append ${KERNEL_VERSION}"
 
   cat /proc/cmdline | awk '{ print $3 }' | grep mmcblk
   if [ $? -eq 0  ]; then

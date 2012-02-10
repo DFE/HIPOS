@@ -28,7 +28,7 @@ do_compileconfigs_prepend() {
   patch -p1 < ${WORKDIR}/aufs/aufs2-standalone.patch
 }
 
-pkg_postinst_kernel-image-${KERNEL_VERSION}_append() {
+pkg_postinst_kernel-image_append() {
 
   # don't run flash utils on image install
   if [ "x$D" != "x" ]; then

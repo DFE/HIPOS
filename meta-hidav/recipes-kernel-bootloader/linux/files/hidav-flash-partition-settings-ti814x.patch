@@ -1,8 +1,8 @@
 diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
-index 8519842..56bea14 100644
+index 94b4f38..8793041 100644
 --- a/arch/arm/mach-omap2/board-ti8148evm.c
 +++ b/arch/arm/mach-omap2/board-ti8148evm.c
-@@ -531,110 +531,63 @@ static struct snd_platform_data ti8148_evm_snd_data = {
+@@ -530,112 +530,62 @@ static struct snd_platform_data ti8148_evm_snd_data = {
  };
  
  /* NOR Flash partitions */
@@ -43,7 +43,7 @@ index 8519842..56bea14 100644
 -		.mask_flags	= 0
 -	}
 -};
-+static struct mtd_partition ti814x_evm_norflash_partitions[] = { };
++static struct mtd_partition ti814x_evm_norflash_partitions[] = {};
  
  /* NAND flash information */
  static struct mtd_partition ti814x_nand_partitions[] = {
@@ -52,11 +52,13 @@ index 8519842..56bea14 100644
 -		.name           = "U-Boot-min",
 -		.offset         = 0,    /* Offset = 0x0 */
 -		.size           = SZ_128K,
+-		.mask_flags     = MTD_WRITEABLE,        /* force read-only */
 -	},
 -	{
 -		.name           = "U-Boot",
 -		.offset         = MTDPART_OFS_APPEND,/* Offset = 0x0 + 128K */
 -		.size           = 18 * SZ_128K,
+-		.mask_flags     = MTD_WRITEABLE,        /* force read-only */
 -	},
 -	{
 -		.name           = "U-Boot Env",
@@ -84,12 +86,11 @@ index 8519842..56bea14 100644
 +        .offset		= 0,
 +        .size		= 1 * SZ_1M,
 +    },
-+    /* boot configs -   0x100000 */
++    /* bootconfig       -   0x100000 */
 +    {
 +        .name		= "bootconfig",
 +        .offset		= MTDPART_OFS_APPEND,
 +        .size		= 1 * SZ_1M,
-+        .mask_flags	= 0,
 +    },
 +    /* first kernel     -   0x200000 */
 +    {
@@ -120,7 +121,7 @@ index 8519842..56bea14 100644
 +        .mask_flags	= 0
 +    },
 +    /* appfs;           -   0xde00000
-+     * => 35 MBytes w/ 256 MByte nand; 291 MBytes w/ 512 MByte NAND */
++     * => 35 MBytes w/ 255 MByte nand; 291 MBytes w/ 512 MByte NAND */
 +    {
 +        .name		= "application_fs",
 +        .offset		= MTDPART_OFS_APPEND,
@@ -160,21 +161,27 @@ index 8519842..56bea14 100644
 -		.size		= MTDPART_SIZ_FULL, /* size ~= 1.1 MiB */
 -	}
 -};
-+struct mtd_partition ti8148_spi_partitions[] = { };
++struct mtd_partition ti8148_spi_partitions[] = {};
  
  const struct flash_platform_data ti8148_spi_flash = {
  	.type		= "w25x32",
-@@ -754,13 +707,10 @@ static void __init ti8148_evm_init(void)
+@@ -776,15 +726,17 @@ static void __init ti8148_evm_init(void)
  	/* initialize usb */
  	usb_musb_init(&musb_board_data);
  
 -	ti8148_spi_init();
++	/* DNS: disable SPI. No SPI NAND on HidaV 
++	ti8148_spi_init(); */
+ 	ti814x_vpss_init();
+ 	ti814x_hdmi_init();
  #ifdef CONFIG_SND_SOC_TI81XX_HDMI
  	platform_add_devices(ti8148_devices, ARRAY_SIZE(ti8148_devices));
  #endif
  	regulator_use_dummy_regulator();
--	board_nor_init(ti814x_evm_norflash_partitions,
++	/* DNS: disable NOR. No NOR flash on HidaV
+ 	board_nor_init(ti814x_evm_norflash_partitions,
 -		ARRAY_SIZE(ti814x_evm_norflash_partitions), 0);
++		ARRAY_SIZE(ti814x_evm_norflash_partitions), 0); */
+ }
  
- 	/* LSI Gigabit Phy fixup */
- 	phy_register_fixup_for_uid(LSI_PHY_ID, LSI_PHY_MASK,
+ static void __init ti8148_evm_map_io(void)

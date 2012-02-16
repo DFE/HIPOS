@@ -1,10 +1,12 @@
 # do not generate rc-links
-PR_append = "+r1"
+PR_append = "+r2"
 INITSCRIPT_NAME = "-f networking"
 INITSCRIPT_PARAMS = "remove"
 
-pkg_postinst_append() {
-
-  rm -f $D/etc/init.d/networking
-
-}
+FILES_${PN} = " /etc/hosts \
+		/etc/protocols \
+		/etc/services \
+		/etc/rpc \
+		/etc/network \
+		/usr/sbin  \
+"

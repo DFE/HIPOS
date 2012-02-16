@@ -1,5 +1,5 @@
 # do not generate rc-links
-PR_append = "+r1"
+PR_append = "+r2"
 INITSCRIPT_NAME = "-f connman"
 INITSCRIPT_PARAMS = "remove"
 
@@ -12,9 +12,26 @@ do_install_append() {
     install -m 644 ${WORKDIR}/connman.service ${D}${base_libdir}/systemd/system
 }
 
-pkg_postinst_append() {
 
-  rm -f $D/etc/init.d/connman
-
-}
+FILES_${PN} = "	${bindir}/* \
+		${sbindir}/* \
+		${libexecdir}/* \
+		${libdir}/lib*.so.* \
+            	${sharedstatedir} \
+		${localstatedir} \
+            	${base_bindir}/* \
+		${base_sbindir}/* \
+		${base_libdir}/*.so* \
+		${datadir}/${PN} \
+            	${datadir}/pixmaps \
+		${datadir}/applications \
+            	${datadir}/idl \
+		${datadir}/omf \
+		${datadir}/sounds \
+            	${libdir}/bonobo/servers \
+            	${datadir}/dbus-1/system-services/* \
+		${sysconfdir}/dbus-1 \
+		${sysconfdir}/dbus-1/system.d \
+		${sysconfdir}/dbus-1/system.d/connman.conf \
+"
 

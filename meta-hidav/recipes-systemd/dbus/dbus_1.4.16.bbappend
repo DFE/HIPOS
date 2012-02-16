@@ -1,11 +1,16 @@
 # do not generate rc-links
-PR_append = "+r1"
+PR_append = "+r2"
 INITSCRIPT_NAME = "-f dbus-1"
 INITSCRIPT_PARAMS = "remove"
 
-pkg_postinst_append() {
+FILES_${PN} = "	/etc/dbus-1 \
+		/etc/default \
+		/var/run/dbus \
+		/var/lib/dbus \
+		/usr/lib/dbus-1.0/test \
+		/usr/libexec/dbus-daemon-launch-helper \
+		/usr/bin \
+		/usr/share/dbus-1 \
+"
 
-  rm -f $D/etc/init.d/dbus-1
-
-}
 

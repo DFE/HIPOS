@@ -1,11 +1,8 @@
 [Unit]
 Description=AUFS overlay file system un-mount
 DefaultDependencies=no
-Conflicts=mount-rootfs-overlay.target
-Before=umount.target
-After=systemd-random-seed-save.service systemd-update-utmp-shutdown.service 
+Before=shutdown.target reboot.target poweroff.target halt.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/umount-rootfs-overlay.sh shutdown
-RemainAfterExit=yes
+ExecStart=/usr/sbin/umount-rootfs-overlay.sh

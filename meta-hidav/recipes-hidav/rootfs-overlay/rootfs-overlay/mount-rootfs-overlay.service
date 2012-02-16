@@ -2,7 +2,7 @@
 Description=AUFS overlay file system mount over root-fs
 DefaultDependencies=false
 Conflicts=shutdown.target
-After=udev-trigger.service udev.service
+After=udev-settle.service
 Before=local-fs-pre.target remote-fs-pre.target local-fs.target remote-fs.target sysinit.target basic.target dbus.target
 Before=fsck-root.service remount-rootfs.service systemd-remount-api-vfs.service systemd-remount-api-vfs.service systemd-random-seed-load.service systemd-tmpfiles-setup.service
 Before=systemd-journald.service systemd-modules-load.service systemd-sysctl.service
@@ -11,4 +11,4 @@ Before=dev-hugepages.mount  dev-mqueue.mount  media.mount  proc-sys-fs-binfmt_mi
 [Service]
 Type=oneshot
 ExecStart=/usr/sbin/mount-rootfs-overlay.sh
-RemainAfterExit=yes
+ExecStart=/bin/systemctl daemon-reload

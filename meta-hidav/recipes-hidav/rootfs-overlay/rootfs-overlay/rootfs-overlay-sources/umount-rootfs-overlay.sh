@@ -14,11 +14,6 @@
 # This script will unmount an AUFS root partition and put you back
 # on the "original" root fs.
 #
-# Optional arguments:
-#
-#  shutdown - Skip killing leftover processes which keep the overlay mount busy.
-#             This option is particularly useful when shutting down the system.
-#
 
 # exit upon error
 set -e
@@ -26,6 +21,8 @@ cd /
 
 check_prerequisites() {
     # prerequisites check 
+    # Source this overlay's configuration to get ${original_root_mountpoint}
+    source /etc/default/rootfs-overlay
     # Source the original configuration, i.e. the settings mount-rootfs-overlay used to
     # set up the overlay. This is the configuration in the original root fs.
     source ${original_root_mountpoint}/etc/default/rootfs-overlay
@@ -92,20 +89,18 @@ cd ${original_root_mountpoint}
 # now switch back to the original root;
 #  remove leading "/" to make old_root work across environments. See man pivot_root.
 pivot_root . ${pivot_root_mountpoint#/}
-cd /
 
 # lazy umount the overlay, remember processes which have 
 # open FDs
-killprocs=`fuser -m ${pivot_root_mountpoint}`
-umount -l ${pivot_root_mountpoint}
-umount -l ${overlays_data_mountpoint}
-
 exec chroot . sh -c "
         cd /
+        killprocs=`fuser -m ${pivot_root_mountpoint}`
         trap \"\" SIGTERM
-        kill -TERM ${killprocs}
+        kill -TERM ${killprocs} || true
+        umount -l ${pivot_root_mountpoint}
+        umount -l ${overlays_data_mountpoint}
         sleep 1
-        ubidetach ${application_fs_mtd}
-        kill -KILL ${killprocs}
+        ubidetach -p ${application_fs_mtd}
+        kill -KILL ${killprocs} || true
 " <dev/console >dev/console 2>&1
 

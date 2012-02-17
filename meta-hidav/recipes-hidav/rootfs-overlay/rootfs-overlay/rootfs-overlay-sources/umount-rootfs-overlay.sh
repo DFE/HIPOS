@@ -94,7 +94,7 @@ pivot_root . ${pivot_root_mountpoint#/}
 # open FDs
 exec chroot . sh -c "
         cd /
-        killprocs=`fuser -m ${pivot_root_mountpoint}`
+        killprocs="`fuser -m ${pivot_root_mountpoint}`"
         trap \"\" SIGTERM
         kill -TERM ${killprocs} || true
         umount -l ${pivot_root_mountpoint}

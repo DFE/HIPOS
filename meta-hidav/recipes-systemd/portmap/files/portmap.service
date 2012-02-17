@@ -1,6 +1,6 @@
 [Unit]
 Description=port mapper service
-Requires=connman.service
+Requires=network.target
 
 [Service]
 Type=forking

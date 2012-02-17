@@ -1,7 +1,5 @@
 # do not generate rc-links
-PR_append = "+r2"
-INITSCRIPT_NAME = "-f dropbear"
-INITSCRIPT_PARAMS = "remove"
+PR_append = "+r3"
 
 FILES_${PN} = "	/var \
 		/etc/pam.d \
@@ -10,4 +8,8 @@ FILES_${PN} = "	/var \
 		/usr/bin \
 		/usr/sbin \
 "
+
+pkg_postrm_${PN}-systemd_prepend() {
+	exit 0
+}
 

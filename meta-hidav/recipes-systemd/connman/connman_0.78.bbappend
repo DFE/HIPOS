@@ -1,7 +1,5 @@
 # do not generate rc-links
-PR_append = "+r2"
-INITSCRIPT_NAME = "-f connman"
-INITSCRIPT_PARAMS = "remove"
+PR_append = "+r3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -34,4 +32,8 @@ FILES_${PN} = "	${bindir}/* \
 		${sysconfdir}/dbus-1/system.d \
 		${sysconfdir}/dbus-1/system.d/connman.conf \
 "
+
+pkg_postrm_${PN}-systemd_prepend() {
+	exit 0
+}
 

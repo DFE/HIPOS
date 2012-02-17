@@ -1,7 +1,5 @@
 # do not generate rc-links
-PR_append = "+r2"
-INITSCRIPT_NAME = "-f networking"
-INITSCRIPT_PARAMS = "remove"
+PR_append = "+r3"
 
 FILES_${PN} = " /etc/hosts \
 		/etc/protocols \
@@ -10,3 +8,8 @@ FILES_${PN} = " /etc/hosts \
 		/etc/network \
 		/usr/sbin  \
 "
+
+pkg_postrm_${PN}-systemd_prepend() {
+	exit 0
+}
+

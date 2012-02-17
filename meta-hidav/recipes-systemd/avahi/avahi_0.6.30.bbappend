@@ -1,5 +1,5 @@
 # do not generate rc-links
-PRINC := "${@int(PRINC) + 2}"
+PRINC := "${@int(PRINC) + 3}"
 
 SRC_URI = "http://avahi.org/download/avahi-${PV}.tar.gz \
           file://00avahi-autoipd \
@@ -30,5 +30,9 @@ FILES_${PN} = "	${sbindir} \
 
 pkg_postinst_avahi-daemon_prepend () {
      exit 0
+}
+
+pkg_postrm_${PN}-systemd_prepend() {
+	exit 0
 }
 

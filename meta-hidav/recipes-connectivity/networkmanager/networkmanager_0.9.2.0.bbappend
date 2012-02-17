@@ -27,7 +27,7 @@ SYSTEMD_SERVICE = "NetworkManager.service"
 FILES_${PN}-systemd += "${base_libdir}/systemd"
 RDEPENDS_${PN}-systemd += "${PN}"
 
-PR_append = "+r3"
+PR_append = "+r4"
 
 # use no iptables
 EXTRA_OECONF = " \
@@ -45,5 +45,9 @@ pkg_postinst_${PN}() {
 
 pkg_prerm_${PN}() {
 	true
+}
+
+pkg_postrm_${PN}-systemd_prepend() {
+	exit 0
 }
 

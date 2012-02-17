@@ -1,13 +1,5 @@
 # do not generate rc-links
-PR_append = "+r2"
-INITSCRIPT_NAME = "-f busybox"
-INITSCRIPT_PARAMS = "remove"
-INITSCRIPT_NAME_${PN}-httpd = "-f busybox-httpd"
-INITSCRIPT_NAME_${PN}-syslog = "-f syslog"
-INITSCRIPT_NAME_${PN}-mdev = "-f mdev"
-INITSCRIPT_PARAMS_${PN}-mdev = "remove"
-INITSCRIPT_NAME_${PN}-udhcpd = "-f busybox-udhcpd" 
-INITSCRIPT_NAME_${PN}-udhcpc = "-f busybox-udhcpc" 
+PR_append = "+r3"
 
 FILES_${PN}= "	/etc/busybox.links \
 		/etc/default \
@@ -34,4 +26,21 @@ pkg_prerm_${PN}-syslog_prepend () {
         update-alternatives --remove syslog-startup-conf syslog-startup.conf.${BPN}
 	exit 0
 }
+
+pkg_postrm_${PN}-httpd_prepend() {
+	exit 0
+}
+pkg_postrm_${PN}-syslog_prepend() {
+        exit 0
+}
+pkg_postrm_${PN}-mdev_prepend() {
+        exit 0
+}
+pkg_postrm_${PN}-udhcpd_prepend() {
+        exit 0
+}
+pkg_postrm_${PN}-udhcpc_prepend() {
+        exit 0
+}
+
 

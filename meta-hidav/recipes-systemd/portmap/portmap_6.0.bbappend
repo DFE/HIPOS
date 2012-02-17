@@ -1,10 +1,7 @@
 # do not generate rc-links
 inherit systemd
 
-PR_append = "+r2"
-
-INITSCRIPT_NAME = "-f portmap"
-INITSCRIPT_PARAMS = "remove"
+PR_append = "+r4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -29,4 +26,7 @@ do_install_append () {
   install -m 0644 ${WORKDIR}/portmap.service ${D}${base_libdir}/systemd/system
 }
 
+pkg_postrm_${PN}-systemd_prepend() {
+	exit 0
+}
 

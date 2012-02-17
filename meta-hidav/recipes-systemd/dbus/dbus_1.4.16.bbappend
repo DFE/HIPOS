@@ -1,7 +1,5 @@
 # do not generate rc-links
-PR_append = "+r2"
-INITSCRIPT_NAME = "-f dbus-1"
-INITSCRIPT_PARAMS = "remove"
+PR_append = "+r3"
 
 FILES_${PN} = "	/etc/dbus-1 \
 		/etc/default \
@@ -12,5 +10,9 @@ FILES_${PN} = "	/etc/dbus-1 \
 		/usr/bin \
 		/usr/share/dbus-1 \
 "
+
+pkg_postrm_${PN}-systemd_prepend() {
+	exit 0
+}
 
 

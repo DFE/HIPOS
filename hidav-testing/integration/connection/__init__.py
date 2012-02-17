@@ -11,13 +11,11 @@ class better_serial ( serial.Serial ):
                 self.write( trigger_write )
             else:
                 buf += ret
-        print "READ UNTIL: returning [%s]" %buf
         return buf
 
     def readline_until( self, target, trigger_write="\n" ):
         buf = self.read_until( target, trigger_write )
         buf += self.readline()
-        print "READLINE UNTIL: returning [%s]" %buf
         return buf
 
     def _is_logged_in(self, user):
@@ -30,7 +28,6 @@ class better_serial ( serial.Serial ):
     def login( self, user, pw ):
         if self._is_logged_in( user ):
             return
-        print "USER NOT LOGGED IN"
 
         self.flushInput()
         self.flushOutput()
@@ -39,8 +36,8 @@ class better_serial ( serial.Serial ):
         self.write( user + "\n" )
 
         self.read_until("Password:")
-        self.write( pw + "\n\n" )
-        self.readline_until( user + "@" )
+        self.write( pw + "\n" )
+        self.read_until( user + "@" )
 
     def cmd( self, cmd ):
         self.flushInput( )
@@ -74,7 +71,7 @@ class Connection( object ):
         h.setFormatter( logging.Formatter("%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" ) )
         self._logger.addHandler( h )
 
-    def __init__( self, serial_setup = ( "/dev/ttyUSB0", 115200, 8, 'N', 1, 5), ip_setup = ( None, "eth0" ), login = ( "root", "hydra01" ) ):
+    def __init__( self, serial_setup = ( "/dev/ttyUSB0", 115200, 8, 'N', 1, 5), ip_setup = ( None, "eth0" ), login = ( "root", "" ) ):
         self._log_init( )
         self._serial_setup( *serial_setup )
         self._login = login
@@ -97,11 +94,18 @@ class Connection( object ):
         self._serial_state = "open"
         self._logger.debug("%s is now open." % port )
  
+    def _serial_cmd( self, cmd ):
+        self._logger.debug(" Executing command [%s] using serial port %s" % (cmd, self._serial.port) )
+        self._serial.login( self._login[0], self._login[1] )
+        rc, retstring = self._serial.cmd( cmd )
+        self._logger.debug(" Command [%s] on %s returned with #%d:\n[%s]" % (cmd, self._serial.port, rc, retstring) )
+        return rc, retstring
+
     def ip():
         def fget( self ):
             try: return self._ip
             except AttributeError:
-                self._ip = self._serial.cmd( r"ifconfig | grep -A 1 '" + self._target_if + r" ' | grep 'inet addr:' | sed -e 's/.*inet\ addr:\([0-9.]\+\)\ .*/\1/'" )[1]
+                self._ip = self._serial_cmd( r"ifconfig | grep -A 1 '" + self._target_if + r" ' | grep 'inet addr:' | sed -e 's/.*inet\ addr:\([0-9.]\+\)\ .*/\1/'" )[1]
                 return self._ip
         def fset( self, value ):
             self._ip = value
@@ -111,3 +115,10 @@ class Connection( object ):
         return locals()
     ip = property( **ip() )
 
+
+
+
+if __name__ == '__main__':
+    c = Connection( ip_setup = ( None, "eth1" ), login= ("root", "") )
+    print c._serial_cmd( "ls /" )[1]
+    c._serial.logout()

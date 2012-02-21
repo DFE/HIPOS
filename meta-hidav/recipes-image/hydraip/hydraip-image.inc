@@ -5,7 +5,7 @@ require recipes-images/angstrom/systemd-image.bb
 # temporary replace connman with networkmanager till it's more stable
 CONMANPKGS = "networkmanager networkmanager-systemd"
 
-PR_append = "+r16"
+PR_append = "+r17"
 
 IMAGE_FEATURES += " package-management "
 
@@ -32,5 +32,6 @@ IMAGE_INSTALL += " \
 # system / plumbing level tools
 IMAGE_INSTALL += "  \
     ethtool         \
+    ltrace \
 "
 

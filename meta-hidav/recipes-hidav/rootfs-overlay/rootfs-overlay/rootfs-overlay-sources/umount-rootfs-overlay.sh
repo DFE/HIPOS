@@ -2,7 +2,7 @@
 #
 # Writeable overlay un-mount script; part of roofs-overlay package.
 #
-# Copyright (C) 2011 DResearch Fahrzeugelektronik GmbH
+# Copyright (C) 2011, 2012 DResearch Fahrzeugelektronik GmbH
 # Written and maintained by Thilo Fromm <fromm@dresearch-fe.de>
 #
 # This program is free software; you can redistribute it and/or

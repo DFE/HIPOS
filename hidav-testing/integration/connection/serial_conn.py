@@ -13,8 +13,10 @@
 
 import serial, re, urllib 
 
-class serial_conn( serial.Serial ):
-
+class Serial_conn( serial.Serial ):
+    """Serial connection to a device.
+       The serial class implements device access via the serial port.
+    """
     def __init__( self, logger, login = ( "root", ""), *args, **kwargs ):
         self._logger = logger
         serial.Serial.__init__( self, *args, **kwargs )
@@ -132,12 +134,12 @@ class serial_conn( serial.Serial ):
 
 if __name__ == '__main__':
     import logging, sys
-    logging.basicConfig( level = logging.DEBUG, format="%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" )
+    logging.basicConfig( level = logging.INFO, format="%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" )
     if len(sys.argv) != 3:
         print "Usage: %s <username> <password>" % sys.argv[0]
         sys.exit()
     l = logging.getLogger( __name__ + "-TEST" )
-    sc = serial_conn( l, (sys.argv[1], sys.argv[2] ) )
+    sc = Serial_conn( l, (sys.argv[1], sys.argv[2] ) )
     sc.port     = "/dev/ttyUSB0"
     sc.baudrate = 115200
     sc.bytesize = 8

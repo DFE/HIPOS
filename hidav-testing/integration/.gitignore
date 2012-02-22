@@ -1,0 +1,5 @@
+# compiled python bytecode
+*.pyc
+
+# vim boo-boos
+*.swp

@@ -30,13 +30,13 @@ class Connection( object ):
 
 
     def __init__( self, serial_setup = ( "/dev/ttyUSB0", 115200, 8, 'N', 1, 1), 
-                  ip_setup = ( None, "eth0" ), login = ( "root", "" ) ):
+                  network_setup = ( None, "eth0" ), login = ( "root", "" ) ):
         self._log_init( )
         self._login = login
-        self._target_if = ip_setup[1]
+        self._target_if = network_setup[1]
         self._serial_setup( *serial_setup )
-        if ip_setup[0]:
-            self.ip = ip_setup[0]
+        if network_setup[0]:
+            self.ip = network_setup[0]
 
 
     def _ssh( ):
@@ -46,6 +46,9 @@ class Connection( object ):
                 self.__ssh = ssh_conn.Ssh_conn( self._logger, self.ip, self._login )
                 return self.__ssh
         def fset( self ):
+            try:                   del self.__ssh
+            except AttributeError: pass
+        def fdel( self ):
             try:                   del self.__ssh
             except AttributeError: pass
         return locals()
@@ -98,5 +101,5 @@ if __name__ == '__main__':
     if len(sys.argv) < 3:
         print "Usage: %s <username> <password> [<ip address>]" % sys.argv[0]
         sys.exit()
-    c = Connection( ip_setup = ( None, "eth1" ), login= (sys.argv[1], sys.argv[2]) )
+    c = Connection( network_setup = ( None, "eth1" ), login= (sys.argv[1], sys.argv[2]) )
     c.cmd("ls /")

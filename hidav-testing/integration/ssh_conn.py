@@ -59,17 +59,20 @@ class Ssh_conn( object ):
     def cmd( self, cmd ):
         self._logger.info( "Executing command [%s]" % cmd )
         c   = self._session.open_session()
-        rc  = c.execute( cmd )
-        buf = ""
-        while True:
-            ret = c.read( 1024 )
-            if ret == "" or ret is None:
-                break
-            buf += ret
-        c.close()
-        self._logger.info( "Command [%s] ret: #%d" % (cmd, rc) )
-        self._logger.debug( "Command [%s] output:\n[%s]" % (cmd, buf) )
-        return rc, buf
+        if 0 <= c.execute( cmd ):
+            buf = ""
+            while True:
+                ret = c.read( 1024 )
+                if ret == "" or ret is None:
+                    break
+                buf += ret
+            c.close()
+            rc = c.exit_status()
+            self._logger.info( "Command [%s] ret: #%d" % (cmd, rc) )
+            self._logger.debug( "Command [%s] output:\n[%s]" % (cmd, buf) )
+            return rc, buf
+        else:
+            raise Exception("Remote execution of %s failed." % cmd)
 
 
     def get( self, local_file, remote_path ):

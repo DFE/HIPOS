@@ -11,7 +11,7 @@
 # 2 of the License, or (at your option) any later version.
 #
 
-import connection
+import connection, logging
 
 class Device( object ):
     """ This class abstracts access to a device, i.e. one single 
@@ -26,20 +26,29 @@ class Device( object ):
             "login"         : ( "root", "" )  }
     }
 
+    def _log_init( self ):
+        self._logger = logging.getLogger( __name__  )
+        self._logger.setLevel( logging.DEBUG )
+
+        h   = logging.StreamHandler()
+        h.setFormatter( logging.Formatter("%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" ) )
+        self._logger.addHandler( h )
+
     def __init__( self, devtype = "HidaV" ):
         try:
             self._setup = Device.device_types[ devtype.lower() ]
         except KeyError:
             raise Exception("Unknown device type %s." % devtype)
 
-        self._conn = connection.Connection( network_setup = self._setup["network_setup"], login = self._setup["login"] )
+        self.conn = connection.Connection( network_setup = self._setup["network_setup"], login = self._setup["login"] )
+        self._log_init()
 
     def firmware_version( ):
         def fget( self ):
             try:
                 return self._fw_version
             except AttributeError:
-                self._fw_version = self._conn.cmd( "lsb_release -r | awk '{ print $2 }'" )[1].strip()
+                self._fw_version = self.conn.cmd( "lsb_release -r | awk '{ print $2 }'" )[1].strip()
                 return self._fw_version
         def fdel( self ):
             try:                   del self._fw_version
@@ -47,13 +56,47 @@ class Device( object ):
         return locals()
     firmware_version = property( **firmware_version() )
 
+    def update_package_index( self ):
+        self._logger.debug("Updating the package index...")
+        ret, msgs = self.conn.cmd("opkg update")
+        if ret != 0:
+            raise Exception("Updating the package index failed with #%s:\n%s" % (ret, msgs))
 
+    def install_package( self, package_name ):
+        self._logger.info("Installing package %s." % package_name)
+        self.update_package_index()
+        ret, msgs = self.conn.cmd("opkg install %s" % package_name)
+        if ret != 0:
+            raise Exception("Installing package %s failed with #%s:\n%s" % (ret, msgs))
 
-
-
+    def remove_package( self, package_name ):
+        self._logger.info("Removing package %s." % package_name)
+        ret, msgs = self.conn.cmd("opkg remove --force-removal-of-dependent-packages %s" % package_name)
+        if ret != 0:
+            raise Exception("Installing package %s failed with #%s:\n%s" % (ret, msgs))
 
 if __name__ == '__main__':
     import sys
     d = Device( devtype = "Hipox" )
     print d.firmware_version
+
+    print "Diffstat is not there:"
+    rc, msg = d.conn.cmd( "diffstat --help" )
+    print "Retcode: %s" % rc
+    print msg
+    print "----------------------"
+
+    d.install_package( "diffstat" )
+    print "Now diffstat is  there:"
+    rc, msg = d.conn.cmd( "diffstat --help" )
+    print "Retcode: %s" % rc
+    print msg
+    print "----------------------"
+
+    d.remove_package ( "diffstat" )
+    print "Now diffstat is gone:"
+    rc, msg = d.conn.cmd( "diffstat --help" )
+    print "Retcode: %s" % rc
+    print msg
+    print "----------------------"
 

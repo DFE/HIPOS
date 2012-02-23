@@ -124,13 +124,14 @@ class Serial_conn( serial.Serial ):
     def reboot( self, reboot_cmd="halt", sync=False, stop_at_bootloader=False ):
         self._logger.info( "Rebooting %s" % ("and stopping at bootloader" if
                 stop_at_bootloader else "synchronously" if sync else ".") )
-        self.cmd( reboot_cmd )
+        buf = self.cmd( reboot_cmd )[1]
         if stop_at_bootloader:
-            self.read_until("U-Boot")
-            self.read_until("$ ", ".\n", 0.001)
+            buf += self.read_until("U-Boot")
+            buf += self.read_until("$ ", ".\n", 0.001)
         elif sync:
-            self.readline_until("login:")
+            buf += self.readline_until("login:")
         self._logger.info("OK")
+        return buf
 
 if __name__ == '__main__':
     import logging, sys
@@ -151,14 +152,20 @@ if __name__ == '__main__':
     print " ######## "
     print " ######## Rebooting..."
     print " ######## "
-    sc.reboot( sync = True )
+    boot_log = sc.reboot( sync = True )
     print " ######## "
     print " ######## Reboot OK"
     print " ######## \n"
+    print "   --- reboot messages ---  \n"
+    print boot_log
+    print "   --- ------ -------- ---  \n"
     print " ######## "
     print " ######## Rebooting into bootloader..."
     print " ######## "
-    sc.reboot( stop_at_bootloader = True )
+    boot_log = sc.reboot( stop_at_bootloader = True )
     print " ######## Device stopped in boot loader"
+    print "   --- reboot messages ---  \n"
+    print boot_log
+    print "   --- ------ -------- ---  \n"
 
 

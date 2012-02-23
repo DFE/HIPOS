@@ -20,10 +20,14 @@ class Device( object ):
     device_types = { 
         "hidav" : { 
             "network_setup" : ( None, "eth0" ),
-            "login"         : ( "root", "" )  },
+            "login"         : ( "root", "" ),
+            "boot_prompt"   : "HidaV boot on",
+            "serial_skip_pw": True },
         "hipox" : {
             "network_setup" : ( None, "eth1" ),
-            "login"         : ( "root", "" )  }
+            "login"         : ( "root", "" ),
+            "boot_prompt"   : "$ ",
+            "serial_skip_pw": False },
     }
 
     def _log_init( self ):
@@ -40,7 +44,9 @@ class Device( object ):
         except KeyError:
             raise Exception("Unknown device type %s." % devtype)
 
-        self.conn = connection.Connection( network_setup = self._setup["network_setup"], login = self._setup["login"] )
+        self.conn = connection.Connection( 
+            network_setup = self._setup["network_setup"], login = self._setup["login"],
+            serial_skip_pw = self._setup["serial_skip_pw"],  )
         self._log_init()
 
     def firmware_version( ):

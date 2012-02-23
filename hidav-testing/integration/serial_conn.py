@@ -11,16 +11,21 @@
 # 2 of the License, or (at your option) any later version.
 #
 
-import serial, re, urllib 
+import serial, re, urllib, time 
 
 class Serial_conn( serial.Serial ):
     """Serial connection to a device.
        The serial class implements device access via the serial port.
     """
-    def __init__( self, logger, login = ( "root", ""), *args, **kwargs ):
+    def __init__( self, logger, login = ( "root", ""), 
+                  skip_pass = True, boot_prompt="HidaV boot on", 
+                  needs_hw_reset = True, *args, **kwargs ):
         self._logger = logger
         serial.Serial.__init__( self, *args, **kwargs )
         self._login = login
+        self._skip_pass = skip_pass
+        self._boot_prompt = boot_prompt
+        self._needs_hw_reset = needs_hw_reset
 
     def read_until ( self, target, trigger_write="\n", timeout=None ):
         self._logger.debug( "reading 'til [%s], triggering output with [%s]" 
@@ -64,7 +69,7 @@ class Serial_conn( serial.Serial ):
         buf = self.readline()
         self.write("\n")
         buf += self.readline()
-        return ( "\n$ " in buf )
+        return ( self._boot_prompt in buf )
 
     def login( self ):
         if self._is_logged_in( ):
@@ -88,11 +93,12 @@ class Serial_conn( serial.Serial ):
         self.read_until("login:", "exit\n")
         self.write( self._login[0] + "\n" )
 
-        self._logger.debug( "Sending password for user %s." % self._login[0] )
-        self.read_until("Password:")
-        self.write( self._login[1] + "\n" )
-        self.read_until( self._login[0] + "@" )
+        if not self._skip_pass:
+            self._logger.debug( "Sending password for user %s." % self._login[0] )
+            self.read_until("Password:")
+            self.write( self._login[1] + "\n" )
 
+        self.read_until( self._login[0] + "@" )
         # make sure no kernel messages go to the serial console while
         # we are remote-controlling the device
         self.write( 'echo "0 0 0 0" > /proc/sys/kernel/printk\n')
@@ -117,17 +123,24 @@ class Serial_conn( serial.Serial ):
         return rc, ret
 
     def logout( self ):
-        self._logger.debug( "Logging out." )
-        self.write("\nexit\n")
-        self.read_until("login:")
+        if self._is_logged_in():
+            self._logger.debug( "Logging out." )
+            self.write("\nexit\n")
+            self.read_until("login:")
     
     def reboot( self, reboot_cmd="halt", sync=False, stop_at_bootloader=False ):
         self._logger.info( "Rebooting %s" % ("and stopping at bootloader" if
                 stop_at_bootloader else "synchronously" if sync else ".") )
-        buf = self.cmd( reboot_cmd )[1]
+        self.login()
+        self.write( reboot_cmd + "\n" )
+        buf=""
+        if self._needs_hw_reset:
+            import reset
+            buf += self.readline_until( "Detaching DM devices" )
+            reset.reset()
         if stop_at_bootloader:
             buf += self.read_until("U-Boot")
-            buf += self.read_until("$ ", ".\n", 0.001)
+            buf += self.read_until(self._boot_prompt, ".\n", 0.001)
         elif sync:
             buf += self.readline_until("login:")
         self._logger.info("OK")
@@ -135,12 +148,12 @@ class Serial_conn( serial.Serial ):
 
 if __name__ == '__main__':
     import logging, sys
-    logging.basicConfig( level = logging.INFO, format="%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" )
+    logging.basicConfig( level = logging.DEBUG, format="%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" )
     if len(sys.argv) != 3:
         print "Usage: %s <username> <password>" % sys.argv[0]
         sys.exit()
     l = logging.getLogger( __name__ + "-TEST" )
-    sc = Serial_conn( l, (sys.argv[1], sys.argv[2] ) )
+    sc = Serial_conn( l, (sys.argv[1], sys.argv[2] ))
     sc.port     = "/dev/ttyUSB0"
     sc.baudrate = 115200
     sc.bytesize = 8

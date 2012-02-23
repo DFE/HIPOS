@@ -30,11 +30,12 @@ class Connection( object ):
 
 
     def __init__( self, serial_setup = ( "/dev/ttyUSB0", 115200, 8, 'N', 1, 1), 
-                  network_setup = ( None, "eth0" ), login = ( "root", "" ) ):
+                  network_setup = ( None, "eth0" ), login = ( "root", "" ),
+                  boot_prompt = "HidaV boot on", serial_skip_pw = True ):
         self._log_init( )
         self._login = login
         self._target_if = network_setup[1]
-        self._serial_setup( *serial_setup )
+        self._serial_setup( *serial_setup, skip_pass = serial_skip_pw, boot_prompt = boot_prompt )
         if network_setup[0]:
             self.ip = network_setup[0]
 
@@ -54,12 +55,13 @@ class Connection( object ):
         return locals()
     _ssh = property( **_ssh() )
 
-    def _serial_setup( self, port, baud, byte, parity, stop, timeout_sec ):
+    def _serial_setup( self, port, baud, byte, parity, stop, timeout_sec, skip_pass, boot_prompt ):
         try:
             self._serial.close()
         except: pass
         self._logger.debug("(re)opening serial port %s" % port )
-        self._serial = serial_conn.Serial_conn( self._logger, login = self._login )
+        self._serial = serial_conn.Serial_conn( self._logger, login = self._login,
+                        skip_pass = skip_pass, boot_prompt = boot_prompt )
         self._serial.port     = port
         self._serial.baudrate = baud
         self._serial.bytesize = byte
@@ -101,5 +103,5 @@ if __name__ == '__main__':
     if len(sys.argv) < 3:
         print "Usage: %s <username> <password> [<ip address>]" % sys.argv[0]
         sys.exit()
-    c = Connection( network_setup = ( None, "eth1" ), login= (sys.argv[1], sys.argv[2]) )
+    c = Connection( network_setup = ( None, "eth0" ), login= (sys.argv[1], sys.argv[2]) )
     c.cmd("ls /")

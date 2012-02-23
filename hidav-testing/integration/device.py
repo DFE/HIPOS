@@ -83,7 +83,7 @@ class Device( object ):
 
 if __name__ == '__main__':
     import sys
-    d = Device( devtype = "Hipox" )
+    d = Device( devtype = "HidaV" )
     print d.firmware_version
 
     print "Diffstat is not there:"

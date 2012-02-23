@@ -12,7 +12,7 @@
 #
 
 
-import logging, serial_conn, ssh_conn
+import logging, serial_conn, ssh_conn, re
 
 class Connection( object ):
     """ Connection to a device.
@@ -77,7 +77,11 @@ class Connection( object ):
             try: 
                 return self._ip
             except AttributeError:
-                self._ip = self._serial.cmd( r"ifconfig | grep -A 1 '" + self._target_if + r" ' | grep 'inet addr:' | sed -e 's/.*inet\ addr:\([0-9.]\+\)\ .*/\1/'" )[1]
+                ret = self._serial.cmd( r"ifconfig | grep -A 1 '" + self._target_if + r" ' | grep 'inet addr:' | sed -e 's/.*inet\ addr:\([0-9.]\+\)\ .*/\1/'" )[1]
+                try:
+                    self._ip = re.search(r'(?P<ip>[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3})', ret).group("ip")
+                except AttributeError:
+                    raise Exception("Unable to collect device's IP address via serial port %s" % self._serial.port)
                 return self._ip
         def fset( self, value ):
             self._ip = value

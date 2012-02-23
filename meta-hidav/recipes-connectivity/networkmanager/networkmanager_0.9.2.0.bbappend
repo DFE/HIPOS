@@ -24,10 +24,11 @@ FILES_${PN} = " \
 SYSTEMD_PACKAGES = "${PN}-systemd"
 SYSTEMD_SERVICE = "NetworkManager.service"
 
-FILES_${PN}-systemd += "${base_libdir}/systemd"
-RDEPENDS_${PN}-systemd += "${PN} systemd"
+FILES_${PN}-systemd += " ${base_libdir}/systemd "
+RDEPENDS_${PN}-systemd += " ${PN} systemd "
 
-PR_append = "+r5"
+
+PR_append = "+r6"
 
 # use no iptables
 EXTRA_OECONF = " \
@@ -37,44 +38,43 @@ EXTRA_OECONF = " \
         --with-dhclient=${base_sbindir}/dhclient \
 "
 
-RRECOMMENDS_${PN} = " "
+RRECOMMENDS_${PN} = " ${PN}-systemd "
 
 pkg_postinst_${PN}() {
-    exit 0
+   exit 0
 }
 
 pkg_postinst_${PN}-systemd() {
-    OPTS=""
+   OPTS=""
 
-    if [ -n "$D" ]; then
-        OPTS="--root=$D"
-    fi
+   if [ -n "$D" ]; then
+       OPTS="--root=$D"
+   fi
 
-    systemctl $OPTS enable ${SYSTEMD_SERVICE}
+   systemctl $OPTS enable ${SYSTEMD_SERVICE}
 
-    if [ -z "$D" ]; then
-        systemctl start ${SYSTEMD_SERVICE}
-    fi
+   if [ -z "$D" ]; then
+       systemctl start ${SYSTEMD_SERVICE}
+   fi
 
 }
 
-
 pkg_postrm_${PN}() {
-    exit 0
+   exit 0
 }
 
 pkg_postrm_${PN}-systemd() {
-    exit 0
+   exit 0
 }
 
 pkg_prerm_${PN}() {
-    exit 0
+   exit 0
 }
 
 pkg_prerm_${PN}-systemd() {
-    if [ -z "$D" ]; then
-	systemctl disable ${SYSTEMD_SERVICE}
-        systemctl stop ${SYSTEMD_SERVICE}
-    fi
+   if [ -z "$D" ]; then
+      systemctl disable ${SYSTEMD_SERVICE}
+      systemctl stop ${SYSTEMD_SERVICE}
+   fi
 }
 

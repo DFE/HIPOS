@@ -11,13 +11,15 @@
 # 2 of the License, or (at your option) any later version.
 #
 
-import connection, logging
+""" Package for the device class """
+
+import connection, logger
 
 class Device( object ):
     """ This class abstracts access to a device, i.e. one single 
         physical system. """
 
-    device_types = { 
+    DEVICE_TYPES = { 
         "hidav" : { 
             "network_setup" : ( None, "eth0" ),
             "login"         : ( "root", "" ),
@@ -30,85 +32,102 @@ class Device( object ):
             "serial_skip_pw": False },
     }
 
-    def _log_init( self ):
-        self._logger = logging.getLogger( __name__  )
-        self._logger.setLevel( logging.DEBUG )
-
-        h   = logging.StreamHandler()
-        h.setFormatter( logging.Formatter("%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" ) )
-        self._logger.addHandler( h )
-
     def __init__( self, devtype = "HidaV" ):
+        """ Initialise a device instance.
+            @param devtype: Device type, either "hidav" or "hipox" """
         try:
-            self._setup = Device.device_types[ devtype.lower() ]
+            self._setup = Device.DEVICE_TYPES[ devtype.lower() ]
         except KeyError:
             raise Exception("Unknown device type %s." % devtype)
 
         self.conn = connection.Connection( 
-            network_setup = self._setup["network_setup"], login = self._setup["login"],
-            serial_skip_pw = self._setup["serial_skip_pw"],  )
-        self._log_init()
+            network_setup = self._setup["network_setup"], 
+            login = self._setup["login"],
+            serial_skip_pw = self._setup["serial_skip_pw"] )
+        self._logger = logger.init()
 
-    def firmware_version( ):
-        def fget( self ):
-            try:
-                return self._fw_version
-            except AttributeError:
-                self._fw_version = self.conn.cmd( "lsb_release -r | awk '{ print $2 }'" )[1].strip()
-                return self._fw_version
-        def fdel( self ):
-            try:                   del self._fw_version
-            except AttributeError: pass
-        return locals()
-    firmware_version = property( **firmware_version() )
+    @property
+    def firmware_version( self ):
+        """ Firmware version property. This is the device's
+            lsb_version revision string."""
+        try:
+            return self._fw_version
+        except AttributeError:
+            self._fw_version = self.conn.cmd(  # pylint: disable-msg=W0201
+                    "lsb_release -r | awk '{ print $2 }'" )[1].strip()
+            return self._fw_version
+    @firmware_version.deleter     # pylint: disable-msg=E1101
+    def firmware_version( self ): # pylint: disable-msg=E0102
+        """ Firmware version property deleter. """
+        del self._fw_version
 
     def update_package_index( self ):
+        """ Update the device's package index remotely.
+            @raise: Exception if the update failed."""
         self._logger.debug("Updating the package index...")
         ret, msgs = self.conn.cmd("opkg update")
         if ret != 0:
-            raise Exception("Updating the package index failed with #%s:\n%s" % (ret, msgs))
+            raise Exception("Updating the package index failed with #%s:\n%s" 
+                    % (ret, msgs))
 
     def install_package( self, package_name ):
+        """ Install a package at the device. The package index will be updated
+            prior to the installation.
+            @param package_name: name of the package to be installed.
+            @raise: Exception if the install failed."""
         self._logger.info("Installing package %s." % package_name)
         self.update_package_index()
         ret, msgs = self.conn.cmd("opkg install %s" % package_name)
         if ret != 0:
-            raise Exception("Installing package %s failed with #%s:\n%s" % (ret, msgs))
+            raise Exception("Installing package %s failed with #%s:\n%s" 
+                    % (package_name, ret, msgs))
 
     def remove_package( self, package_name ):
+        """ Remove a package from the device.
+            @param package_name: name of the package to be removed.
+            @raise: Exception if the install failed."""
         self._logger.info("Removing package %s." % package_name)
-        ret, msgs = self.conn.cmd("opkg remove --force-removal-of-dependent-packages %s" % package_name)
+        ret, msgs = self.conn.cmd(
+                "opkg remove --force-removal-of-dependent-packages %s" 
+                % package_name)
         if ret != 0:
-            raise Exception("Installing package %s failed with #%s:\n%s" % (ret, msgs))
+            raise Exception("Installing package %s failed with #%s:\n%s" 
+                    % (package_name, ret, msgs))
 
 if __name__ == '__main__':
-    import sys, time
-    d = Device( devtype = "HidaV" )
-    print d.firmware_version
+    def standalone():
+        """ Standalone function; only defined if the class is run by itself. 
+            This function uses some basic capabilities of the class. It is
+            thought to be used for interactive testing during development,
+            and for a showcase on how to use the class. """
+        import sys, time
+        dev = Device( devtype = "hipox" )
+        print dev.firmware_version
 
-    print "Waiting for Networking to come up..."
-    while not d.conn.has_networking():
-        time.sleep(1)
-        sys.stdout.write(".")
-    print "\nWe now have networking."
+        print "Waiting for Networking to come up..."
+        while not dev.conn.has_networking():
+            time.sleep(1)
+            sys.stdout.write(".")
+        print "\nWe now have networking."
 
-    print "Diffstat is not there:"
-    rc, msg = d.conn.cmd( "diffstat --help" )
-    print "Retcode: %s" % rc
-    print msg
-    print "----------------------"
+        print "Diffstat is not there:"
+        retc, msg = dev.conn.cmd( "diffstat --help" )
+        print "Retcode: %s" % retc
+        print msg
+        print "----------------------"
 
-    d.install_package( "diffstat" )
-    print "Now diffstat is  there:"
-    rc, msg = d.conn.cmd( "diffstat --help" )
-    print "Retcode: %s" % rc
-    print msg
-    print "----------------------"
+        dev.install_package( "diffstat" )
+        print "Now diffstat is  there:"
+        retc, msg = dev.conn.cmd( "diffstat --help" )
+        print "Retcode: %s" % retc
+        print msg
+        print "----------------------"
 
-    d.remove_package ( "diffstat" )
-    print "Now diffstat is gone:"
-    rc, msg = d.conn.cmd( "diffstat --help" )
-    print "Retcode: %s" % rc
-    print msg
-    print "----------------------"
+        dev.remove_package ( "diffstat" )
+        print "Now diffstat is gone:"
+        retc, msg = dev.conn.cmd( "diffstat --help" )
+        print "Retcode: %s" % retc
+        print msg
+        print "----------------------"
+    standalone()
 

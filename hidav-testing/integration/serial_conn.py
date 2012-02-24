@@ -20,6 +20,13 @@ class Serial_conn( serial.Serial ):
     def __init__( self, logger, login = ( "root", ""), 
                   skip_pass = True, boot_prompt="HidaV boot on", 
                   needs_hw_reset = True, *args, **kwargs ):
+        """Initialise a new instance of the serial communication class.
+            @param logger:         Log object to be used by this class.
+            @param login:          tuple of ( username, pass )
+            @param skip_pass:      True if the login will not be prompted for a password
+            @param boot_prompt:    The prompt to identify the boot loader with
+            @param needs_hw_reset: True if the device requires a HW reset for a reboot.
+                                   This requires additional hardware in the test setup."""
         self._logger = logger
         serial.Serial.__init__( self, *args, **kwargs )
         self._login = login
@@ -28,6 +35,11 @@ class Serial_conn( serial.Serial ):
         self._needs_hw_reset = needs_hw_reset
 
     def read_until ( self, target, trigger_write="\n", timeout=None ):
+        """ Read up to a trigger text, then stop.
+            @param target:          Target string to match
+            @param trigger_write:   A string to be sent via serial if a read timeout occurs
+            @param timeout:         Custom timeout for C{trigger_write}
+            @return:                All the text read up to the point where C{target} appeared, including C{Target}."""
         self._logger.debug( "reading 'til [%s], triggering output with [%s]" 
                 % (target, urllib.quote( trigger_write )) )
         buf=""; log_line=""
@@ -53,6 +65,9 @@ class Serial_conn( serial.Serial ):
         return buf
 
     def readline_until( self, target, trigger_write="\n" ):
+        """ Read up to a trigger text, read the whole line, then stop.
+            This method works just like C{read_until()} with the exception that 
+            it will read the whole last line containing the target string."""
         buf = self.read_until( target, trigger_write )
         buf += self.readline()
         return buf
@@ -72,6 +87,10 @@ class Serial_conn( serial.Serial ):
         return ( self._boot_prompt in buf )
 
     def login( self ):
+        """ Login to a device.
+            This method will log in to a device. It will check wheter we are already logged in
+            (in which case the method succeeds early), and whether we're currently
+            in the boot loader (in which case the method will boot the device, then log in)."""
         if self._is_logged_in( ):
             self._logger.debug( "User %s already logged in." % self._login[0] )
             return
@@ -104,6 +123,20 @@ class Serial_conn( serial.Serial ):
         self.write( 'echo "0 0 0 0" > /proc/sys/kernel/printk\n')
 
     def cmd( self, cmd ):
+        """ Execute a linux user space command on the remote system.
+            This method will execute a command on the remote system,
+            returning the retcode of that command and all the output
+            which appeared on the serial console while the command was
+            executed.
+
+            NOTE that the command to be run MUST be guaranteed to return; 
+            so issuing "halt" or "reboot" is a bad idea. Also, Linux
+            user space is required for execution (e.g. when calculating
+            the return value of the command executed). C{cmd()} does not
+            currently work with the boot loader prompt.
+
+            @param cmd: The command to run
+            @return:    Tuple of (retcode, command output) """
         self.flushInput( )
         self.flushOutput( )
 
@@ -123,12 +156,26 @@ class Serial_conn( serial.Serial ):
         return rc, ret
 
     def logout( self ):
+        """ Log out of the system. """
         if self._is_logged_in():
             self._logger.debug( "Logging out." )
             self.write("\nexit\n")
             self.read_until("login:")
     
     def reboot( self, reboot_cmd="halt", sync=False, stop_at_bootloader=False ):
+        """ Reboot the system.
+            This method will reboot the system, kicking it with a HW reset if the serial class was
+            asked to do so at instanciation time.
+            By default the method will issue a reboot command and then return immediately.
+            @param reboot_cmd:  actual command to trigger the reboot. Defaults to "halt" since most of
+                                our systems are self-resetting :)
+            @param sync:        Wait for the reboot to happen; return only after the device rebooted 
+                                and a login is available. Defaults to False.
+            @param stop_at_bootloader:
+                                Reboot, then wait for boot loader messages on the serial line, then
+                                interrupt the boot loader. This function returns after we got a boot
+                                loader prompt.
+        """
         self._logger.info( "Rebooting %s" % ("and stopping at bootloader" if
                 stop_at_bootloader else "synchronously" if sync else ".") )
         self.login()

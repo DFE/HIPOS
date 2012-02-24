@@ -82,9 +82,15 @@ class Device( object ):
             raise Exception("Installing package %s failed with #%s:\n%s" % (ret, msgs))
 
 if __name__ == '__main__':
-    import sys
+    import sys, time
     d = Device( devtype = "HidaV" )
     print d.firmware_version
+
+    print "Waiting for Networking to come up..."
+    while not d.conn.has_networking():
+        time.sleep(1)
+        sys.stdout.write(".")
+    print "\nWe now have networking."
 
     print "Diffstat is not there:"
     rc, msg = d.conn.cmd( "diffstat --help" )

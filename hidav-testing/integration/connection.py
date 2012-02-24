@@ -100,6 +100,13 @@ class Connection( object ):
             self._logger.exception( "Command execution of [%s] via SSH failed" % cmd)
             self._logger.info( "Falling back to serial for cmd [%s]" % cmd )
             return self._serial.cmd( cmd )
+
+    def has_networking( self ):
+        try:    del self.ip
+        except  AttributeError: pass
+        try:    ip = self.ip
+        except: return False
+        return True
         
 
 if __name__ == '__main__':

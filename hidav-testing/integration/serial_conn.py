@@ -149,8 +149,8 @@ class Serial_conn( serial.Serial ):
 if __name__ == '__main__':
     import logging, sys
     logging.basicConfig( level = logging.DEBUG, format="%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" )
-    if len(sys.argv) != 3:
-        print "Usage: %s <username> <password>" % sys.argv[0]
+    if len(sys.argv) < 3:
+        print "Usage: %s <username> <password> [<command>]" % sys.argv[0]
         sys.exit()
     l = logging.getLogger( __name__ + "-TEST" )
     sc = Serial_conn( l, (sys.argv[1], sys.argv[2] ))
@@ -161,6 +161,16 @@ if __name__ == '__main__':
     sc.stopbits = 1
     sc.timeout  = 1
     sc.open()
+
+    if len(sys.argv) > 3:
+        for cmd in sys.argv[3:]:
+            print "\n ######## "
+            print " ######## Running custom command >>>> %s <<<<" % cmd
+            print " ######## \n"
+            rc, bla = sc.cmd(cmd)
+            print "\n\n#######\nRETCODE: %s, EXEC MSGS:\n%s" %(rc, bla)
+        sys.exit()
+
     print sc.cmd( "ls /" )[1]
     print " ######## "
     print " ######## Rebooting..."

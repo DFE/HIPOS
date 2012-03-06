@@ -1,14 +1,12 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/llvm-common:"
 
-PR_append = "+r1"
+PR_append = "+r2"
 
 # provide native perl binaries via PATH
 inherit perlnative
 DEPENDS += "perl-native"
 
 SRC_URI = "file://llvm-config"
-
-PRINC = 1
 
 do_compile() {
   cd ..

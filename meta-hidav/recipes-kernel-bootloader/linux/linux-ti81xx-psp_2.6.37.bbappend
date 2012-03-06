@@ -6,15 +6,21 @@ RDEPENDS += " mtd-utils gawk busybox "
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
+TAG = "v2.6.37_TI81XXPSP_04.04.00.01.patch2"
+
+SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;tag=${TAG} \
+           file://0001-ti814x-added-code-for-disabling-the-least-significan.patch \
+           file://defconfig \
+		   file://configs \
+"
+
 SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=27da2e1df6d7f5bb33bb9d2569bba2fe0407adf7 \
                    file://hidav-flash-partition-settings-ti814x.patch \
 		   		   file://hidav-flash-partition-settings-ti816x.patch \
                    file://btrfs-kobject-include.patch \ 
                    "
 
-SRCREV = "3228b1d8e5270ee56002e7f59d839ed8b6b85606"
-
-MACHINE_KERNEL_PR = "r35"
+MACHINE_KERNEL_PR = "r37"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}

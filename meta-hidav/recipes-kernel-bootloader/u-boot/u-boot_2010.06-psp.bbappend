@@ -1,16 +1,17 @@
-PR_append = "+r3"
+PR_append = "+r4"
 
 COMPATIBLE_MACHINE = "hidav"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
+TAG = "v2010.06_TI81XXPSP_ENG1_REL"
+
+SRC_URI = "git://arago-project.org/git/projects/u-boot-omap3.git;tag=${TAG};protocol=git"
+
 SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-fast-flash-settings.patch \
                    file://hidav-enable-icache.patch \
                    file://hidav-nand-do-not-use-bad_block_table.patch "
-
-BRANCH_ti814x = "ti81xx-master"
-SRCREV_pn-${PN}_ti814x  = "2ec1a17817e422b9417289b91c027980b45c7d65"
 
 do_configure() {
     # tfm: do nothing; we re-configure and re-compile u-boot at least ttwwiiccee in the "compile" stage.

@@ -1,12 +1,11 @@
-PR_append = "+r4"
+PR_append = "+r5"
 
 COMPATIBLE_MACHINE = "hidav"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-TAG = "v2010.06_TI81XXPSP_ENG1_REL"
-
-SRC_URI = "git://arago-project.org/git/projects/u-boot-omap3.git;tag=${TAG};protocol=git"
+BRANCH = "ti81xx-master"
+SRCREV = "2ec1a17817e422b9417289b91c027980b45c7d65"
 
 SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-fast-flash-settings.patch \

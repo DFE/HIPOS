@@ -1,10 +1,10 @@
 DESCRIPTION = "Script tools to use and maintain root fs snapshots by using AUFS writeable overlays."
 SECTION = "base"
 LICENSE = "GPLv2"
-PACKAGE_ARCH = all
+PACKAGE_ARCH = "all"
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
-PR = "r26"
+PR = "r27"
 
 # ubi tooling from mtd-utils
 RDEPENDS = " mtd-utils "

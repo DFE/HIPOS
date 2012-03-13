@@ -6,7 +6,7 @@ RDEPENDS += " mtd-utils gawk busybox "
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-TAG = "v2.6.37_TI81XXPSP_04.04.00.01.patch2"
+TAG = "v2.6.37_TI814XPSP_04.01.00.06.patch2"
 
 SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;tag=${TAG} \
            file://0001-ti814x-added-code-for-disabling-the-least-significan.patch \

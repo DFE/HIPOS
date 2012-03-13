@@ -2,7 +2,7 @@ DESCRIPTION = "HidaV make bootable sd card with dev image"
 
 LICENSE = "MIT"
 
-PR = "r12"
+PR = "r13"
 
 PACKAGES = " ${PN} "
 
@@ -13,8 +13,8 @@ SRC_URI = "file://ti814x-bootable-sdcard.sh \
 
 do_install() {
 	install -d ${DEPLOY_DIR_IMAGE}
-	install -m 0555 ${WORKDIR}/ti814x-bootable-sdcard.sh ${DEPLOY_DIR_IMAGE}/ti814x-bootable-sdcard_${PR}.sh
-	install -m 0555 ${WORKDIR}/ti816x-bootable-sdcard.sh ${DEPLOY_DIR_IMAGE}/ti816x-bootable-sdcard_${PR}.sh
+	install -m 0555 ${WORKDIR}/ti814x-bootable-sdcard.sh ${DEPLOY_DIR_IMAGE}/ti814x-bootable-sdcard.sh
+	install -m 0555 ${WORKDIR}/ti816x-bootable-sdcard.sh ${DEPLOY_DIR_IMAGE}/ti816x-bootable-sdcard.sh
 }
 
 do_patch[noexec] = "1"

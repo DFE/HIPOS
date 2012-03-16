@@ -70,6 +70,7 @@ update_submodules()
   log "I: updating submodules (OE layers + bitbake)"
 
    "${GIT}" submodule init
+   "${GIT}" submodule sync
    "${GIT}" submodule update
 }
 

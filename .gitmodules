@@ -3,16 +3,16 @@
 	url = git://git.openembedded.org/openembedded-core
 [submodule "meta-angstrom"]
 	path = meta-angstrom
-	url = http://git.angstrom-distribution.org/cgi-bin/cgit.cgi/meta-angstrom
+	url = git://github.com/Angstrom-distribution/meta-angstrom.git
 [submodule "bitbake"]
 	path = bitbake
 	url = git://git.openembedded.org/bitbake
 [submodule "meta-texasinstruments"]
 	path = meta-texasinstruments
-	url = http://git.angstrom-distribution.org/cgi-bin/cgit.cgi/meta-texasinstruments
+	url = git://git.yoctoproject.org/meta-ti
 [submodule "meta-openembedded"]
 	path = meta-openembedded
-	url = http://cgit.openembedded.org/cgit.cgi/meta-openembedded
+	url = git://git.openembedded.org/meta-openembedded
 [submodule "meta-java"]
 	path = meta-java
 	url = git://github.com/woglinde/meta-java.git

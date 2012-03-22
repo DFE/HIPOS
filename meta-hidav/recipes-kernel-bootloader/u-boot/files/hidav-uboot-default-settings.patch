@@ -201,7 +201,7 @@ index 33f7bea..215209d 100644
 +#else 
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO0,115200n8 quiet rootwait root=/dev/mtdblock4 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
++                    "'console=ttyO0,115200n8 quiet rootwait root=/dev/mtdblock4 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg';" \
 +                "nboot 0x80007FC0 0 0x200000; bootm;\0"
 +#endif
 +
@@ -211,7 +211,7 @@ index 33f7bea..215209d 100644
 +                    "go 0x80800000\0" \
 +    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
-+                                "'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
++                                "'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg';" \
 +                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    BOOTNAND_CMD \
@@ -415,7 +415,7 @@ index c615e9a..7eb9bf1 100644
 +#else 
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO2,115200n8 quiet rootwait root=/dev/mtdblock4 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
++                    "'console=ttyO2,115200n8 quiet rootwait root=/dev/mtdblock4 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg';" \
 +                "nboot 0x80007FC0 0 0x200000; bootm;\0"
 +#endif
 +
@@ -426,7 +426,7 @@ index c615e9a..7eb9bf1 100644
 +                    "go 0x80800000\0" \
 +    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
-+                                "'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ip=off noinitrd user_debug=255';" \
++                                "'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg';" \
 +                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    BOOTNAND_CMD \

@@ -1,8 +1,13 @@
 [Unit]
 Description=AUFS overlay file system un-mount
 DefaultDependencies=no
-Before=shutdown.target reboot.target poweroff.target halt.target
+Requires=shutdown.target
+After=shutdown.target
+Before=umount.target
+Conflicts=umount.target
 
 [Service]
 Type=oneshot
 ExecStart=/usr/sbin/umount-rootfs-overlay.sh
+ExecStart=/bin/systemctl daemon-reload
+

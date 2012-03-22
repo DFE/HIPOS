@@ -139,7 +139,7 @@ list_moveable_mounts() {
 
 cd /
 source /etc/default/rootfs-overlay
-modprobe ubifs || true
+modprobe ubifs || true > /dev/null
 
 check_prerequisites
 

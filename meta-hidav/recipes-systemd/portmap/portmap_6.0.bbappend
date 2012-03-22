@@ -1,7 +1,7 @@
 # do not generate rc-links
 inherit systemd
 
-PR_append = "+r4"
+PR_append = "+r5"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -16,17 +16,9 @@ RDEPENDS_${PN}-systemd += "${PN}"
 SYSTEMD_PACKAGES = "${PN}-systemd"
 SYSTEMD_SERVICE = "portmap.service"
 
-FILES_${PN} = " ${base_sbindir}/portmap \
-		${base_libdir} \
-"
-
 do_install_append () {
-
   install -d ${D}${base_libdir}/systemd/system
   install -m 0644 ${WORKDIR}/portmap.service ${D}${base_libdir}/systemd/system
 }
 
-pkg_postrm_${PN}-systemd_prepend() {
-	exit 0
-}
 

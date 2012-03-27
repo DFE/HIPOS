@@ -11,4 +11,6 @@
  * HidaV boot configuration user space tooling low level routines.
  */
 
-static unsigned int get_num_bootblocks
+#include "lowlevel.h"
+
+static unsigned int get_num_bootblocks;

@@ -1,4 +1,12 @@
-PR_append = "+r1"
+PR_append = "+r2"
+
+#
+# MTD dev package
+#
+
+FILES_${PN}-staticdev += "          \
+    ${includedir}/mtd/libmtd.h      \
+"
 
 do_install_append() {
     # Texas Instruments MTD drivers are broken for subpage access, as can be pointed out
@@ -24,5 +32,14 @@ do_install_append() {
         chmod 755 ${D}${sbindir}/$ubitool
 
     done
+
+
+    # MTD dev package:
+    # install libmtd and its headers
+
+    install -d ${D}${includedir}/mtd/
+    install -m 0644 ${S}include/libmtd.h ${D}${includedir}/mtd/
+    install -d ${D}${libdir}/
+    install -m 0644 ${S}/lib/libmtd.a ${D}${libdir}/
 }
 

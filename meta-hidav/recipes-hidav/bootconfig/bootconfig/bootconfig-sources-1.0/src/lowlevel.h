@@ -18,6 +18,7 @@
 #define __BOOTINFO_LL_H_
 
 #include <stdint.h>
+#include <mtd/libmtd.h>
 
 struct btinfo {
     uint32_t    epoch;
@@ -26,19 +27,36 @@ struct btinfo {
     uint8_t     n_booted:1;
     uint8_t     n_healthy:1;
 } __attribute__((packed));
+/* -- */
 
 struct btblock {
-    char magic[5];
+    char   magic[5];
     struct btinfo kernel_1;
     struct btinfo kernel_2;
     struct btinfo rootfs_1;
     struct btinfo rootfs_2;
 } __attribute__((packed));
+/* -- */
 
 struct bootconfig {
-    unsigned count;
-    struct btblock * blocks;
-    int fd;
+    struct btblock    * blocks;
+    const char        * dev;
+    int                 fd;
+    libmtd_t            mtd;
+    struct mtd_dev_info info;
 };
+/* -- */
+
+/**
+ * Initialise bootconfig structure, or exit.
+ * This call initialises the bootconfig structure for device %dev.
+ *
+ * @param bc  - bootconfig structure to initialise
+ * @param dev - full path to the MTD (char) device file
+ * 
+ * The function will call exit() upon error.
+ */
+void bc_ll_init( struct bootconfig * bc, const char * dev );
+/* -- */
     
 #endif /* __BOOTINFO_LL_H_ */

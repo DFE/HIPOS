@@ -22,6 +22,9 @@
 
 #include "lowlevel.h"
 #include "logging.h"
+
+static int initialised = 0;
+
 /*
  * private functions
  */
@@ -104,7 +107,7 @@ static int _read_bootblock( struct bootconfig * bc, unsigned int block_idx )
         bc_log( LOG_WARNING, "Block %d on %s is bad. Skipping.\n", 
                 block_num, bc->dev);
         memset( &bc->blocks[ block_idx ], 0x00, sizeof( *bc->blocks ) );
-        strcpy ( bc->blocks[ block_idx ].magic, "BAD!!" );
+        strcpy ( bc->blocks[ block_idx ].magic, "BAD!" );
         return 1;
     }
 
@@ -159,6 +162,43 @@ void bc_ll_init( struct bootconfig * bc, const char * dev )
             "bootconfig initialised for %s with a total of %u config blocks.\n",
             bc->dev, bc->info.eb_cnt );
 
+    initialised = 1;
 }
 /* -- */
 
+struct btblock * bc_ll_get_current ( struct bootconfig * bc, uint32_t *block_index )
+{
+    unsigned int block; 
+    unsigned int idx       = 0;
+    uint32_t     epoch_max = 0;
+
+    if (! initialised) {
+        bc_log( LOG_ERR, "Internal error: called before initialisation!\n");
+        exit(1);
+    }
+
+    for ( block = 0; block < (unsigned) bc->info.eb_cnt; block++ ) {
+        struct btblock * b = &bc->blocks[ block ];
+
+        if ( 0 != strcmp( "Boot", b->magic ) )
+            continue;
+        
+        if ( b->epoch > epoch_max ) {
+            idx = block;
+            epoch_max = b->epoch;
+        }
+    }
+
+    if( epoch_max ) {
+        if ( NULL != block_index )
+            *block_index = idx;
+        return &bc->blocks[ idx ];
+    }
+
+    return NULL;
+}
+/* -- */
+
+
+
+    

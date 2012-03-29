@@ -13,42 +13,46 @@ $ bootconfig help
                                    Write results to boot config partition.
 
 $ bootconfig
-  image name      MTD partition   epoch   Flags
-  current-kernel:  3              56677   B O
-  old-kernel:      2              56676   B -
-  current-root:    4              76      B O
-  old-root:        5              75      - -
+  epoch: 56677
+  written: Mon Jan  2 01:07:41 UTC 2012
+  image name      MTD   Flags
+  kernel:          3     B O
+  root fs:         5     B O
 
 $ bootconfig set-kernel mtd2
   Setting current kernel to mtd2.
   Writing to NAND...
-  image name      MTD partition   epoch   Flags
-  current-kernel:  2              56678   - -
-  old-kernel:      3              56677   B O
-  current-root:    4              76      B O
-  old-root:        5              75      - -
+  epoch: 56678
+  written: Wed Mar 28 14:33:53 UTC 2012
+  image name      MTD   Flags
+  kernel:          2     - -
+  root fs:         4     B O
 
 $ bootconfig set-rootfs mtd4
   Setting current root FS to mtd4.
   Writing to NAND...
-  image name      MTD partition   epoch   Flags
-  current-kernel:  2              56678   - -
-  old-kernel:      3              56677   B O
-  current-root:    4              76      - -
-  old-root:        5              75      - -
+  epoch: 56679
+  written: Wed Mar 28 14:34:15 UTC 2012
+  image name      MTD   Flags
+  kernel:          2     - -
+  root fs:         4     - -
 
 $ bootconfig info
-  There are 8 boot config blocks:
-                epoch   flags
-  #1 kernel 1:    1       - -
-  #1 kernel 2:    4       B -
-  #1 rootfs 1:   19       B O
-  #1 rootfs 2:    2       B -
-    ---
-  #2 kernel 1:    2       B O
-  #2 kernel 2:    9       - -
-  #2 rootfs 1:    6       B -
-  #2 rootfs 2:    1       B O
+  There are 8 boot config blocks.
+   ---
+  Boot block #1
+  epoch: 56679
+  written: Wed Mar 28 14:34:15 UTC 2012
+  image name      MTD   Flags
+  kernel          2     - -
+  root fs         4     - -
+   ---
+  Boot block #2
+  epoch: 56676
+  written: Mon Jan  2 00:05:10 UTC 2012
+  image name      MTD   Flags
+  kernel           2    - -
+  rootfs           5    B O
    ---
 ...
    ---
@@ -59,8 +63,10 @@ $ bootconfig info
   #6 BAD BLOCK
    ---
 ...
-  #8 kernel 1:    7       - -
-  #8 kernel 2:    3       B -
-  #8 rootfs 1:    9       B O
-  #8 rootfs 2:    4       B O
- 
+   ---
+  Boot block #8
+  epoch: 56678
+  written: Wed Mar 28 14:33:53 UTC 2012
+  image name      MTD   Flags
+  kernel           3     B -
+  rootfs           5     B O

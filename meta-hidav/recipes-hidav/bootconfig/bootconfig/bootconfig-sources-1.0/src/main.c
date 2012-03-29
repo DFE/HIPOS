@@ -1,15 +1,14 @@
 /*
-*  Copyright (C) 2011, 2012 DResearch Fahrzeugelektronik GmbH   
-*  Written and maintained by Thilo Fromm <fromm@dresearch-fe.de>
-*                                                               
-*  This program is free software; you can redistribute it and/or
-*  modify it under the terms of the GNU General Public License  
-*  as published by the Free Software Foundation; either version 
-*  2 of the License, or (at your option) any later version.     
-*
-*
-* HidaV boot configuration user space tooling.
-*/
+ *  Copyright (C) 2011, 2012 DResearch Fahrzeugelektronik GmbH   
+ *  Written and maintained by Thilo Fromm <fromm@dresearch-fe.de>
+ *                                                               
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License  
+ *  as published by the Free Software Foundation; either version 
+ *  2 of the License, or (at your option) any later version.     
+ *
+ *  HidaV boot configuration user space tooling.
+ */
 
 #include <time.h>
 #include <stdio.h>
@@ -23,14 +22,14 @@ static void _print_block( struct btblock * bt )
 {
     time_t ts = bt->timestamp;
 
-    printf( "epoch: %d\n", bt->epoch);
-    printf( "written: %s", asctime( gmtime( &ts ) ));
-    printf( "image type      MTD   Flags\n");
-    printf( "kernel           %1.1d     %c %c\n", 
+    printf( "   epoch: %d\n", bt->epoch);
+    printf( "   written: %s", asctime( gmtime( &ts ) ));
+    printf( "   image type      MTD   Flags\n");
+    printf( "   kernel           %1.1d     %c %c\n", 
             bt->kernel.partition + KERNEL_START_PARTITION,
             bt->kernel.n_booted  == 0 ? 'B' : '-',
             bt->kernel.n_healthy == 0 ? 'H' : '-' );
-    printf( "rootfs           %1.1d     %c %c\n", 
+    printf( "   rootfs           %1.1d     %c %c\n", 
             bt->rootfs.partition + ROOTFS_START_PARTITION,
             bt->rootfs.n_booted  == 0 ? 'B' : '-',
             bt->rootfs.n_healthy == 0 ? 'H' : '-' );
@@ -115,7 +114,7 @@ int main(int argc, char ** argv)
         ret = 0;
     }
 
-    if ( argc < 4 ) {
+    if ( argc == 3 ) {
         /* TFM TODO / FIXME: this needs refactoring. */
         unsigned int partition;
 

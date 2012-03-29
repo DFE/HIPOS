@@ -59,7 +59,6 @@ struct bootconfig {
  * The function will call exit() upon error.
  */
 void bc_ll_init( struct bootconfig * bc, const char * dev );
-/* -- */
 
 
 /**
@@ -74,6 +73,24 @@ void bc_ll_init( struct bootconfig * bc, const char * dev );
 * The function will call exit() upon error (i.e. library was not initialised).
 */
 struct btblock * bc_ll_get_current ( struct bootconfig * bc, uint32_t * block_index );
-/* -- */
-    
+
+
+/**
+ * Set a partition for either kernel or rootfs.
+ * This function sets the partition to boot from for either
+ * kernel or rootfs. This will modify the next logical config
+ * block and write it out to flash.
+ *
+ * @param bc        - bootconfig structure
+ * @param which     - the image type, either kernel or rootfs 
+ * @param partition - partition 0 or partition 1 of the corresponding image
+ * @return          - 0 if successful, < 0 otherwise.
+ *
+ * The function will call exit() upon error 
+ * (i.e. library was not initialised, partition was >1, etc.).
+ */   
+enum bt_ll_parttype { kernel, rootfs };
+int bc_ll_set_partition( struct bootconfig * bc, enum bt_ll_parttype which, unsigned int partition );
+
+
 #endif /* __BOOTINFO_LL_H_ */

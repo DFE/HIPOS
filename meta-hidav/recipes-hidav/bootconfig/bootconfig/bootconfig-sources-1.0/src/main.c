@@ -13,17 +13,19 @@
 
 #include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "logging.h"
 #include "lowlevel.h"
 
-static void print_config( struct btblock * bt )
+static void _print_block( struct btblock * bt )
 {
     time_t ts = bt->timestamp;
+
     printf( "epoch: %d\n", bt->epoch);
-    printf( "written: %s\n", asctime( gmtime( &ts ) ));
-    printf( "image name      MTD   Flags\n");
+    printf( "written: %s", asctime( gmtime( &ts ) ));
+    printf( "image type      MTD   Flags\n");
     printf( "kernel           %1.1d     %c %c\n", 
             bt->kernel.partition + KERNEL_START_PARTITION,
             bt->kernel.n_booted  == 0 ? 'B' : '-',
@@ -36,7 +38,19 @@ static void print_config( struct btblock * bt )
 }
 /* -- */
 
-static void print_info( struct bootconfig * bc )
+static void _print_config( struct bootconfig * bc )
+{
+    struct btblock * bt = bc_ll_get_current( bc, NULL );
+
+    if ( NULL == bt ) {
+        printf("No current boot config.\n");
+    } else {
+        _print_block( bt );
+    }
+}
+/* -- */
+
+static void _print_info( struct bootconfig * bc )
 {
     unsigned int block;
 
@@ -47,13 +61,13 @@ static void print_info( struct bootconfig * bc )
 
         printf("    ---\n");
 
-        if ( 0 == strcmp( "Boot", bt->magic ) ) {
+        if ( 0 == memcmp( "Boot", bt->magic, 4 ) ) {
             printf( "   Boot block #%d\n", block);
-            print_config( bt );
+            _print_block( bt );
             continue;
         }
 
-        if ( 0 == strcmp( "BAD!", bt->magic ) ) {
+        if ( 0 == memcmp( "BAD!", bt->magic, 4 ) ) {
             printf( "   #%d BAD BLOCK\n", block);
             continue;
         }
@@ -64,24 +78,80 @@ static void print_info( struct bootconfig * bc )
 }
 /* -- */
 
+static void _print_help( void )
+{
+    printf("  bootconfig - show and set HidaV boot configuration\n");
+    printf("  Usage:\n");
+    printf("  bootconfig                      Show current boot configuration\n");
+    printf("  bootconfig info                 Show detailed / raw boot config information\n");
+    printf("  bootconfig set-kernel <mtd>     Generate new boot configuration which sets <mtd>\n");
+    printf("                                   to contain the latest kernel image. Clear all flags.\n");
+    printf("                                   Write results to boot config partition.\n");
+    printf("  bootconfig set-rootfs <mtd>     Generate new boot configuration which sets <mtd>\n");
+    printf("                                   to contain the latest root FS image. Clear all flags.\n");
+    printf("                                   Write results to boot config partition.\n");
+};
+/* -- */
+
+
 int main(int argc, char ** argv)
 {
-    struct   bootconfig   bc;
-    struct   btblock    * b;
-    uint32_t              idx;
+    struct bootconfig bc;
+    int ret = -1;
 
     bc_ll_init( &bc, "/dev/mtd1" );
 
-    b = bc_ll_get_current( &bc, &idx );
-    if ( NULL == b ) {
-        printf("No current boot config.\n");
-    } else {
-        print_config( b );
+    if ( argc < 2 ) {
+        _print_config( &bc );
+        exit(0);
     }
 
-    printf("\n\n\n\n");
+    if ( 0 == strcmp( argv[1], "info" ) ) {
+        _print_info( &bc );
+        exit(0);
+    }
 
-    print_info( &bc );
+    if ( 0 == strcmp( argv[1], "help" ) ) {
+        ret = 0;
+    }
 
-    return 0;
+    if ( argc < 4 ) {
+        /* TFM TODO / FIXME: this needs refactoring. */
+        unsigned int partition;
+
+        if( 1 != sscanf( argv[2], "mtd%u", &partition) ) {
+            bc_log( LOG_ERR, "Unable to parse partition string %s.\n", argv[2] );
+            exit(0);
+        }
+
+        if ( 0 == strcmp( argv[1], "set-kernel" ) ) {
+            partition -= 2;
+            if (partition > 1) {
+                printf("Illegal partition %s. Valid: mtd2, mtd3.\n", argv[2]);
+                exit(1);
+            }
+            printf("   Setting current kernel to %s.\n", argv[2]);
+            printf("   Writing to NAND...\n");
+            bc_ll_set_partition( &bc, kernel, partition ); bc_ll_reread( &bc );
+            _print_config( &bc );
+            exit(0);
+        }
+
+        if ( 0 == strcmp( argv[1], "set-rootfs" ) ) {
+            partition -= 4;
+            if (partition > 1) {
+                printf("Illegal partition %s. Valid: mtd4, mtd5.\n", argv[2]);
+                exit(1);
+            }
+            printf("   Setting current rootfs to %s.\n", argv[2]);
+            printf("   Writing to NAND...\n");
+            bc_ll_set_partition( &bc, rootfs, partition ); bc_ll_reread( &bc );
+            _print_config( &bc );
+            exit(0);
+        }
+    }
+
+    _print_help();
+
+    return ret;
 }

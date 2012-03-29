@@ -60,6 +60,15 @@ struct bootconfig {
  */
 void bc_ll_init( struct bootconfig * bc, const char * dev );
 
+/**
+ * Re-read bootconfig structure from NAND.
+ *
+ * @param bc  - bootconfig structure 
+ * @return    - 0 upon success, < 0 otherwise.
+ * 
+ * The function will call exit() upon error.
+ */
+int bc_ll_reread( struct bootconfig * bc );
 
 /**
 * Get the currently valid boot config block.

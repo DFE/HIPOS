@@ -20,7 +20,7 @@ $ bootconfig
   root fs:         5     B O
 
 $ bootconfig set-kernel mtd2
-  Setting current kernel to mtd2.
+  Setting current kernel to mtd2 (kernel partition #0).
   Writing to NAND...
   epoch: 56678
   written: Wed Mar 28 14:33:53 UTC 2012
@@ -29,7 +29,7 @@ $ bootconfig set-kernel mtd2
   root fs:         4     B O
 
 $ bootconfig set-rootfs mtd4
-  Setting current root FS to mtd4.
+  Setting current root FS to mtd4 (rootfs partition #0).
   Writing to NAND...
   epoch: 56679
   written: Wed Mar 28 14:34:15 UTC 2012

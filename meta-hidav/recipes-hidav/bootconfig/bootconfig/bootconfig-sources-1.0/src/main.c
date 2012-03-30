@@ -92,6 +92,36 @@ static void _print_help( void )
 };
 /* -- */
 
+static void _set( struct bootconfig * bc, const char * desc, 
+                 const char * part_string, int part_mod, enum bt_ll_parttype what )
+{
+
+    unsigned int part;
+
+    if( 1 != sscanf( part_string, "mtd%u", &part) ) {
+        bc_log( LOG_ERR, "Unable to parse partition string %s.\n", part_string );
+        exit(1);
+    }
+
+    part  = part + part_mod;
+
+    if (part > 1) {
+        printf("Illegal partition %s. Valid: mtd%d, mtd%d.\n", 
+                part_string, 0 - part_mod, 0 - part_mod + 1);
+        exit(1);
+    }
+    printf("   Setting current %s to %s (%s partition #%u).\n", 
+                desc, part_string, desc, part);
+    printf("   Writing to NAND...\n");
+
+    bc_ll_set_partition( bc, what, part ); 
+    bc_ll_reread( bc );
+    _print_config( bc );
+
+    exit(0);
+}
+/* -- */
+
 
 int main(int argc, char ** argv)
 {
@@ -116,37 +146,12 @@ int main(int argc, char ** argv)
 
     if ( argc == 3 ) {
         /* TFM TODO / FIXME: this needs refactoring. */
-        unsigned int partition;
-
-        if( 1 != sscanf( argv[2], "mtd%u", &partition) ) {
-            bc_log( LOG_ERR, "Unable to parse partition string %s.\n", argv[2] );
-            exit(0);
-        }
-
         if ( 0 == strcmp( argv[1], "set-kernel" ) ) {
-            partition -= 2;
-            if (partition > 1) {
-                printf("Illegal partition %s. Valid: mtd2, mtd3.\n", argv[2]);
-                exit(1);
-            }
-            printf("   Setting current kernel to %s.\n", argv[2]);
-            printf("   Writing to NAND...\n");
-            bc_ll_set_partition( &bc, kernel, partition ); bc_ll_reread( &bc );
-            _print_config( &bc );
-            exit(0);
+            _set( &bc, "kernel", argv[2], -2, kernel );
         }
 
         if ( 0 == strcmp( argv[1], "set-rootfs" ) ) {
-            partition -= 4;
-            if (partition > 1) {
-                printf("Illegal partition %s. Valid: mtd4, mtd5.\n", argv[2]);
-                exit(1);
-            }
-            printf("   Setting current rootfs to %s.\n", argv[2]);
-            printf("   Writing to NAND...\n");
-            bc_ll_set_partition( &bc, rootfs, partition ); bc_ll_reread( &bc );
-            _print_config( &bc );
-            exit(0);
+            _set( &bc, "rootfs", argv[2], -4, rootfs );
         }
     }
 

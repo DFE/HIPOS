@@ -2,7 +2,7 @@ COMPATIBLE_MACHINE = "hidav"
 
 DEPENDS += " lzop-native "
 
-RDEPENDS += " mtd-utils gawk busybox "
+RDEPENDS += " mtd-utils gawk busybox bootconfig "
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -20,7 +20,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
                    file://btrfs-kobject-include.patch \ 
                    "
 
-MACHINE_KERNEL_PR = "r41"
+MACHINE_KERNEL_PR = "r42"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
@@ -54,20 +54,41 @@ pkg_postinst_kernel-image_append() {
      exit 0
   fi
 
+  mtd_to_write="/dev/null"
+  bootconfig | grep kernel | grep 2 >/dev/null
+  if [ "`echo $?`" = "0"  ]; then
+	mtd_to_write="/dev/mtd3"
+  fi
+  bootconfig | grep kernel | grep 3 >/dev/null
+  if [ "`echo $?`" = "0"  ]; then
+        mtd_to_write="/dev/mtd2"
+  fi
+  if [ "$mtd_to_write" = "/dev/null" ]; then
+	echo "error: active kernel not found"
+	echo "skip kernel update on flash"
+	exit 0
+  fi
+
   cp /boot/uImage /run/uImage_system
-  mtd_debug read /dev/mtd2 0 `ls -l /run/uImage_system | awk '{ printf("%s",$5) }'` /run/uImage_flash
+  mtd_debug read $mtd_to_write 0 `ls -l /run/uImage_system | awk '{ printf("%s",$5) }'` /run/uImage_flash
   flash_md5sum="`md5sum /run/uImage_flash | awk '{ printf("%s",$1) }'`"
   system_md5sum="`md5sum /run/uImage_system | awk '{ printf("%s",$1) }'`"
   rm /run/uImage_system /run/uImage_flash
 
   if [ "$flash_md5sum" != "$system_md5sum" ]; then
     # flash kernel
-      echo "flash kernel to /dev/mtd2 ..."
-      flash_erase /dev/mtd2 0 0 && nandwrite -m -p /dev/mtd2 /boot/uImage
-    exit $?
+      echo "flash kernel to $mtd_to_write ..."
+      flash_erase $mtd_to_write 0 0 && nandwrite -m -p $mtd_to_write /boot/uImage
   else
       echo "no new kernel in /boot/uImage"
     exit 0
+  fi
+
+  if [ "$mtd_to_write" = "/dev/mtd2" ]; then
+    bootconfig set-kernel mtd2
+  fi
+  if [ "$mtd_to_write" = "/dev/mtd3" ]; then
+    bootconfig set-kernel mtd3
   fi
 
 }

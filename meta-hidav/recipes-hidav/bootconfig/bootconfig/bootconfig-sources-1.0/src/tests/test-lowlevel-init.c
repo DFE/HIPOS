@@ -48,6 +48,7 @@ int main( int argc, char ** argv)
 
     bc_ll_init( &bc, test_dev );
 
+    TEST_ASSERT( 1, initialised, int );
 
     TEST_ASSERT( 0, _my_open_called_count, int );
     TEST_ASSERT( 0, _libmtd_open_called_count, int );

@@ -183,29 +183,30 @@ void set_default_fail( enum fail_switch_t mode ) {
  */
 
 static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
-
+#include <string.h>
 #define MAX_NUM_FUNC_CALL   50
 
-#define CHECK_PARAM_P(func, param, type)                                    \
-{                                                                           \
-    int ret;                                                                \
-    type exp = _##func##_exp_##param[_##func##_called_count];               \
-    type got = param;                                                       \
-    if (_##func##_called_count + 1 >= MAX_NUM_FUNC_CALL) {                  \
-        printf("INTERNAL TEST ERROR: Maximum number of mock function calls "\
-                 "(%u) reached.\n", MAX_NUM_FUNC_CALL);                     \
-        exit(ERR_PREPARATION_FAILED);                                       \
-    }                                                                       \
+#define CHECK_PARAM_P(func, param, type)                                        \
+{                                                                               \
+    int ret;                                                                    \
+    void *exp=NULL, *got=NULL;                                                  \
+    memcpy(&exp, &_##func##_exp_##param[_##func##_called_count], sizeof(type)); \
+    memcpy(&got, &param, sizeof(type));                                         \
+    if (_##func##_called_count + 1 >= MAX_NUM_FUNC_CALL) {                      \
+        printf("INTERNAL TEST ERROR: Maximum number of mock function calls "    \
+                 "(%u) reached.\n", MAX_NUM_FUNC_CALL);                         \
+        exit(ERR_PREPARATION_FAILED);                                           \
+    }                                                                           \
     if (_##func##_called_count > _##func##_configured_calls) {                  \
         printf("TEST ERROR: Mocked function " #func " called more often (%ld) than it has been set up to by the test (%ld)!\n",\
-                _##func##_called_count, _##func##_configured_calls);                     \
+                _##func##_called_count, _##func##_configured_calls);        \
         exit(ERR_PREPARATION_FAILED);                                       \
     }                                                                       \
-    if (    (exp != (type) DONT_CHECK_PARAM)                                \
-        &&  (exp != param)                                                  \
+    if (    (exp != DONT_CHECK_PARAM)                                       \
+        &&  (exp != got)                                                    \
         &&  (ret = fail_callback(#func,                                     \
                         "Parameter " #param " failed expectations.",        \
-                                (void*)exp, (void*)got),                   \
+                                exp, got),                                  \
                    printf (" --- >>> mock wrapper for " #func ": at call #%ld (%ld calls configured totally):\n", \
                           _##func##_called_count + 1, _##func##_configured_calls + 1))    \
             )                  \

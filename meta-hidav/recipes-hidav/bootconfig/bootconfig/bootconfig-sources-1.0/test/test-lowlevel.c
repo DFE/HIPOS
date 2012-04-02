@@ -17,12 +17,12 @@
 
 #include "test_harness.h"
 
-typedef int libmtd_t;
+typedef void* libmtd_t;
 struct mtd_dev_info {
     int eb_cnt;
     int min_io_size; };
 
-MOCK_0( int, libmtd_open );
+MOCK_0( void*, libmtd_open );
 MOCK_2( int, my_open,           const char *, int );
 MOCK_3( int, mtd_get_dev_info,  libmtd_t,     const char *,         struct mtd_dev_info *);
 MOCK_3( int, mtd_is_bad,        struct mtd_dev_info *,  int,        int);
@@ -39,7 +39,7 @@ static void test_init( void )
 {
     struct bootconfig bc;
     int dev_fd            = 42;
-    int mtd_hdl           = 23;
+    void* mtd_hdl         = (void*) 23;
     const char * test_dev = "/test/device";
 
     bc.info.eb_cnt = 4;

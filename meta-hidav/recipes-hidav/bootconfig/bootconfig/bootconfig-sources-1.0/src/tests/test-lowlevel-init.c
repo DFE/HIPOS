@@ -17,37 +17,23 @@
 
 #include "test_harness.h"
 
-typedef int libmtd_t;
-struct mtd_dev_info {
-    int eb_cnt;
-    int min_io_size; };
-
-MOCK_0( int, libmtd_open );
-MOCK_2( int, my_open,           const char *, int );
-MOCK_3( int, mtd_get_dev_info,  libmtd_t,     const char *,         struct mtd_dev_info *);
-MOCK_3( int, mtd_is_bad,        struct mtd_dev_info *,  int,        int);
-MOCK_4( int, mtd_erase,         libmtd_t,     struct mtd_dev_info*, int, int);
-MOCK_6( int, mtd_read, struct mtd_dev_info *, int,      int,        int, void *, int );
-MOCK_10(int, mtd_write,libmtd_t,struct mtd_dev_info *,  int, int,   int, void *, int, void*, int, int);
+#include "mocks.c"
 
 #define open my_open
-#include "../src/logging.c"
-#include "../src/lowlevel.c"
+#include "../logging.c"
+#include "../lowlevel.c"
 
-
-static void test_init( void )
+int main( int argc, char ** argv)
 {
     struct bootconfig bc;
     int dev_fd            = 42;
-    int mtd_hdl           = 23;
+    void* mtd_hdl         = (void*) 23;
     const char * test_dev = "/test/device";
-
-    bc.info.eb_cnt = 4;
-    bc.info.min_io_size = 1234;
 
     MOCK_2_CALL( dev_fd,  my_open,             test_dev, O_RDWR );
     MOCK_0_CALL( mtd_hdl, libmtd_open );
     MOCK_3_CALL( 0,       mtd_get_dev_info, mtd_hdl,  test_dev, &bc.info );
+    _mtd_get_dev_info_cb = _mock_mtd_get_dev_info;
 
     MOCK_3_CALL( 0, mtd_is_bad, &bc.info, dev_fd, 0 );
     MOCK_3_CALL( 0, mtd_is_bad, &bc.info, dev_fd, 1 );
@@ -61,11 +47,20 @@ static void test_init( void )
 
 
     bc_ll_init( &bc, test_dev );
-}
-/* -- */
 
-int main( int argc, char ** argv)
-{
-    test_init();   
+
+    TEST_ASSERT( 0, _my_open_called_count, int );
+    TEST_ASSERT( 0, _libmtd_open_called_count, int );
+    TEST_ASSERT( 0, _mtd_get_dev_info_called_count, int );
+    TEST_ASSERT( 3, _mtd_is_bad_called_count, int );
+    TEST_ASSERT( 3, _mtd_read_called_count, int );
+
+    MOCK_RESET( my_open );
+    MOCK_RESET( libmtd_open );
+    MOCK_RESET( mtd_get_dev_info );
+    MOCK_RESET( mtd_is_bad );
+    MOCK_RESET( mtd_read );
+
     return 0;
 }
+/* -- */

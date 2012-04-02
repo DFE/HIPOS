@@ -83,10 +83,14 @@
  */
 #define TEST_ASSERT( exp, got, type )                       \
 {                                                       \
-    type ret;                                           \
-    if ( (exp) != ( ret = (got) ) ){                    \
+    void *e, *g;                                        \
+    type _got = ( got );                                \
+    type _exp = ( exp );                                \
+    memcpy(&e, &_exp, sizeof( type ));                   \
+    memcpy(&g, &_got, sizeof( type ));                   \
+    if ( (exp) != (got)  ){                             \
         printf("%s:%s, line %u: " #got " should be %p (%s), is %p\n", \
-         __FILE__, __func__, __LINE__, (void*)exp, #exp, (void*)ret);  \
+         __FILE__, __func__, __LINE__, e, #exp, g);  \
         exit (ERR_TEST_FAILED);                         \
     }                                                   \
 }
@@ -183,29 +187,30 @@ void set_default_fail( enum fail_switch_t mode ) {
  */
 
 static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
-
+#include <string.h>
 #define MAX_NUM_FUNC_CALL   50
 
-#define CHECK_PARAM_P(func, param, type)                                    \
-{                                                                           \
-    int ret;                                                                \
-    type exp = _##func##_exp_##param[_##func##_called_count];               \
-    type got = param;                                                       \
-    if (_##func##_called_count + 1 >= MAX_NUM_FUNC_CALL) {                  \
-        printf("INTERNAL TEST ERROR: Maximum number of mock function calls "\
-                 "(%u) reached.\n", MAX_NUM_FUNC_CALL);                     \
-        exit(ERR_PREPARATION_FAILED);                                       \
-    }                                                                       \
+#define CHECK_PARAM_P(func, param, type)                                        \
+{                                                                               \
+    int ret;                                                                    \
+    void *exp=NULL, *got=NULL;                                                  \
+    memcpy(&exp, &_##func##_exp_##param[_##func##_called_count], sizeof(type)); \
+    memcpy(&got, &param, sizeof(type));                                         \
+    if (_##func##_called_count + 1 >= MAX_NUM_FUNC_CALL) {                      \
+        printf("INTERNAL TEST ERROR: Maximum number of mock function calls "    \
+                 "(%u) reached.\n", MAX_NUM_FUNC_CALL);                         \
+        exit(ERR_PREPARATION_FAILED);                                           \
+    }                                                                           \
     if (_##func##_called_count > _##func##_configured_calls) {                  \
         printf("TEST ERROR: Mocked function " #func " called more often (%ld) than it has been set up to by the test (%ld)!\n",\
-                _##func##_called_count, _##func##_configured_calls);                     \
+                _##func##_called_count, _##func##_configured_calls);        \
         exit(ERR_PREPARATION_FAILED);                                       \
     }                                                                       \
-    if (    (exp != (type) DONT_CHECK_PARAM)                                \
-        &&  (exp != param)                                                  \
+    if (    (exp != DONT_CHECK_PARAM)                                       \
+        &&  (exp != got)                                                    \
         &&  (ret = fail_callback(#func,                                     \
                         "Parameter " #param " failed expectations.",        \
-                                (void*)exp, (void*)got),                   \
+                                exp, got),                                  \
                    printf (" --- >>> mock wrapper for " #func ": at call #%ld (%ld calls configured totally):\n", \
                           _##func##_called_count + 1, _##func##_configured_calls + 1))    \
             )                  \
@@ -287,10 +292,11 @@ _MOCK_COMMON_V(func)                          \
 ret_type    _##func##_ret[MAX_NUM_FUNC_CALL];
 
 
-#define MOCK_RESET ( func )             \
+#define MOCK_RESET( func )              \
 {                                       \
-     _##func##_configured_calls = -1;   \
-     _##func##_called_count= -1;        \
+    _##func##_configured_calls = -1;    \
+    _##func##_called_count= -1;         \
+    _##func##_cb = 0;                   \
 }
 
 /**
@@ -337,6 +343,8 @@ arg0_type   _##func##_exp_arg0[MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0) {                 \
     _##func##_called_count++;                   \
     CHECK_PARAM_P( func, arg0, arg0_type);      \
+    if (_##func##_cb)                           \
+        _##func##_cb(arg0);                     \
     return _##func##_ret[_##func##_called_count]; \
 }
 
@@ -347,6 +355,8 @@ arg0_type   _##func##_exp_arg0[MAX_NUM_FUNC_CALL]; \
 void    func(arg0_type arg0) {                  \
     _##func##_called_count++;                   \
     CHECK_PARAM_P( func, arg0, arg0_type);      \
+    if (_##func##_cb)                           \
+        _##func##_cb(arg0);                     \
 }
 
 #define MOCK_1V_CALL( func, arg0 )  \

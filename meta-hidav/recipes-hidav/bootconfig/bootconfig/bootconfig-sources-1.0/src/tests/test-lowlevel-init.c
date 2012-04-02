@@ -31,8 +31,8 @@ MOCK_6( int, mtd_read, struct mtd_dev_info *, int,      int,        int, void *,
 MOCK_10(int, mtd_write,libmtd_t,struct mtd_dev_info *,  int, int,   int, void *, int, void*, int, int);
 
 #define open my_open
-#include "../src/logging.c"
-#include "../src/lowlevel.c"
+#include "../logging.c"
+#include "../lowlevel.c"
 
 
 static void test_init( void )

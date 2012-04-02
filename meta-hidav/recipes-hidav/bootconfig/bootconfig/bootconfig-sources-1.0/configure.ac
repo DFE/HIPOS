@@ -1,7 +1,7 @@
 AC_PREREQ([2.60])
 AC_INIT([bootconfig], [0.2], [fromm@dresearch-fe.de])
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign parallel-tests])
 AC_CONFIG_HEADERS([config.h])
 
 #------------------------------------------------------

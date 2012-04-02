@@ -83,10 +83,14 @@
  */
 #define TEST_ASSERT( exp, got, type )                       \
 {                                                       \
-    type ret;                                           \
-    if ( (exp) != ( ret = (got) ) ){                    \
+    void *e, *g;                                        \
+    type _got = ( got );                                \
+    type _exp = ( exp );                                \
+    memcpy(&e, &_exp, sizeof( type ));                   \
+    memcpy(&g, &_got, sizeof( type ));                   \
+    if ( (exp) != (got)  ){                             \
         printf("%s:%s, line %u: " #got " should be %p (%s), is %p\n", \
-         __FILE__, __func__, __LINE__, (void*)exp, #exp, (void*)ret);  \
+         __FILE__, __func__, __LINE__, e, #exp, g);  \
         exit (ERR_TEST_FAILED);                         \
     }                                                   \
 }
@@ -288,10 +292,11 @@ _MOCK_COMMON_V(func)                          \
 ret_type    _##func##_ret[MAX_NUM_FUNC_CALL];
 
 
-#define MOCK_RESET ( func )             \
+#define MOCK_RESET( func )              \
 {                                       \
-     _##func##_configured_calls = -1;   \
-     _##func##_called_count= -1;        \
+    _##func##_configured_calls = -1;    \
+    _##func##_called_count= -1;         \
+    _##func##_cb = 0;                   \
 }
 
 /**
@@ -338,6 +343,8 @@ arg0_type   _##func##_exp_arg0[MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0) {                 \
     _##func##_called_count++;                   \
     CHECK_PARAM_P( func, arg0, arg0_type);      \
+    if (_##func##_cb)                           \
+        _##func##_cb(arg0);                     \
     return _##func##_ret[_##func##_called_count]; \
 }
 
@@ -348,6 +355,8 @@ arg0_type   _##func##_exp_arg0[MAX_NUM_FUNC_CALL]; \
 void    func(arg0_type arg0) {                  \
     _##func##_called_count++;                   \
     CHECK_PARAM_P( func, arg0, arg0_type);      \
+    if (_##func##_cb)                           \
+        _##func##_cb(arg0);                     \
 }
 
 #define MOCK_1V_CALL( func, arg0 )  \

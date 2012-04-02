@@ -10,7 +10,7 @@ bootconfig_HEADERS= \
 	lowlevel.h		\
 	logging.h
 
-TESTS = test_lowlevel_init
+TESTS = test-lowlevel-init test-lowlevel-init-nodev
 
 # TFM: this needs some rework: BUILD_CC is only available
 # when building w/ openembedded, so this should default to
@@ -18,8 +18,6 @@ TESTS = test_lowlevel_init
 # 
 # Also, the coverage files generated are not yet post-processed.
 #
-test_lowlevel_init: tests/test-lowlevel-init.c
-		${BUILD_CC} -Itests/include --coverage -o ${@} ${<}
-		./${@}
-		mv ${@} ${@}.bin
+test-%: tests/test-%.c
+		${BUILD_CC} -Itests/include --coverage -ftest-coverage -o ${@} ${<} -lpthread
 

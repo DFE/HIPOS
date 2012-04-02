@@ -77,7 +77,7 @@ static struct btblock * _alloc_blocks( unsigned int num )
     struct btblock * ret = malloc( num * sizeof( *ret ) );
 
     if( NULL == ret ) {
-        bc_log( LOG_ERR, "Failed to allocate %lu bytes.\n",
+        bc_log( LOG_ERR, "Failed to allocate %u bytes.\n",
                 num * sizeof( *ret ));
         exit(1);
     }

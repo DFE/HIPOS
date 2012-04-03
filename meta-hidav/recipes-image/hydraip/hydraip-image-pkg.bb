@@ -7,7 +7,7 @@ RDEPENDS = "mtd-utils"
 RRECOMMENDS = "kernel"
 
 PACKAGES = "${PN}"
-PR = "r3"
+PR = "r4"
 
 FILES_${PN} = "/tmp/hydraip-image-hidav.squashfs"
 
@@ -38,6 +38,27 @@ pkg_postinst_${PN} () {
 	exit 0
   fi
 
+  # check bootconfig
+  if [ "$mtd_to_write" = "/dev/mtd4" ]; then
+	cat /proc/cmdline | grep mtdblock4 >/dev/null
+	if [ "`echo $?`" = "0" ]; then
+		echo "error: do not write on used $mtd_to_write"
+		echo "check bootconfig"
+		echo "skip rootfs update on flash"
+        	exit 0
+	fi
+  fi 
+  if [ "$mtd_to_write" = "/dev/mtd5" ]; then
+        cat /proc/cmdline | grep mtdblock5 >/dev/null
+        if [ "`echo $?`" = "0" ]; then
+                echo "error: do not write on used $mtd_to_write"
+		echo "check bootconfig"
+                echo "skip rootfs update on flash"
+                exit 0
+        fi
+  fi
+
+  
   # flash rootfs
   echo "flash to $mtd_to_write ..."
   flash_erase $mtd_to_write 0 0 && nandwrite -m -p $mtd_to_write /tmp/hydraip-image-hidav.squashfs

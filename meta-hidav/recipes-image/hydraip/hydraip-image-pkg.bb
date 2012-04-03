@@ -7,7 +7,7 @@ RDEPENDS = "mtd-utils"
 RRECOMMENDS = "kernel"
 
 PACKAGES = "${PN}"
-PR = "r2"
+PR = "r3"
 
 FILES_${PN} = "/tmp/hydraip-image-hidav.squashfs"
 
@@ -45,10 +45,10 @@ pkg_postinst_${PN} () {
   rm $D/tmp/hydraip-image-hidav.squashfs
 
   if [ "$mtd_to_write" = "/dev/mtd4" ]; then
-    bootconfig set-kernel mtd4
+    bootconfig set-rootfs mtd4
   fi
   if [ "$mtd_to_write" = "/dev/mtd5" ]; then
-    bootconfig set-kernel mtd5
+    bootconfig set-rootfs mtd5
   fi
 
   exit 0

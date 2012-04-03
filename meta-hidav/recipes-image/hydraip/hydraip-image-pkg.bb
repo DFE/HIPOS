@@ -7,7 +7,7 @@ RDEPENDS = "mtd-utils"
 RRECOMMENDS = "kernel"
 
 PACKAGES = "${PN}"
-PR = "r4"
+PR = "r5"
 
 FILES_${PN} = "/tmp/hydraip-image-hidav.squashfs"
 

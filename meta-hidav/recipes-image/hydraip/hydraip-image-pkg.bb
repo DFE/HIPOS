@@ -23,6 +23,19 @@ pkg_postinst_${PN} () {
     exit 0	# don't give an error code on image install
   fi
 
+  cat /proc/cmdline | awk '{ print $3 }' | grep mmcblk
+  if [ $? -eq 0  ]; then
+     echo "skip write to nandflash on sdcard boot"
+     echo "copy $D/tmp/hydraip-image-hidav.squashfs to /dev/mmcblk0p1"
+     mkdir -p /tmp/boot
+     mount /dev/mmcblk0p1 /tmp/boot/
+     cp /tmp/hydraip-image-hidav.squashfs /tmp/boot/hidav-root-fs.squashfs
+     umount /tmp/boot/
+     echo "clean $D/tmp/hydraip-image-hidav.squashfs"
+     rm $D/tmp/hydraip-image-hidav.squashfs 
+     exit 0
+  fi
+
   mtd_to_write="/dev/null"
   bootconfig | grep rootfs | grep 4 >/dev/null
   if [ "`echo $?`" = "0" ]; then
@@ -57,7 +70,6 @@ pkg_postinst_${PN} () {
                 exit 0
         fi
   fi
-
   
   # flash rootfs
   echo "flash to $mtd_to_write ..."

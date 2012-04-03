@@ -29,6 +29,7 @@ pkg_postinst_${PN} () {
      echo "copy $D/tmp/hydraip-image-hidav.squashfs to /dev/mmcblk0p1"
      mkdir -p /tmp/boot
      mount /dev/mmcblk0p1 /tmp/boot/
+     rm /tmp/boot/hidav-root-fs.squashfs
      cp /tmp/hydraip-image-hidav.squashfs /tmp/boot/hidav-root-fs.squashfs
      umount /tmp/boot/
      echo "clean $D/tmp/hydraip-image-hidav.squashfs"

@@ -19,7 +19,14 @@ TESTS = test-lowlevel-init \
 		test-lowlevel-reread \
 		test-lowlevel-reread-noinit \
 		test-lowlevel-getcurrent \
-		test-lowlevel-getcurrent-noinit
+		test-lowlevel-getcurrent-noinit \
+		test-lowlevel-setpartition \
+		test-lowlevel-setpartition-noblock \
+		test-lowlevel-setpartition-allempty \
+		test-lowlevel-setpartition-noinit	\
+		test-lowlevel-setpartition-illegalpart \
+		test-lowlevel-alloc-bootblock-fail	\
+		test-lowlevel-write-block-alloc-fail
 
 # TFM: this needs some rework: BUILD_CC is only available
 # when building w/ openembedded, so this should default to
@@ -28,5 +35,5 @@ TESTS = test-lowlevel-init \
 # Also, the coverage files generated are not yet post-processed.
 #
 test-%: tests/test-%.c
-		${BUILD_CC} -Itests/include --coverage -ftest-coverage -o ${@} ${<} -lpthread
+		${BUILD_CC} -Itests/include --coverage -ftest-coverage -o ${@} ${<}
 

@@ -724,7 +724,7 @@ void func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_t
 
 #define MOCK_10_CALL( ret, func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 )    \
 {                                                                       \
-    MOCK_10_CALL( func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 )            \
+    MOCK_10V_CALL( func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 );           \
     _##func##_ret[ _##func##_configured_calls] = ret;                   \
 }
 

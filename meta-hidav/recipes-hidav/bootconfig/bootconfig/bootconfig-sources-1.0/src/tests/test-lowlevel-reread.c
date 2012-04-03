@@ -20,7 +20,6 @@
 
 #include "mocks.c"
 
-#define open my_open
 #include "../logging.c"
 #include "../lowlevel.c"
 

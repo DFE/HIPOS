@@ -56,12 +56,6 @@ int main( int argc, char ** argv)
     TEST_ASSERT( 3, _mtd_is_bad_called_count, int );
     TEST_ASSERT( 3, _mtd_read_called_count, int );
 
-    MOCK_RESET( my_open );
-    MOCK_RESET( libmtd_open );
-    MOCK_RESET( mtd_get_dev_info );
-    MOCK_RESET( mtd_is_bad );
-    MOCK_RESET( mtd_read );
-
     return 0;
 }
 /* -- */

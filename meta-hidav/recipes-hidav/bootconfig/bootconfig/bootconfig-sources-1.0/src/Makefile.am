@@ -15,7 +15,11 @@ TESTS = test-lowlevel-init \
 		test-lowlevel-init-nomtd \
 		test-lowlevel-init-errmtd \
 		test-lowlevel-init-devinfo-err \
-		test-lowlevel-init-checkblock-err
+		test-lowlevel-init-checkblock-err \
+		test-lowlevel-reread \
+		test-lowlevel-reread-noinit \
+		test-lowlevel-getcurrent \
+		test-lowlevel-getcurrent-noinit
 
 # TFM: this needs some rework: BUILD_CC is only available
 # when building w/ openembedded, so this should default to

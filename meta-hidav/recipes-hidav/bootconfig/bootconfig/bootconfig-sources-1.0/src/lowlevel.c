@@ -77,10 +77,12 @@ static struct btblock * _alloc_blocks( unsigned int num )
     struct btblock * ret = malloc( num * sizeof( *ret ) );
 
     if( NULL == ret ) {
-        bc_log( LOG_ERR, "Failed to allocate %u bytes.\n",
+        bc_log( LOG_ERR, "Failed to allocate %lu bytes.\n",
                 num * sizeof( *ret ));
         exit(1);
     }
+
+    memset( ret, 0x00, num * sizeof( *ret ) );
 
     return ret;
 }
@@ -91,19 +93,14 @@ static int _check_block( struct bootconfig * bc, unsigned int block_idx )
 {
     int          err;
 
-    if ( block_idx > (unsigned) bc->info.eb_cnt ) {
-        bc_log( LOG_ERR, "Illegal block number %u. %s has %d erase blocks.\n",
-                block_idx, bc->dev, bc->info.eb_cnt );
-        return -1;
-    }
-
     err = mtd_is_bad( &bc->info, bc->fd, block_idx );
+
     if        ( 0 > err ) {
         bc_log( LOG_ERR, "Error %d while bad block checking block %d on %s: %s.\n",
                 errno, block_idx, bc->dev, strerror( errno ));
         return -1;
     } else if ( 0 < err ) {
-        bc_log( LOG_WARNING, "Block %d on %s is bad. Skipping.\n", 
+        bc_log( LOG_WARNING, "Block %d on %s is bad. Sorry about that.\n", 
                 block_idx, bc->dev);
         memcpy ( bc->blocks[ block_idx ].magic, "BAD!", 4 );
         return 1;
@@ -137,37 +134,63 @@ static int _read_bootblock( struct bootconfig * bc, unsigned int block_idx )
 
 /* Returns -1 upon failure, 0 if successful, and 1 if the erase block is bad. */
 
-static int _write_bootblock( struct bootconfig * bc, unsigned int block_idx )
+static int _do_write_bootblock( struct bootconfig * bc, unsigned int block_idx )
 {
     int    err;
+    char  *page;
+   
+    err = mtd_erase( bc->mtd, &bc->info, bc->fd, block_idx );
+    if (0 > err)
+        return 1;
+
+    page = malloc( bc->info.min_io_size );
+    if( NULL == page ) {
+        bc_log( LOG_ERR, "Error #%d malloc()ing %d bytes: %s.\n", 
+                errno, bc->info.min_io_size, strerror(errno));
+        return -1;
+    }
+
+    memset( page, 0xFF, bc->info.min_io_size );
+    memcpy( page, &bc->blocks[ block_idx ], sizeof( *bc->blocks ) );
+    err = mtd_write( bc->mtd, &bc->info, bc->fd, block_idx, 0,
+                     page, bc->info.min_io_size , NULL, 0, 0 );
+    free( page );
+
+    if (0 > err)
+        return 1;
+
+    return 0;
+}
+/* -- */
+
+static int _write_errorcheck_bootblock( struct bootconfig * bc, unsigned int block_idx )
+{
+    int    err, no;
     char  page[ bc->info.min_io_size ];
     
     err = _check_block( bc, block_idx );
     if ( 0 != err )
         return err;
 
-    err = mtd_erase( bc->mtd, &bc->info, bc->fd, block_idx );
-    if (0 > err) {
-        /* check again to mark this block BAD! if it turned bad with the erase */
-        if ( 1 == _check_block( bc, block_idx ) )
+    err = _do_write_bootblock( bc, block_idx );
+    no = errno;
+
+    if( 1 == err ) {
+        if ( 1 == _check_block( bc, block_idx ) ) {
+            bc_log( LOG_WARNING, "Block #%d went bad while erasing / writing it.\n",
+                    block_idx);
             return 1;
-        return err;
+        }
     }
 
-    memset( page, 0xFF, sizeof(page) );
-    memcpy( page, &bc->blocks[ block_idx ], sizeof( *bc->blocks ) );
-    err = mtd_write( bc->mtd, &bc->info, bc->fd, block_idx, 0,
-                     page, sizeof(page),
-                     NULL, 0, 0 );
-    if( err ) {
-        bc_log( LOG_ERR, "Error %d while writing bootinfo block %d from %s: %s.\n",
-                errno, block_idx, bc->dev, strerror( errno ));
-        return -1;
-    }
+    if (err)
+        bc_log( LOG_ERR, "Error #%d while erasing / writing block %d on %s: %s.\n",
+                no, block_idx, bc->dev, strerror(no));
 
-    return 0;
+    return err;
 }
 /* -- */
+
 
 static int _update_bootblock( struct bootconfig * bc, enum bt_ll_parttype which,
                               unsigned int p, uint32_t prev_idx, uint32_t idx )
@@ -175,6 +198,7 @@ static int _update_bootblock( struct bootconfig * bc, enum bt_ll_parttype which,
     struct btblock * b     = &bc->blocks[ idx ];
     struct btblock * b_old = &bc->blocks[ prev_idx ];
     struct btinfo  * bi;
+    int ret;
 
     if ( 0 == memcmp( b->magic, "BAD!", 4 ) ) {
         bc_log( LOG_INFO, "Skipping bad block #%d.\n", idx );
@@ -192,12 +216,7 @@ static int _update_bootblock( struct bootconfig * bc, enum bt_ll_parttype which,
     bi->n_booted  = 1;
     bi->n_healthy = 1;
 
-    if ( 0 != _write_bootblock( bc, idx ) ) {
-        bc_log( LOG_ERR, "Error writing boot block #%d.\n", idx );
-        return -1;
-    }
-
-    return 0;
+    return _write_errorcheck_bootblock( bc, idx );
 }
 /* -- */
 

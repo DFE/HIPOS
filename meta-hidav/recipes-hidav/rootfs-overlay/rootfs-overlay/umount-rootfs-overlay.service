@@ -1,10 +1,7 @@
 [Unit]
 Description=AUFS overlay file system un-mount
 DefaultDependencies=no
-Requires=shutdown.target
-After=shutdown.target
-Before=umount.target
-Conflicts=umount.target
+Before=systemd-shutdownd.service shutdown.target umount.target
 
 [Service]
 Type=oneshot

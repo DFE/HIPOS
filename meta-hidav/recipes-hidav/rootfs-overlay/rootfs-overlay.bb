@@ -4,7 +4,7 @@ LICENSE = "GPLv2"
 PACKAGE_ARCH = "all"
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
-PR = "r28"
+PR = "r29"
 
 # ubi tooling from mtd-utils
 RDEPENDS = " mtd-utils "

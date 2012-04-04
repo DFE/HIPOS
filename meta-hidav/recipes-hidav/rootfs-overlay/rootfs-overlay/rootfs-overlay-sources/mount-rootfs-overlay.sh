@@ -178,8 +178,6 @@ logger -s -p syslog.notice -t rootfs-overlay \
 pivot_root . ${original_root_mountpoint#/}
 
 exec chroot . sh -lc "
-    mount -o remount,ro ${original_root_mountpoint};
-    /bin/systemctl daemon-reload" \
+    mount -o remount,ro ${original_root_mountpoint}" \
     <dev/console >dev/console 2>&1
-
 

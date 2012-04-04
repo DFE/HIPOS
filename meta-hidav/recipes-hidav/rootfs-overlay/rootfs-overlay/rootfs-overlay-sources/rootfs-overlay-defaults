@@ -25,4 +25,4 @@ original_root_mountpoint="/overlays/original-rootfs"
 
 # Set this to "true" if udev is available when the mount script runs.
 # If set to != "true" then the script will use "mdev -s" appropriately.
-rely_on_udev="true"
+rely_on_udev="false"

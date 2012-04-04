@@ -14,13 +14,13 @@ SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;tag
 		   file://configs \
 "
 
-SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=d9d4255bf60e7b88bb7c4dfb32eabc15ba7b49e1 \
+SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=c3fc5bd123a94fcfe9bb1aa2fd5f41b16ea7ac04 \
                    file://hidav-flash-partition-settings-ti814x.patch \
 		   		   file://hidav-flash-partition-settings-ti816x.patch \
                    file://btrfs-kobject-include.patch \ 
                    "
 
-MACHINE_KERNEL_PR = "r39"
+MACHINE_KERNEL_PR = "r40"
 
 do_compileconfigs_prepend() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}

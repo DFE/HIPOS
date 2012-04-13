@@ -2,7 +2,7 @@ DESCRIPTION = "HidaV make bootable sd card with dev image"
 
 LICENSE = "MIT"
 
-PR = "r13"
+PR = "r14"
 
 PACKAGES = " ${PN} "
 

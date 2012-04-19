@@ -11,18 +11,22 @@ TAG = "v2.6.37_TI814XPSP_04.01.00.06.patch2"
 SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;tag=${TAG} \
            file://0001-ti814x-added-code-for-disabling-the-least-significan.patch \
            file://defconfig \
-	   file://configs \
+           file://configs \
 "
 
 SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=c3fc5bd123a94fcfe9bb1aa2fd5f41b16ea7ac04 \
                    file://hidav-flash-partition-settings-ti814x.patch \
-		   file://hidav-flash-partition-settings-ti816x.patch \
+                   file://hidav-flash-partition-settings-ti816x.patch \
                    file://btrfs-kobject-include.patch \ 
                    "
 
-MACHINE_KERNEL_PR = "r44"
+MACHINE_KERNEL_PR = "r45"
 
-do_compileconfigs_prepend() {
+#
+# do_compileconfigs_prepend() {
+#
+
+do_aufs_setup() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
   cp -r ${WORKDIR}/aufs/fs ${S}
   cp ${WORKDIR}/aufs/include/linux/aufs_type.h ${S}/include/linux/
@@ -32,6 +36,26 @@ do_compileconfigs_prepend() {
   patch -p1 < ${WORKDIR}/aufs/aufs2-base.patch
   patch -p1 < ${WORKDIR}/aufs/proc_map.patch
   patch -p1 < ${WORKDIR}/aufs/aufs2-standalone.patch
+}
+
+# this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
+# so we insert it manually.
+addtask aufs_setup after do_patch before do_configure
+
+
+do_compile_prepend() {
+    # The TI layer can break the kernel's do_compile when you provide
+    # your own defconfig and then do a multi-kernel build:
+    # Your defconfig kernel will never be built. Instead, one of the
+    # "multi-config" kernels will be built in place of the defconfig one.
+    #
+    # Since I can't quite determine *where* exactly this happens in the meta-ti layer's
+    # multi-kernel.inc or linux.inc (they pretty much do everything by themselves, 
+    # reinventing the wheel, not using openembedded stages the traditional way, it's quite a mess)
+    # I just restore our defconfig just before compilation to even things out.
+
+    cp ${WORKDIR}/defconfig ${S}/.config
+    oe_runmake oldconfig
 }
 
 pkg_postinst_kernel-image_append() {

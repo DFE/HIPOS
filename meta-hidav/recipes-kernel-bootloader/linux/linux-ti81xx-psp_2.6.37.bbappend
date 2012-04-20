@@ -20,12 +20,10 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
                    file://btrfs-kobject-include.patch \ 
                    "
 
-MACHINE_KERNEL_PR = "r45"
+MACHINE_KERNEL_PR = "r46"
 
-#
-# do_compileconfigs_prepend() {
-#
-
+# this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
+# so we insert it manually.
 do_aufs_setup() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
   cp -r ${WORKDIR}/aufs/fs ${S}
@@ -37,11 +35,17 @@ do_aufs_setup() {
   patch -p1 < ${WORKDIR}/aufs/proc_map.patch
   patch -p1 < ${WORKDIR}/aufs/aufs2-standalone.patch
 }
-
-# this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
-# so we insert it manually.
 addtask aufs_setup after do_patch before do_configure
 
+# Create ti816x config on the fly from our defconfig (ti8148).
+do_create_ti816x_conf() {
+    mkdir -p ${WORKDIR}/configs
+    cp -f ${WORKDIR}/defconfig ${WORKDIR}/configs/ti816x
+    sed -i -e 's/^CONFIG_ARCH_TI814X=y/# CONFIG_ARCH_TI814X is not set/' ${WORKDIR}/configs/ti816x
+    sed -i -e 's/^# CONFIG_ARCH_TI816X is not set/CONFIG_ARCH_TI816X=y/' ${WORKDIR}/configs/ti816x
+    sed -i -e 's/^CONFIG_MACH_TI8148EVM=y/CONFIG_MACH_TI8168EVM=y/' ${WORKDIR}/configs/ti816x
+}
+addtask create_ti816x_conf after do_aufs_setup before do_configure
 
 do_compile_prepend() {
     # The TI layer can break the kernel's do_compile when you provide

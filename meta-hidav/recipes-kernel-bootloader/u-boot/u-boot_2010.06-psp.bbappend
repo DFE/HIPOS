@@ -1,16 +1,16 @@
-PR_append = "+r3"
+PR_append = "+r6"
 
 COMPATIBLE_MACHINE = "hidav"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
+BRANCH = "ti81xx-master"
+SRCREV = "2ec1a17817e422b9417289b91c027980b45c7d65"
+
 SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-fast-flash-settings.patch \
                    file://hidav-enable-icache.patch \
                    file://hidav-nand-do-not-use-bad_block_table.patch "
-
-BRANCH_ti814x = "ti81xx-master"
-SRCREV_pn-${PN}_ti814x  = "2ec1a17817e422b9417289b91c027980b45c7d65"
 
 do_configure() {
     # tfm: do nothing; we re-configure and re-compile u-boot at least ttwwiiccee in the "compile" stage.

@@ -1,6 +1,6 @@
 require hydraip-image.inc
 
-PR_append = ".4"
+PR_append = ".6"
 
 export IMAGE_BASENAME = "hydraip-image"
 

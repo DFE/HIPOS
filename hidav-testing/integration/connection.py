@@ -24,7 +24,7 @@ class Connection( object ):
     def __init__( self, serial_setup = ( "/dev/ttyUSB0", 115200, 8, 'N', 1, 1), 
                   network_setup = ( None, "eth0" ), login = ( "root", "" ),
                   boot_prompt = "HidaV boot on", serial_skip_pw = True,
-		  hw_reset = True ):
+                  hw_reset = True ):
         """ Initialize a new connection instance.
             @param serial_setup:  Set of init options for the serial backend:
               ( "port", baudrate, data bits, parity, stop bits, timeout_sec )
@@ -40,7 +40,7 @@ class Connection( object ):
         self._logger = logger.init()
         self._login = login
         self._target_if = network_setup[1]
-	self._hw_reset = hw_reset
+        self._hw_reset = hw_reset
         self._serial = self._serial_setup( *serial_setup, 
                             skip_pass = serial_skip_pw, 
                             boot_prompt = boot_prompt )
@@ -69,7 +69,7 @@ class Connection( object ):
         ser = serial_conn.SerialConn( self._logger, 
                         login = self._login, skip_pass = skip_pass, 
                         boot_prompt = boot_prompt,
-			needs_hw_reset = self._hw_reset )
+                        needs_hw_reset = self._hw_reset )
         ser.port     = port
         ser.baudrate = baud
         ser.bytesize = byte

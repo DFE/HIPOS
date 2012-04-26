@@ -60,6 +60,7 @@ update_bblayers_conf()
   echo "${BASE}/meta-texasinstruments \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-angstrom \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-openembedded/meta-oe \\" >> ${BB_LAYER_CONF}
+  echo "${BASE}/meta-openembedded/toolchain-layer \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/openembedded-core/meta \\" >> ${BB_LAYER_CONF}
 
   echo "\"" >> ${BB_LAYER_CONF}
@@ -70,6 +71,7 @@ update_submodules()
   log "I: updating submodules (OE layers + bitbake)"
 
    "${GIT}" submodule init
+   "${GIT}" submodule sync
    "${GIT}" submodule update
 }
 

@@ -47,7 +47,7 @@ class Device( object ):
             login = self._setup["login"],
             serial_skip_pw = self._setup["serial_skip_pw"] )
         self._logger = logger.init()
-	if self._setup["hw_reset"]:
+        if self._setup["hw_reset"]:
             power.power(1)
 
     @property

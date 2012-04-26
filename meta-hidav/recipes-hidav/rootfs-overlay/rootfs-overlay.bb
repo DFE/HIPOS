@@ -1,10 +1,10 @@
 DESCRIPTION = "Script tools to use and maintain root fs snapshots by using AUFS writeable overlays."
 SECTION = "base"
 LICENSE = "GPLv2"
-PACKAGE_ARCH = all
+PACKAGE_ARCH = "all"
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
-PR = "r26"
+PR = "r29"
 
 # ubi tooling from mtd-utils
 RDEPENDS = " mtd-utils "
@@ -16,6 +16,7 @@ COMPATIBLE_MACHINE = "hidav"
 SRC_URI=" file://rootfs-overlay-sources/* \
 	  file://mount-rootfs-overlay.service   \
 	  file://umount-rootfs-overlay.service   \
+	  file://rootfs-overlay.target \
 "
 
 FILES_${PN} += "/overlays \
@@ -26,10 +27,10 @@ FILES_${PN} += "/overlays \
 # systemd
 PACKAGES =+ "${PN}-systemd"
 FILES_${PN}-systemd += "${base_libdir}/systemd"
-RDEPENDS_${PN}-systemd += "${PN}"
+RDEPENDS_${PN}-systemd += "${PN} systemd"
 
 SYSTEMD_PACKAGES = "${PN}-systemd"
-SYSTEMD_SERVICE_${PN}-systemd = "mount-rootfs-overlay.service unmount-rootfs-overlay.service"
+SYSTEMD_SERVICE_${PN}-systemd = "mount-rootfs.target mount-rootfs-overlay.service unmount-rootfs-overlay.service"
 
 FILES_${PN} += "${base_libdir}/systemd"
 
@@ -53,6 +54,7 @@ do_install() {
 
 	# systemd
     install -d ${D}${base_libdir}/systemd/system
+	install -m 644 ${WORKDIR}/rootfs-overlay.target ${D}${base_libdir}/systemd/system
     install -m 644 ${WORKDIR}/mount-rootfs-overlay.service ${D}${base_libdir}/systemd/system
     install -m 644 ${WORKDIR}/umount-rootfs-overlay.service ${D}${base_libdir}/systemd/system
 
@@ -63,13 +65,16 @@ do_install() {
     #  - the links will never be created, because in order to create the links we need a writeable overlay,
     #      but in order to get a writeable overlay we need the systemd links but in order to get them we needawriteableoverlaybutinordertogetthisweneedlinks AAAAARGH.
     #
-    install -d ${D}${base_libdir}/systemd/system/local-fs.target.wants
+    install -d ${D}${base_libdir}/systemd/system/rootfs-overlay.target.wants
     install -d ${D}${base_libdir}/systemd/system/shutdown.target.wants
-    cd '${D}${base_libdir}/systemd/system/local-fs.target.wants'
+
+	cd '${D}${base_libdir}/systemd/system/rootfs-overlay.target.wants'
     ln -s '../mount-rootfs-overlay.service' 'mount-rootfs-overlay.service'
     cd -
     cd '${D}${base_libdir}/systemd/system/shutdown.target.wants'
     ln -s '../umount-rootfs-overlay.service' 'umount-rootfs-overlay.service'
+
+	ln -s 'rootfs-overlay.target' '${D}${base_libdir}/systemd/system/default.target'
 }
 
 do_patch[noexec] = "1"

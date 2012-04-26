@@ -1,4 +1,4 @@
-PR_append = "+r1"
+PR_append = "+r2"
 
 URI = "http://hydraip-integration:8080/userContent/hidav-"
 STABLE = "stable"
@@ -18,8 +18,8 @@ do_install () {
 	install -m 0644  ${S}/${sysconfdir}/opkg/* ${D}${sysconfdir}/opkg/
 }
 
-RCONFLICTS_${PN} = "${PN}-${UNSTABLE}"
-RCONFLICTS_${PN}-${UNSTABLE} = "${PN}"
+#RCONFLICTS_${PN} = "${PN}-${UNSTABLE}"
+#RCONFLICTS_${PN}-${UNSTABLE} = "${PN}"
 
 PACKAGES += "${PN}-${UNSTABLE}"
 

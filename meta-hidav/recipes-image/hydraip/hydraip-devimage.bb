@@ -1,6 +1,6 @@
 require hydraip-image.inc
 
-PR_append = ".2"
+PR_append = ".5"
 
 export IMAGE_BASENAME = "hydraip-devimage"
 
@@ -14,5 +14,7 @@ IMAGE_INSTALL += " \
   openssh-sftp-server \
   subversion \
   git \
-  openjdk-6-jdk \
 "
+
+# DNS: deactivated temporary on build issues
+#IMAGE_INSTALL += "openjdk-6-jdk"

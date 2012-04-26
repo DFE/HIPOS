@@ -11,7 +11,10 @@
 # 2 of the License, or (at your option) any later version.
 #
 
+""" Helper function which performs a RESET on a device. """
+
 import serial
+
 
 def reset( port = "/dev/ttyUSB1" ):
     """ Reset a device using a DResearch GPIOBox on a serial port.
@@ -19,16 +22,16 @@ def reset( port = "/dev/ttyUSB1" ):
         connected to a serial port. Pin #1 will switch for 2 seconds,
         connecting the shutter, which should be connected to the
         device's RESET pins."""
-    s = serial.Serial ()
-    s.port     = port
-    s.baudrate = 9600
-    s.bytesize = 8
-    s.parity   = 'N'
-    s.stopbits = 1
-    s.timeout  = 1
-    s.open()
-    s.write("P114\n")
-    s.close()
+    ser = serial.Serial ()
+    ser.port     = port
+    ser.baudrate = 9600
+    ser.bytesize = 8
+    ser.parity   = 'N'
+    ser.stopbits = 1
+    ser.timeout  = 1
+    ser.open()
+    ser.write("P114\n")
+    ser.close()
     
 
 if __name__ == '__main__':

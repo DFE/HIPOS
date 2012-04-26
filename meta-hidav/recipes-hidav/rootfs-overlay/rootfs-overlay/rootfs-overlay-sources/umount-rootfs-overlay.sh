@@ -79,7 +79,7 @@ mount -o remount,rw ${original_root_mountpoint} || \
 
 # move-mount everything
 for mount in `list_moveable_mounts`; do
-    mount --move "${mount}" "${original_root_mountpoint}${mount}" || \
+	mount --move "${mount}" "${original_root_mountpoint}${mount}" || \
         logger -s -p syslog.warn -t rootfs-overlay \
             "Failed to move-mount ${fs} to ${original_root_mountpoint}${fs}. Ignoring and continuing anyway."
 done
@@ -94,13 +94,13 @@ pivot_root . ${pivot_root_mountpoint#/}
 # open FDs
 exec chroot . sh -c "
         cd /
-        killprocs="`fuser -m ${pivot_root_mountpoint}`"
+        killprocs=\"`fuser -m ${pivot_root_mountpoint}`\"
         trap \"\" SIGTERM
-        kill -TERM ${killprocs} || true
+        kill -TERM ${killprocs} > /dev/null || true
         umount -l ${pivot_root_mountpoint}
         umount -l ${overlays_data_mountpoint}
-        sleep 1
+   		sleep 1
         ubidetach -p ${application_fs_mtd}
-        kill -KILL ${killprocs} || true
+        kill -KILL ${killprocs} > /dev/null || true
 " <dev/console >dev/console 2>&1
 

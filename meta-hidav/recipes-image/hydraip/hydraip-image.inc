@@ -2,10 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-# temporary replace connman with networkmanager till it's more stable
-CONMANPKGS = "networkmanager networkmanager-systemd"
-
-PR_append = "+r17"
+PR_append = "+r19"
 
 IMAGE_FEATURES += " package-management "
 
@@ -14,6 +11,7 @@ IMAGE_INSTALL += " \
   htop \
   bash \
   portmap portmap-systemd \
+  bootconfig \
 "
 
 # profiling

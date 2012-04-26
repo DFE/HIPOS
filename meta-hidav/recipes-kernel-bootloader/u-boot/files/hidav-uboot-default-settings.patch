@@ -74,10 +74,10 @@ index 6fc94b1..b286c11 100644
  	/* fallback ecc info, this will be overridden by 
  	 * ti81xx_nand_switch_ecc() below to 1-bit h/w ecc
 diff --git a/include/configs/ti8148_evm.h b/include/configs/ti8148_evm.h
-index 33f7bea..215209d 100644
+index 33f7bea..f4bc7ff 100644
 --- a/include/configs/ti8148_evm.h
 +++ b/include/configs/ti8148_evm.h
-@@ -17,134 +17,137 @@
+@@ -17,134 +17,139 @@
  #ifndef __CONFIG_TI8148_EVM_H
  #define __CONFIG_TI8148_EVM_H
  
@@ -107,22 +107,7 @@ index 33f7bea..215209d 100644
 -//# undef CONFIG_BOOTM_RTEMS
 -//# undef CONFIG_SREC
 -//# undef CONFIG_XYZMODEM
-+#endif
-+
-+#define CONFIG_CMD_RUN 
-+#define CONFIG_CMD_MEMORY	/* for mtest */
-+#define CONFIG_CMD_ECHO
-+
-+#define CONFIG_SETUP_PLL
-+
-+#define CONFIG_CMDLINE_TAG		1	/* enable passing of ATAGs  */
-+#define CONFIG_SETUP_MEMORY_TAGS	1
-+#define CONFIG_INITRD_TAG		1	/* Required for ramdisk support */
-+
-+#define CONFIG_VERSION_VARIABLE
-+
-+# undef CONFIG_CRC32_VERIFY
- # undef CONFIG_SYS_HUSH_PARSER
+-# undef CONFIG_SYS_HUSH_PARSER
 -# define CONFIG_CMD_LOADB	/* loadb			*/
 -# define CONFIG_CMD_LOADY	/* loady */
 -# define CONFIG_SETUP_PLL
@@ -141,43 +126,48 @@ index 33f7bea..215209d 100644
 -#  define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootcmd=sf probe 0; sf read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
--
++#endif
+ 
 -# elif defined(CONFIG_NAND_BOOT)		/* Autoload the 2nd stage from NAND */
 -#  define CONFIG_NAND			1
 -#  define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootcmd=nand read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
--
++#define CONFIG_CMD_RUN 
++#define CONFIG_CMD_MEMORY	/* for mtest */
++#define CONFIG_CMD_ECHO
+ 
 -# elif defined(CONFIG_SD_BOOT)		/* Autoload the 2nd stage from SD */
 -#  define CONFIG_MMC			1
 -#  define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootcmd=mmc rescan 0; fatload mmc 0 0x80800000 u-boot.bin; go 0x80800000\0" \
--
++#define CONFIG_SETUP_PLL
+ 
 -#elif defined(CONFIG_UART_BOOT)                /* stop in the min prompt */
 -#define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootcmd=\0" \
--
++#define CONFIG_CMDLINE_TAG		1	/* enable passing of ATAGs  */
++#define CONFIG_SETUP_MEMORY_TAGS	1
++#define CONFIG_INITRD_TAG		1	/* Required for ramdisk support */
+ 
 -#elif defined(CONFIG_ETH_BOOT)		/* Auto load 2nd stage from server */
 -#  define CONFIG_EXTRA_ENV_SETTINGS \
 -	"verify=yes\0" \
 -	"bootcmd=setenv autoload no;dhcp; tftp 0x81000000 u-boot.bin; go 0x81000000\0"
++#define CONFIG_VERSION_VARIABLE
+ 
+-# endif
++# undef CONFIG_CRC32_VERIFY
++# undef CONFIG_SYS_HUSH_PARSER
 +# undef CONFIG_DISPLAY_CPUINFO
 +# undef CONFIG_SPI
 +# undef CONFIG_I2C
  
--# endif
+-#else
 +# define CONFIG_BOOTDELAY	0
 +# define CONFIG_SYS_AUTOLOAD	"no"
- 
--#else
-+/*
-+ * tfm TODO:
-+ * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
-+ * - figure which filesystem to use (timestamp)
-+ * - boot the right kernel with the freshest rootfs
-+ */
  
 -# include <config_cmd_default.h>
 -# define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */
@@ -193,25 +183,34 @@ index 33f7bea..215209d 100644
 -# define CONFIG_INITRD_TAG	  	1	/* Required for ramdisk support */
 -# define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
 -/* By default, 2nd stage will have MMC, NAND, SPI and I2C support */
++/*
++ * tfm TODO:
++ * - figure which kernel (i.e. which NAND offset) to boot (timestamp, last kernel tried, last kernel succeeded,)
++ * - figure which filesystem to use (timestamp)
++ * - boot the right kernel with the freshest rootfs
++ */
++
 +#ifdef TI81XX_SECOND_STAGE
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO0,115200n8 rootwait root=/dev/mtdblock4 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
-+                "nboot 0x80007FC0 0 0x200000; bootm;\0"
++                    "console=ttyO0,115200n8 rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255;" \
++                "nboot 0x80007FC0 0 ${kernel_offset}; bootm;\0"
 +#else 
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO0,115200n8 quiet rootwait root=/dev/mtdblock4 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg';" \
-+                "nboot 0x80007FC0 0 0x200000; bootm;\0"
++                    "console=ttyO0,115200n8 quiet rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg;" \
++                "nboot 0x80007FC0 0 ${kernel_offset}; bootm;\0"
 +#endif
 +
 +# define CONFIG_EXTRA_ENV_SETTINGS \
++    "kernel_offset=0x200000\0"\
++    "rootfs_device=/dev/mtdblock4\0"\
 +    "boot2nd=mmc rescan 0; "\
 +                    "fatload mmc 0 0x80800000 u-boot-2nd.sd;"\
 +                    "go 0x80800000\0" \
 +    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
-+                                "'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg';" \
++                                "console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg;" \
 +                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    BOOTNAND_CMD \
@@ -253,7 +252,10 @@ index 33f7bea..215209d 100644
 -	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 -	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 -		"source ${script_addr}\0" \
--
++# define CONFIG_BOOTCOMMAND "run bootnand"
++# define TI814X_ENABLE_ICACHE
++#endif
+ 
 -# define CONFIG_BOOTCOMMAND \
 -	"if mmc rescan 0; then " \
 -		"if run loadbootscript; then " \
@@ -267,20 +269,16 @@ index 33f7bea..215209d 100644
 -		"echo Please set bootargs and bootcmd before booting the kernel; " \
 -		"echo If that has already been done please ignore this message; "\
 -	"fi"
-+# define CONFIG_BOOTCOMMAND "run bootnand"
-+# define TI814X_ENABLE_ICACHE
-+#endif
- 
 +#ifdef TI81XX_SECOND_STAGE
  
--#endif
 +#define CONFIG_CMD_ASKENV
 +#define CONFIG_MMC			1
  
+-#endif
++#define TI814X_ENABLE_ICACHE
+ 
 -#define CONFIG_SYS_GBL_DATA_SIZE	128	/* size in bytes reserved for
 -						   initial data */
-+#define TI814X_ENABLE_ICACHE
-+
 +/* U-Boot default commands */
 +# include <config_cmd_default.h>
 +# define CONFIG_SYS_HUSH_PARSER		/* Use HUSH parser to allow command parsing */
@@ -320,10 +318,10 @@ index 33f7bea..215209d 100644
  #define CONFIG_SYS_PBSIZE		(CONFIG_SYS_CBSIZE \
  					+ sizeof(CONFIG_SYS_PROMPT) + 16)
 diff --git a/include/configs/ti8168_evm.h b/include/configs/ti8168_evm.h
-index c615e9a..7eb9bf1 100644
+index c615e9a..cebc2f9 100644
 --- a/include/configs/ti8168_evm.h
 +++ b/include/configs/ti8168_evm.h
-@@ -17,98 +17,125 @@
+@@ -17,98 +17,127 @@
  #ifndef __CONFIG_TI816X_EVM_H
  #define __CONFIG_TI816X_EVM_H
  
@@ -373,13 +371,13 @@ index c615e9a..7eb9bf1 100644
 -#define CONFIG_CMD_ASKENV
  #define CONFIG_VERSION_VARIABLE
 -#define CONFIG_CMD_ECHO
- 
+-
 -/* By default, any image built will have MMC, NAND, SPI and I2C support */
 -#define CONFIG_MMC			1
 -#define CONFIG_NAND			1
 -#define CONFIG_SPI			1
 -#define CONFIG_I2C			1
--
+ 
 -/* Minimal image which runs out of internal memory */
 -#ifdef CONFIG_MINIMAL
 -# undef CONFIG_MMC
@@ -410,23 +408,25 @@ index c615e9a..7eb9bf1 100644
 +#ifdef TI81XX_SECOND_STAGE
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO2,115200n8 rootwait root=/dev/mtdblock4 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255';" \
-+                "nboot 0x80007FC0 0 0x200000; bootm;\0"
++                    "console=ttyO2,115200n8 rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255;" \
++                "nboot 0x80007FC0 0 ${kernel_offset}; bootm;\0"
 +#else 
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "'console=ttyO2,115200n8 quiet rootwait root=/dev/mtdblock4 ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg';" \
-+                "nboot 0x80007FC0 0 0x200000; bootm;\0"
++                    "console=ttyO2,115200n8 quiet rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg;" \
++                "nboot 0x80007FC0 0 ${kernel_offset}; bootm;\0"
 +#endif
 +
 +
 +# define CONFIG_EXTRA_ENV_SETTINGS \
++    "kernel_offset=0x200000\0"\
++    "rootfs_device=/dev/mtdblock4\0"\
 +    "boot2nd=mmc rescan 0; "\
 +                    "fatload mmc 0 0x80800000 u-boot-2nd.sd;"\
 +                    "go 0x80800000\0" \
 +    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
-+                                "'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg';" \
++                                "console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 ro earlyprink mem=1024M vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg;" \
 +                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    BOOTNAND_CMD \
@@ -490,7 +490,7 @@ index c615e9a..7eb9bf1 100644
 -	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 -	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 -		"source ${script_addr}\0" \
--
+ 
 -#define CONFIG_BOOTCOMMAND \
 -	"if mmc rescan 0; then " \
 -		"if run loadbootscript; then " \
@@ -504,7 +504,6 @@ index c615e9a..7eb9bf1 100644
 -		"echo Please set bootargs and bootcmd before booting the kernel; " \
 -		"echo If that has already been done please ignore this message; "\
 -	"fi"
- 
 +#define CONFIG_MMC			1
 +#undef CONFIG_BOOTCOMMAND
 +#undef CONFIG_BOOTDELAY
@@ -512,7 +511,7 @@ index c615e9a..7eb9bf1 100644
 +#define CONFIG_BOOTDELAY 5
 +#undef CONFIG_SYS_MALLOC_LEN
 +#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
-+
+ 
 +#define CONFIG_ENV_OVERWRITE
 +#define CONFIG_SYS_LONGHELP
 +#define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */
@@ -520,7 +519,7 @@ index c615e9a..7eb9bf1 100644
  
  #endif
  
-@@ -120,7 +147,7 @@
+@@ -120,7 +149,7 @@
  /* Undef to save memory */
  #define CONFIG_SYS_LONGHELP
  /* Monitor Command Prompt */
@@ -529,7 +528,7 @@ index c615e9a..7eb9bf1 100644
  /* Console I/O Buffer Size */
  #define CONFIG_SYS_CBSIZE		512
  /* Print Buffer Size */
-@@ -144,11 +171,11 @@
+@@ -144,11 +173,11 @@
  /**
   * Physical Memory Map
   */
@@ -546,7 +545,7 @@ index c615e9a..7eb9bf1 100644
  
  
  /**
-@@ -268,17 +295,6 @@ extern unsigned int boot_flash_type;
+@@ -268,17 +297,6 @@ extern unsigned int boot_flash_type;
  # endif
  #endif /* SPI support */
  
@@ -564,7 +563,7 @@ index c615e9a..7eb9bf1 100644
  /* NOR support */
  #if defined(CONFIG_NOR)
  # undef CONFIG_CMD_NAND			/* Remove NAND support */
-@@ -323,9 +339,8 @@ extern unsigned int boot_flash_type;
+@@ -323,9 +341,8 @@ extern unsigned int boot_flash_type;
  
  /* HSMMC Definitions */
  #ifdef CONFIG_MMC
@@ -575,7 +574,7 @@ index c615e9a..7eb9bf1 100644
  # define CONFIG_DOS_PARTITION	1
  # define CONFIG_CMD_FAT		1
  #endif
-@@ -333,5 +348,13 @@ extern unsigned int boot_flash_type;
+@@ -333,5 +350,13 @@ extern unsigned int boot_flash_type;
  /* Unsupported features */
  #undef CONFIG_USE_IRQ
  

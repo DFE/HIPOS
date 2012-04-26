@@ -1,0 +1,142 @@
+#!/bin/bash
+
+mock_count=0
+mock_path=""
+
+function cat() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count] cat $@"
+
+	echo "[$mock_count] I'm a mocked CAT! I was called with: \"$@\"" >&2
+	if [ "$@" =  "/proc/cmdline" ]; then
+		echo "mtdblock4"
+		echo "mtdblock4" >&2
+		exit
+	fi
+	if [ "$@" = "layer_stack" ]; then
+		echo "/overlay/layer-rool1/hiiiiiiiiisadsadsadsa"
+		echo "/overlay/layer-rool1/hiid"
+		echo "/overlay/layer-rool1/bla"
+		echo "/overlay/layer-rool1/blu"
+		echo "/overlay/layer-rool1/ooooooooommmmmaaaaaaannnd"
+		echo "/overlay/layer-rool1/blubber"
+	fi
+}
+
+function id() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count] id $@"
+
+	echo "[$mock_count] I'm a mocked id! I was called with: \"$@\"" >&2
+	if [ "$@" = "-u" ]; then
+		echo "0"
+		return 0
+	fi
+
+}
+
+function cd() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count] cd $@"
+	echo "[$mock_count] I'm a mocked cd! I was called with: \"$@\"" >&2
+}
+
+function touch() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count] touch $@"
+	echo "[$mock_count] I'm a mocked touch! I was called with: \"$@\"" >&2
+}
+
+function mkdir() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count] mkdir $@"
+
+	echo "[$mock_count] I'm a mocked mkdir! I was called with: \"$@\"" >&2
+}
+
+function ls() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count] ls $@"
+
+	echo "[$mock_count] I'm a mocked ls! I was called with: \"$@\"" >&2
+	if [ "$1" = "-d" ]; then
+		echo "/overlay/layer-rool1/bla/"
+ 		echo "/overlay/layer-rool1/blu/"
+		echo "/overlay/layer-rool1/blubber/"
+		echo "/overlay/layer-rool1/do_not_use/" 
+		echo "/overlay/layer-rool1/hii/"
+		echo "/overlay/layer-rool1/hiid/"
+		echo "/overlay/layer-rool1/hiiiiiiiii/"
+		echo "/overlay/layer-rool1/hiiiiiiiiisadsadsadsa/"
+		echo "/overlay/layer-rool1/jjjjjjjjjjjjj/" 
+		echo "/overlay/layer-rool1/ooooooooommmmmaaaaaaannn/" 
+		echo "/overlay/layer-rool1/ooooooooommmmmaaaaaaannnd/"
+		echo "/overlay/layer-rool1/overlay/"
+	fi
+
+}
+
+function rm() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count]rm$@"
+
+	echo "[$mock_count] I'm a mocked rm! I was called with: \"$@\"" >&2
+}
+
+function [() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count] [ $@"
+
+#	echo "---------------- \"$@\"" >&2
+	param=""
+	for p in $*
+	do
+		if /usr/bin/test "$p" != "]" ; then
+			param="$param$p ";
+		fi 
+		if /usr/bin/test "$p" = "" ; then
+			param="$param\"\" ";
+		fi
+	done;
+
+
+	/usr/bin/test $param
+	ret=$?
+	if /usr/bin/test "$*" = "-e layer_stack ]" ; then
+		ret=0
+	fi
+	if /usr/bin/test "$*" = "-d /overlay/layer-rool1 ]" ; then
+		ret=0
+	fi
+#	echo "---------------- \"$*\" ret:$ret" >&2
+	return $ret
+
+}
+
+function echo() {
+mock_count=`expr $mock_count + 1`;
+mock_path="$mock_path :[$mock_count] [ $@"
+	/bin/echo $@
+}
+
+
+. overlay-list
+
+/bin/echo "mock_count=$mock_count"
+/bin/echo $mock_path
+
+for line in $( echo "$mock_path" );
+do
+	/bin/echo "$line" | grep ^: >/dev/null
+	if [ $? -ne 0 ]; then
+       		/bin/echo "$line" | awk -F : '{ printf(" %s",$0 ) }'
+	else
+		/bin/echo ""
+		/bin/echo "$line" | awk -F : '{ printf("%s ",$0) }'
+	fi
+done
+
+/bin/echo ""
+
+/bin/echo "$mock_path" | md5sum 
+

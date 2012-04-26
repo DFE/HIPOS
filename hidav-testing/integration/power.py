@@ -20,10 +20,10 @@ def power( onoff, port = "/dev/ttyUSB1" ):
     """ Power /un-power a device using a DResearch GPIOBox on a serial port.
         This helper function will issue a pin command to a GPIOBox
         connected to a serial port. Pin #1 will switch on or off depending
-	on the onoff parameter.
+        on the onoff parameter.
 
-	@param onoff - whether to switch power on or off.
-	@kwparam port - serial port to use.
+        @param onoff: whether to switch power on or off.
+        @kwparam port: serial port to use.
 	"""
 
     ser = serial.Serial ()

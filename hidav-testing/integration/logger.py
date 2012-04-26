@@ -13,17 +13,32 @@
 
 """ Logging helper Package """
 
-import logging
+import logging, datetime
 
-def init( ):
+logger = None
+
+def init( stdout_too = False ):
     """ Initalise logging
         @return: logger instance """
+
+    global logger
+
+    if logger:
+        return logger
+
     logger = logging.getLogger( __name__  )
     logger.setLevel( logging.DEBUG )
 
-    handler = logging.StreamHandler()
+    handler = logging.FileHandler( "run-%s.log" % datetime.datetime.now(), mode='w+')
     handler.setFormatter( logging.Formatter(
         "%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): "
         + "%(message)s" ) )
     logger.addHandler( handler )
+
+    if stdout_too:
+        handler = logging.StreamHandler()
+        handler.setFormatter( logging.Formatter(
+            "%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): "
+            + "%(message)s" ) )
+        logger.addHandler( handler )
     return logger

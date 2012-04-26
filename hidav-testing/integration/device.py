@@ -13,6 +13,7 @@
 
 """ Package for the device class """
 
+import time
 import connection, logger, power
 
 class Device( object ):
@@ -50,6 +51,22 @@ class Device( object ):
         if self._setup["hw_reset"]:
             power.power(1)
 
+    def reboot( self ):
+        """ Reboot the device. Return after reboot was successful."""
+        self.conn._serial.reboot( sync=True )
+
+    def boot_to_nand( self ):
+        """ Reboot the device to NAND.
+            """
+        self._logger.info( "Rebooting to NAND." )
+        self.conn._serial.reboot( sync=True,
+                                  stop_at_bootloader = True )
+        self._logger.debug( "Stopped at bootloader; issuing 'run bootnand'." )
+        self.conn._serial.write("run bootnand\n")
+        time.sleep( 1 )
+        self.conn._serial.login()
+        self._logger.debug( "Now rebooted to NAND." )
+
     @property
     def firmware_version( self ):
         """ Firmware version property. This is the device's
@@ -67,7 +84,7 @@ class Device( object ):
 
     def update_package_index( self ):
         """ Update the device's package index remotely.
-            @raise: Exception if the update failed."""
+            @raise Exception: if the update failed."""
         self._logger.debug("Updating the package index...")
         ret, msgs = self.conn.cmd("opkg update")
         if ret != 0:
@@ -78,7 +95,7 @@ class Device( object ):
         """ Install a package at the device. The package index will be updated
             prior to the installation.
             @param package_name: name of the package to be installed.
-            @raise: Exception if the install failed."""
+            @raise Exception: if the install failed."""
         self._logger.info("Installing package %s." % package_name)
         self.update_package_index()
         ret, msgs = self.conn.cmd("opkg install %s" % package_name)
@@ -89,7 +106,7 @@ class Device( object ):
     def remove_package( self, package_name ):
         """ Remove a package from the device.
             @param package_name: name of the package to be removed.
-            @raise: Exception if the install failed."""
+            @raise Exception: if the install failed."""
         self._logger.info("Removing package %s." % package_name)
         ret, msgs = self.conn.cmd(
                 "opkg remove --force-removal-of-dependent-packages %s" 
@@ -104,7 +121,7 @@ if __name__ == '__main__':
             This function uses some basic capabilities of the class. It is
             thought to be used for interactive testing during development,
             and for a showcase on how to use the class. """
-        import sys, time
+        import sys
         dev = Device( devtype = "hidav" )
         print dev.firmware_version
 

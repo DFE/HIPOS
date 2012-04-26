@@ -13,7 +13,7 @@
 
 """ Package for the Serial Connection class """
 
-import serial, re, urllib, power
+import serial, re, urllib, power, time
 
 class SerialConn( serial.Serial ):
     """Serial connection to a device.

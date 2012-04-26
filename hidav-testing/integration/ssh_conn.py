@@ -57,7 +57,7 @@ class SshConn( object ):
     def _session( self ):
         """ Session property. This is the current SSH session. It will be 
             created when needed.
-             Return the session; create it if it isn't there yet """
+            Return the session; create it if it isn't there yet """
         try:    
             return self.__session
         except AttributeError:

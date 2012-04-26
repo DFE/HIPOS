@@ -55,13 +55,25 @@ class Device( object ):
         """ Reboot the device. Return after reboot was successful."""
         self.conn._serial.reboot( sync=True )
 
-    def boot_to_nand( self ):
+    def boot_to_nand( self, kernel_partition = 2, rootfs_partition = 4 ):
         """ Reboot the device to NAND.
             """
-        self._logger.info( "Rebooting to NAND." )
+        kernel_offset = "0x200000" if kernel_partition == 2 else "0xC00000"
+
+        self._logger.info( "Rebooting to NAND (kernel: mtd%s, rootfs: mtd%s)."
+                            % (kernel_partition, rootfs_partition) )
         self.conn._serial.reboot( sync=True,
                                   stop_at_bootloader = True )
-        self._logger.debug( "Stopped at bootloader; issuing 'run bootnand'." )
+
+        self._logger.debug( "Setting kernel offset to %s." % kernel_offset )
+        self.conn._serial.write("setenv kernel_offset %s\n" % kernel_offset)
+
+        self._logger.debug( "Setting kernel root to /dev/mtdblock%s." 
+                                % rootfs_partition)
+        self.conn._serial.write("setenv rootfs_device /dev/mtdblock%s\n"
+                                % rootfs_partition )
+
+        self._logger.debug( "Issuing 'run bootnand'." )
         self.conn._serial.write("run bootnand\n")
         time.sleep( 1 )
         self.conn._serial.login()
@@ -81,6 +93,31 @@ class Device( object ):
     def firmware_version( self ): # pylint: disable-msg=E0102
         """ Firmware version property deleter. """
         del self._fw_version
+
+    @property
+    def bootconfig( self ):
+        """ Bootconfig property. This is a dictionary
+            representing the device's boot partition configuration.
+            E.g. { "epoch" : 42, "kernel" : 2, "rootfs" : 5 } would mean
+            the current kernel is on mtd2, the current rootfs on mtd5,
+            and the entry is the 42nd ever written. """
+        try:
+            return self._bootconfig
+        except AttributeError:
+            ret = self.conn.cmd(  # pylint: disable-msg=W0201
+                        """bootconfig | """
+                    +   """awk '/kernel/{ k=$2 } /rootfs/{ r=$2 } """
+                    +     """ /epoch/{ e=$2 } END{ print k " " r " " e }'""" 
+                        )[1].split(" ")
+            self._bootconfig = { "kernel" : int(ret[0]), 
+                                 "rootfs" : int(ret[1]),
+                                 "epoch"  : int(ret[2])  }
+            return self._bootconfig
+    @bootconfig.deleter     # pylint: disable-msg=E1101
+    def bootconfig( self ): # pylint: disable-msg=E0102
+        """ Firmware version property deleter. """
+        del self._bootconfig
+
 
     def update_package_index( self ):
         """ Update the device's package index remotely.
@@ -123,7 +160,13 @@ if __name__ == '__main__':
             and for a showcase on how to use the class. """
         import sys
         dev = Device( devtype = "hidav" )
-        print dev.firmware_version
+        print "Connecting to device..."
+        print "Firmware version: %s" % dev.firmware_version
+
+        print "Boot config:"
+        print "  Kernel:      /dev/mtd%s" % dev.bootconfig["kernel"]
+        print "  rootfs: /dev/mtdblock%s" % dev.bootconfig["rootfs"]
+        print "  epoch :             #%s" % dev.bootconfig["epoch"]
 
         print "Waiting for Networking to come up..."
         while not dev.conn.has_networking():

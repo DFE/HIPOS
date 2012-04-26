@@ -15,8 +15,7 @@ import sys, time, power
 
 from device import Device
 
-def run_upgrade():
-    dev = Device( devtype = "hidav" )
+def run_upgrade( dev ):
 
     print "Booting into NAND..."
     dev.boot_to_nand()
@@ -29,9 +28,32 @@ def run_upgrade():
     print "Firmware version: %s" % dev.firmware_version
 
     print "Installing kernel package..."
-    dev.install_package("kernel")
+    dev.install_package("kernel-image-2.6.37")
 
     print "Installing hydraip-image-pkg package..."
     dev.install_package("hydraip-image-pkg")
 
-run_upgrade()
+def test():
+    dev = Device( devtype = "hidav" )
+    bc_old = dev.bootconfig
+
+    run_upgrade( dev )
+
+    # force re-read
+    del dev.bootconfig
+    bc = dev.bootconfig
+
+    if bc_old["kernel"] == bc["kernel"]:
+        print "Kernel was not updated."
+    if bc_old["rootfs"] == bc["rootfs"]:
+        print "Rootfs was not updated."
+
+    if bc_old["epoch"] == bc["epoch"]:
+        print "Skipping reboot test since nothing was updated."
+    else:
+        dev.boot_to_nand( kernel_partition = bc["kernel"],
+                          rootfs_partition = bc["rootfs"] )
+        # TODO: check...
+
+
+test()

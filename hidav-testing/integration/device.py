@@ -14,7 +14,7 @@
 """ Package for the device class """
 
 import time
-import connection, logger, power
+import connection, logger
 
 class Device( object ):
     """ This class abstracts access to a device, i.e. one single 
@@ -48,8 +48,6 @@ class Device( object ):
             login = self._setup["login"],
             serial_skip_pw = self._setup["serial_skip_pw"] )
         self._logger = logger.init()
-        if self._setup["hw_reset"]:
-            power.power(1)
 
     def reboot( self, to_nand = False ):
         """ Reboot the device. Return after reboot was successful.

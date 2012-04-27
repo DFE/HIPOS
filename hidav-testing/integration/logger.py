@@ -16,12 +16,13 @@
 import logging, datetime
 
 logger = None
+filename = None
 
 def init( stdout_too = False ):
     """ Initalise logging
         @return: logger instance """
 
-    global logger
+    global logger, filename
 
     if logger:
         return logger
@@ -29,7 +30,9 @@ def init( stdout_too = False ):
     logger = logging.getLogger( __name__  )
     logger.setLevel( logging.DEBUG )
 
-    handler = logging.FileHandler( "run-%s.log" % datetime.datetime.now(), mode='w+')
+    filename = "run-%s.log" % datetime.datetime.now()
+
+    handler = logging.FileHandler( filename, mode='w+')
     handler.setFormatter( logging.Formatter(
         "%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): "
         + "%(message)s" ) )
@@ -42,3 +45,4 @@ def init( stdout_too = False ):
             + "%(message)s" ) )
         logger.addHandler( handler )
     return logger
+

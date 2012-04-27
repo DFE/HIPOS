@@ -73,6 +73,10 @@ class SerialConn( serial.Serial ):
             self._timeout = old_to
         return buf
 
+    def dump_receive_buffer ( self ):
+        """ Return the contents of the serial input buffer """
+        return self.read( self.inWaiting() )        
+
     def readline_until( self, target, trigger_write="\n" ):
         """ Read up to a trigger text, read the whole line, then stop.
             This method works just like C{read_until()} with the exception that 
@@ -322,6 +326,7 @@ if __name__ == '__main__':
         print "   --- reboot messages ---  \n"
         print bootlog
         print "   --- ------ -------- ---  \n"
+        print scn.dump_receive_buffer()
 
     standalone()
 

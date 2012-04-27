@@ -114,7 +114,10 @@ class Connection( object ):
     @host.deleter # new-style properties unknown to pylint: disable-msg=E1101
     def host( self ): # pylint: disable-msg=E0102,E0202
         """ Delete the Host property """
-        del self._host
+        try:
+            del self._host
+        except AttributeError:
+            pass
 
 
     def cmd( self, cmd ):
@@ -139,6 +142,7 @@ class Connection( object ):
             whether the address of the remote device is known.
             This will trigger extraction of the IP address via serial
             if the address is currently unknown."""
+        del self.host
         try:    
             self.host = self.host
         except: 

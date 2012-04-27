@@ -221,6 +221,56 @@ class SerialConn( serial.Serial ):
         self._logger.info("OK")
         return buf
 
+
+    def boot_to_nand( self, kernel_partition = 2, rootfs_partition = 4,
+                            sync = False ):
+        """ Reboot the device to NAND.
+            @kwparam kernel_partition: kernel partition number to boot into.
+            @kwparam rootfs_partition: root fs parition number to boot into.
+            @kwparam sync:  Wait for the reboot to happen; return only after
+                                the device rebooted 
+                                and a login is available. Defaults to False.
+            @return:            All the console messages from when the reboot has been issued up to
+                                the point the method stopped reading.
+            """
+        buf = ""
+        kernel_offset = "0x200000" if kernel_partition == 2 else "0xC00000"
+
+        self._logger.info( "Rebooting to NAND (kernel: mtd%s, rootfs: mtd%s)."
+                            % (kernel_partition, rootfs_partition) )
+
+        buf += self.reboot( sync=True, stop_at_bootloader = True )
+
+        self.flushInput( )
+        self.flushOutput( )
+        self.flush( )
+        time.sleep(1)
+
+        self._logger.debug( "Setting kernel offset to %s." % kernel_offset )
+
+        self.write("\nsetenv kernel_offset %s\n" % kernel_offset)
+        self.flush( )
+        time.sleep(1)
+
+        self._logger.debug( "Setting kernel root to /dev/mtdblock%s." 
+                                % rootfs_partition)
+        self.write("\nsetenv rootfs_device /dev/mtdblock%s\n" 
+                                % rootfs_partition )
+        self.flush( )
+        time.sleep(1)
+
+        self._logger.debug( "Issuing 'run bootnand'." )
+        self.write("run bootnand\n")
+        self.flush( )
+        time.sleep(1)
+        if sync:
+            buf += self.readline_until("login:")
+        self._logger.debug( "Now rebooted to NAND." )
+
+        return buf
+
+
+
 if __name__ == '__main__':
     import logging, sys
     def standalone():

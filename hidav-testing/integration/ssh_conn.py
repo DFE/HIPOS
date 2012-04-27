@@ -32,46 +32,21 @@ class SshConn( object ):
         self._login = login
 
 
-    @property
-    def _socket( self ):
-        """ Socket property. This is the currently used socket of the
-            SSH connection. Will be created on demand, can be closed
-            by deleting the property.
-            Return the socket; create it if it isn't there yet """
-        try:    
-            return self.__socket
-        except AttributeError:
-            self._logger.info("Opening tcp connection to %s" % (self._host))
-            sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-            sock.connect( (self._host, 22) )
-            sock.setblocking(1)
-            self.__socket = sock # pylint: disable-msg=W0201
-            return self.__socket
-    @_socket.deleter # new-style properties unknown to pylint: disable-msg=E1101
-    def _socket( self ): # pylint: disable-msg=E0102
-        """ Delete the socket """
-        del self.__socket
-
-
-    @property
     def _session( self ):
         """ Session property. This is the current SSH session. It will be 
             created when needed.
             Return the session; create it if it isn't there yet """
-        try:    
-            return self.__session
-        except AttributeError:
-            self._logger.info("Opening session for user %s to %s" 
-                                % (self._login[0], self._host))
-            self.__session = libssh2.Session() # pylint: disable-msg=W0201
-            self.__session.startup( self._socket )
-            self.__session.userauth_password( 
-                    self._login[0], self._login[1] )
-            return self.__session
-    @_session.deleter # new-style property unknown to pylint: disable-msg=E1101
-    def _session( self ): # pylint: disable-msg=E0102
-        """ Delete the session """
-        del self.__session
+        self._logger.info("Opening session for user %s to %s" 
+                            % (self._login[0], self._host))
+        sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+        sock.connect( (self._host, 22) )
+        sock.setblocking(1)
+
+        self.__session = libssh2.Session() # pylint: disable-msg=W0201
+        self.__session.startup( sock )
+        self.__session.userauth_password( 
+                self._login[0], self._login[1] )
+        return self.__session
 
 
     def cmd( self, cmd ):
@@ -79,8 +54,14 @@ class SshConn( object ):
             @param cmd: the command to run
             @return:    tuple of ( retcode, command_output ) """
         self._logger.info( "Executing command [%s]" % cmd )
-        chan   = self._session.open_session()
-        if 0 <= chan.execute( cmd ):
+        s = self._session()
+        chan   = s.open_session()
+        # fixup: explicitly set PATH since we missed /usr/sbin
+        # in the default env at some point.
+        ret = chan.execute( "export PATH=\"$PATH:/bin:/sbin:/usr/bin"
+                            + ":/usr/sbin:/usr/local/bin:/usr/local/sbin\";"
+                            +  cmd + " 2>&1" )
+        if ret == 0:
             buf = ""
             while True:
                 ret = chan.read( 1024 )
@@ -93,7 +74,9 @@ class SshConn( object ):
             self._logger.debug( "Command [%s] output:\n[%s]" % (cmd, buf) )
             return rcd, buf
         else:
-            raise Exception("Remote execution of %s failed." % cmd)
+            raise Exception(
+                "Remote execution of %s failed; ret %s, session error %s." 
+                    % (cmd, ret, s.last_error())  )
 
 
     def get( self, local_file, remote_path ):
@@ -104,7 +87,7 @@ class SshConn( object ):
             @return:            None """
         self._logger.info( "Receiving file [%s] from device" % (remote_path) )
         start_offs = local_file.tell()
-        chan = self._session.scp_recv( remote_path )
+        chan = self._session().scp_recv( remote_path )
         local_file.write( chan.read() )
         chan.close()
         size = local_file.tell() - start_offs
@@ -133,7 +116,7 @@ class SshConn( object ):
 
         self._logger.info( "Sending file [%s], mode %s, %d bytes, to device" 
                             % (remote_path, remote_mode, size) )
-        chan = self._session.scp_send( remote_path, remote_mode, size )
+        chan = self._session().scp_send( remote_path, remote_mode, size )
         chan.write( local_file.read() )
         chan.close()
         self._logger.info( "File [%s] transmission successful" % remote_path)  
@@ -150,12 +133,17 @@ if __name__ == '__main__':
            "%(asctime)s %(levelname)s %(filename)s::%(funcName)s():" 
          + "%(message)s" )
         if len(sys.argv) != 4:
-            print "Usage: %s <host> <username> <password> <host>" % sys.argv[0]
+            print "Usage: %s <host> <username> <password>" % sys.argv[0]
             sys.exit()
         log = logging.getLogger( __name__ + "-TEST" )
         ssh = SshConn( log, sys.argv[1], (sys.argv[2], sys.argv[3] ) )
+        print ssh.cmd("echo $PATH")[1]
         print ssh.cmd("ls /")[1]
         print ssh.cat( "/etc/resolv.conf" )
+        print ssh.cmd("dd if=/dev/zero of=/tmp/z bs=1024 count=1")[1]
+        print ssh.cmd("depmod")[1]
+        print ssh.cmd("nandwrite")[1]
+        print ssh.cmd("flash_erase")[1]
         tfl = tempfile.TemporaryFile()
         tfl.write("This is an example file transmission.")
         ssh.put(tfl, "/home/root/test")

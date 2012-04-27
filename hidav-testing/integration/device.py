@@ -51,33 +51,21 @@ class Device( object ):
         if self._setup["hw_reset"]:
             power.power(1)
 
-    def reboot( self ):
-        """ Reboot the device. Return after reboot was successful."""
-        self.conn._serial.reboot( sync=True )
-
-    def boot_to_nand( self, kernel_partition = 2, rootfs_partition = 4 ):
-        """ Reboot the device to NAND.
+    def reboot( self, to_nand = False ):
+        """ Reboot the device. Return after reboot was successful.
+            Optionally reboot to NAND flash into the currently
+            active kernel / root fs combination (see bootconfig).
+            @param to_nand: Reboot into currently active NAND partitions.
+            @return: Buffer containing all the messages from the reboot.
             """
-        kernel_offset = "0x200000" if kernel_partition == 2 else "0xC00000"
+        if to_nand:
+            return self.conn._serial.boot_to_nand( 
+                    sync = True,
+                    kernel_partition = self.bootconfig["kernel"],
+                    rootfs_partition = self.bootconfig["rootfs"] )
 
-        self._logger.info( "Rebooting to NAND (kernel: mtd%s, rootfs: mtd%s)."
-                            % (kernel_partition, rootfs_partition) )
-        self.conn._serial.reboot( sync=True,
-                                  stop_at_bootloader = True )
+        return self.conn._serial.reboot( sync=True )
 
-        self._logger.debug( "Setting kernel offset to %s." % kernel_offset )
-        self.conn._serial.write("setenv kernel_offset %s\n" % kernel_offset)
-
-        self._logger.debug( "Setting kernel root to /dev/mtdblock%s." 
-                                % rootfs_partition)
-        self.conn._serial.write("setenv rootfs_device /dev/mtdblock%s\n"
-                                % rootfs_partition )
-
-        self._logger.debug( "Issuing 'run bootnand'." )
-        self.conn._serial.write("run bootnand\n")
-        time.sleep( 1 )
-        self.conn._serial.login()
-        self._logger.debug( "Now rebooted to NAND." )
 
     @property
     def firmware_version( self ):
@@ -89,10 +77,12 @@ class Device( object ):
             self._fw_version = self.conn.cmd(  # pylint: disable-msg=W0201
                     "lsb_release -r | awk '{ print $2 }'" )[1].strip()
             return self._fw_version
+
     @firmware_version.deleter     # pylint: disable-msg=E1101
     def firmware_version( self ): # pylint: disable-msg=E0102
         """ Firmware version property deleter. """
         del self._fw_version
+
 
     @property
     def bootconfig( self ):
@@ -105,18 +95,40 @@ class Device( object ):
             return self._bootconfig
         except AttributeError:
             ret = self.conn.cmd(  # pylint: disable-msg=W0201
-                        """bootconfig | """
-                    +   """awk '/kernel/{ k=$2 } /rootfs/{ r=$2 } """
-                    +     """ /epoch/{ e=$2 } END{ print k " " r " " e }'""" 
+                    """bootconfig | """
+                +   """awk '/kernel/{ k=$2 } /rootfs/{ r=$2 } """
+                +       """ /epoch/{ e=$2 } END{ print k " " r " " e }'"""
                         )[1].split(" ")
             self._bootconfig = { "kernel" : int(ret[0]), 
                                  "rootfs" : int(ret[1]),
                                  "epoch"  : int(ret[2])  }
             return self._bootconfig
+
+    @bootconfig.setter              # pylint: disable-msg=E1101
+    def bootconfig( self, value ):  # pylint: disable-msg=E0102,E0202
+        """ Set the bootconfig property (kernel and rootfs mtd; not the epoch).
+            @param value: dictionary containing kernel and rootfs partition number
+                          to be set, e.g.
+                          { "kernel" : 2, "rootfs" : 5 } """
+        del self.bootconfig
+        if value["kernel"] != self.bootconfig["kernel"]:
+            self._logger.info("Setting kernel partition to mtd%s" 
+                                % value["kernel"])
+            self.conn.cmd("bootconfig set-kernel mtd%d" % value["kernel"] )
+
+        if value["rootfs"] != self.bootconfig["rootfs"]:
+            self._logger.info("Setting rootfs partition to mtd%s" 
+                                % value["rootfs"])
+            self.conn.cmd("bootconfig set-rootfs mtd%d" % value["rootfs"] )
+        del self.bootconfig
+
     @bootconfig.deleter     # pylint: disable-msg=E1101
     def bootconfig( self ): # pylint: disable-msg=E0102
-        """ Firmware version property deleter. """
-        del self._bootconfig
+        """ Bootconfig property deleter. """
+        try:
+            del self._bootconfig
+        except AttributeError:
+            pass
 
 
     def update_package_index( self ):
@@ -128,17 +140,22 @@ class Device( object ):
             raise Exception("Updating the package index failed with #%s:\n%s" 
                     % (ret, msgs))
 
-    def install_package( self, package_name ):
+
+    def install_package( self, package_name, force = False ):
         """ Install a package at the device. The package index will be updated
             prior to the installation.
             @param package_name: name of the package to be installed.
+            @param force: force re-installation of already installed package.
             @raise Exception: if the install failed."""
-        self._logger.info("Installing package %s." % package_name)
+        f = "--force-reinstall" if force else ""
+        self._logger.info("Installing package %s %s." 
+                            % (package_name, f) )
         self.update_package_index()
-        ret, msgs = self.conn.cmd("opkg install %s" % package_name)
+        ret, msgs = self.conn.cmd("opkg install %s %s" % ( f, package_name) )
         if ret != 0:
             raise Exception("Installing package %s failed with #%s:\n%s" 
                     % (package_name, ret, msgs))
+
 
     def remove_package( self, package_name ):
         """ Remove a package from the device.
@@ -151,6 +168,9 @@ class Device( object ):
         if ret != 0:
             raise Exception("Installing package %s failed with #%s:\n%s" 
                     % (package_name, ret, msgs))
+
+
+
 
 if __name__ == '__main__':
     def standalone():

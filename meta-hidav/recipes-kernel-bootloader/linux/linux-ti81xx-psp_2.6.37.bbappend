@@ -12,19 +12,21 @@ SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;tag
            file://0001-ti814x-added-code-for-disabling-the-least-significan.patch \
            file://defconfig \
            file://configs \
+           file://src/ \
 "
 
 SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=c3fc5bd123a94fcfe9bb1aa2fd5f41b16ea7ac04 \
                    file://hidav-flash-partition-settings-ti814x.patch \
                    file://hidav-flash-partition-settings-ti816x.patch \
                    file://btrfs-kobject-include.patch \ 
+                   file://mtd-blockrom-glue.patch \ 
                    "
 
-MACHINE_KERNEL_PR = "r46"
+MACHINE_KERNEL_PR = "r47"
 
 # this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
 # so we insert it manually.
-do_aufs_setup() {
+do_setup_additional_sources() {
   cp -r ${WORKDIR}/aufs/Documentation ${S}
   cp -r ${WORKDIR}/aufs/fs ${S}
   cp ${WORKDIR}/aufs/include/linux/aufs_type.h ${S}/include/linux/
@@ -34,8 +36,10 @@ do_aufs_setup() {
   patch -p1 < ${WORKDIR}/aufs/aufs2-base.patch
   patch -p1 < ${WORKDIR}/aufs/proc_map.patch
   patch -p1 < ${WORKDIR}/aufs/aufs2-standalone.patch
+
+  cp ${WORKDIR}/src/src/blockrom.c ${S}/drivers/mtd
 }
-addtask aufs_setup after do_patch before do_configure
+addtask setup_additional_sources after do_patch before do_configure
 
 # Create ti816x config on the fly from our defconfig (ti8148).
 do_create_ti816x_conf() {
@@ -45,7 +49,7 @@ do_create_ti816x_conf() {
     sed -i -e 's/^# CONFIG_ARCH_TI816X is not set/CONFIG_ARCH_TI816X=y/' ${WORKDIR}/configs/ti816x
     sed -i -e 's/^CONFIG_MACH_TI8148EVM=y/CONFIG_MACH_TI8168EVM=y/' ${WORKDIR}/configs/ti816x
 }
-addtask create_ti816x_conf after do_aufs_setup before do_configure
+addtask create_ti816x_conf after do_setup_additional_sources before do_configure
 
 do_compile_prepend() {
     # The TI layer can break the kernel's do_compile when you provide

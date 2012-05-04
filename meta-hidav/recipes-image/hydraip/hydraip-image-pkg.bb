@@ -7,7 +7,7 @@ RDEPENDS = "mtd-utils"
 RRECOMMENDS = "kernel"
 
 PACKAGES = "${PN}"
-PR = "r5"
+PR = "r6"
 
 FILES_${PN} = "/tmp/hydraip-image-hidav.squashfs"
 
@@ -54,7 +54,7 @@ pkg_postinst_${PN} () {
 
   # check bootconfig
   if [ "$mtd_to_write" = "/dev/mtd4" ]; then
-	cat /proc/cmdline | grep mtdblock4 >/dev/null
+	cat /proc/cmdline | grep blockrom4>/dev/null
 	if [ "`echo $?`" = "0" ]; then
 		echo "error: do not write on used $mtd_to_write"
 		echo "check bootconfig"
@@ -63,7 +63,7 @@ pkg_postinst_${PN} () {
 	fi
   fi 
   if [ "$mtd_to_write" = "/dev/mtd5" ]; then
-        cat /proc/cmdline | grep mtdblock5 >/dev/null
+        cat /proc/cmdline | grep blockrom5>/dev/null
         if [ "`echo $?`" = "0" ]; then
                 echo "error: do not write on used $mtd_to_write"
 		echo "check bootconfig"

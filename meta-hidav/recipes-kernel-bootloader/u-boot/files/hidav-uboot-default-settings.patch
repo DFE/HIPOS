@@ -204,7 +204,7 @@ index 33f7bea..f4bc7ff 100644
 +
 +# define CONFIG_EXTRA_ENV_SETTINGS \
 +    "kernel_offset=0x200000\0"\
-+    "rootfs_device=/dev/mtdblock4\0"\
++    "rootfs_device=/dev/blockrom4\0"\
 +    "boot2nd=mmc rescan 0; "\
 +                    "fatload mmc 0 0x80800000 u-boot-2nd.sd;"\
 +                    "go 0x80800000\0" \
@@ -420,7 +420,7 @@ index c615e9a..cebc2f9 100644
 +
 +# define CONFIG_EXTRA_ENV_SETTINGS \
 +    "kernel_offset=0x200000\0"\
-+    "rootfs_device=/dev/mtdblock4\0"\
++    "rootfs_device=/dev/blockrom4\0"\
 +    "boot2nd=mmc rescan 0; "\
 +                    "fatload mmc 0 0x80800000 u-boot-2nd.sd;"\
 +                    "go 0x80800000\0" \

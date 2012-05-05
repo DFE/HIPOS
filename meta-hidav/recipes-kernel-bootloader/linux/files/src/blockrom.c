@@ -4,11 +4,24 @@
  *  (C) 2006 Baydarov Konstantin <kbaidarov@dev.rtsoft.ru>
  *           Pantelis Antoniou <panto@intracom.gr>
  *           David Woodhouse <dwmw2@infradead.org>
+ *  (C) 2012 DResearch Fahrzeugelektronik GmbH,
+ *           Thilo Fromm <kontakt@thilo-fromm.de>
  *
- *  It allows to use any filesystem on this device in
- *  RO mode and thus gain faster mount times and better
- *  throughput rates.
+ *         This program is free software; you can redistribute it and/or
+ *         modify it under the terms of the GNU General Public License
+ *         as published by the Free Software Foundation; either version
+ *         2 of the License, or (at your option) any later version.
  *
+ *
+ *        The blockrom MTD driver provides bad block free read access to MTDs via
+ *        /dev/blockromX device files. Bad blocks are automatically skipped upon read,
+ *        and reading continues with the next good block.
+ *
+ *        This allows for read-only filesystems to exist in MTDs with bad blocks:
+ *        usually the baddies are skipped when writing the filesystem into MTD by
+ *        the tool performing the write (e.g. nandwrite). To successfully mount 
+ *        these filesystems, however, you will need a translation layer that skips 
+ *        bad blocks upon read as well. blockrom is such a translation layer.
  */
 
 #include <linux/init.h>

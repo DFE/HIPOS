@@ -48,7 +48,7 @@ def init( ):
     print "  Firmware version: %s" % dev.firmware_version
     print "  Boot config (current):"
     print "     Kernel:      /dev/mtd%s" % dev.bootconfig["kernel"]
-    print "     rootfs: /dev/mtdblock%s" % dev.bootconfig["rootfs"]
+    print "     rootfs: /dev/romblock%s" % dev.bootconfig["rootfs"]
     print "     epoch :             #%s" % dev.bootconfig["epoch"]
 
     print "  Booting into NAND..."
@@ -86,7 +86,7 @@ def run_upgrade( dev ):
     del dev.bootconfig
     print "  Boot config (new):"
     print "     Kernel:      /dev/mtd%s" % dev.bootconfig["kernel"]
-    print "     rootfs: /dev/mtdblock%s" % dev.bootconfig["rootfs"]
+    print "     rootfs: /dev/blockdev%s" % dev.bootconfig["rootfs"]
     print "     epoch :             #%s" % dev.bootconfig["epoch"]
 
 

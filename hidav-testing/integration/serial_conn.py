@@ -256,9 +256,9 @@ class SerialConn( serial.Serial ):
         self.flush( )
         time.sleep(1)
 
-        self._logger.debug( "Setting kernel root to /dev/mtdblock%s." 
+        self._logger.debug( "Setting kernel root to /dev/blockdev%s." 
                                 % rootfs_partition)
-        self.write("\nsetenv rootfs_device /dev/mtdblock%s\n" 
+        self.write("\nsetenv rootfs_device /dev/blockdev%s\n" 
                                 % rootfs_partition )
         self.flush( )
         time.sleep(1)

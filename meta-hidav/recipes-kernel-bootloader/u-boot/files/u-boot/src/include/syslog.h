@@ -161,7 +161,7 @@ CODE facilitynames[] =
 #define	LOG_NOWAIT	0x10	/* don't wait for console forks: DEPRECATED */
 #define	LOG_PERROR	0x20	/* log to stderr as well */
 
-__BEGIN_DECLS
+/*__BEGIN_DECLS*/
 
 /* Close descriptor used to write to system logger.
 
@@ -176,7 +176,10 @@ extern void closelog (void);
 extern void openlog (__const char *__ident, int __option, int __facility);
 
 /* Set the log mask level.  */
+#if 0
+#define __THROW THROW
 extern int setlogmask (int __mask) __THROW;
+#endif
 
 /* Generate a log message using FMT string and option arguments.
 
@@ -205,6 +208,6 @@ extern void vsyslog (int __pri, __const char *__fmt, __gnuc_va_list __ap)
 # include <bits/syslog-ldbl.h>
 #endif
 
-__END_DECLS
+/*__END_DECLS*/
 
 #endif /* sys/syslog.h */

@@ -23,6 +23,8 @@
 #define BC_LOG_STDERR   ( 1 << 1 )
 #define BC_LOG_SYSLOG   ( 1 << 2 )
 
+#define uint32_t unsigned int
+
 void get_log_config ( uint32_t * channels, uint32_t * levels );
 void set_log_config ( uint32_t   channels, uint32_t   levels );
 

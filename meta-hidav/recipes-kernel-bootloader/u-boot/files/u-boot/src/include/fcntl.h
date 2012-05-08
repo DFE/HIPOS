@@ -139,6 +139,12 @@
 # define DN_MULTISHOT	0x80000000	/* Don't remove notifier.  */
 #endif
 
+#define __off_t off_t
+#define __off64_t off64_t
+#define __pid_t pid_t
+
+#ifndef flock_def
+#define flock_def 1
 struct flock
   {
     short int l_type;	/* Type of lock: F_RDLCK, F_WRLCK, or F_UNLCK.	*/
@@ -180,6 +186,7 @@ struct f_owner_ex
     enum __pid_type type;	/* Owner type of ID.  */
     __pid_t pid;		/* ID of owner.  */
   };
+#endif
 #endif
 
 /* Define some more compatibility macros to be backward compatible with
@@ -224,7 +231,7 @@ struct f_owner_ex
 # define SPLICE_F_GIFT		8	/* Pages passed in are a gift.  */
 #endif
 
-__BEGIN_DECLS
+/*__BEGIN_DECLS*/
 
 #ifdef __USE_GNU
 
@@ -270,4 +277,4 @@ extern int fallocate64 (int __fd, int __mode, __off64_t __offset,
 
 #endif
 
-__END_DECLS
+/*__END_DECLS*/

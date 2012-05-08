@@ -1,4 +1,4 @@
-PR_append = "+r7"
+PR_append = "+r9"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -15,8 +15,8 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
 		   file://u-boot/src/* "
 
 do_install_boot_config() {
-	cp ${WORKDIR}/u-boot/src/*.h ${S}/include/
-	cp ${WORKDIR}/u-boot/src/*.c ${S}/lib/
+	cp ${WORKDIR}/u-boot/src/include/*.h ${S}/include/
+	cp ${WORKDIR}/u-boot/src/lib/*.c ${S}/lib/
 }
 
 addtask install_boot_config after do_unpack before do_patch

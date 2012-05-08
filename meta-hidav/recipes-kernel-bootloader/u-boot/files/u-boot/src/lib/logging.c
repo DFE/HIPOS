@@ -13,15 +13,17 @@
  *  Maintained by thilo fromm <fromm@dresearch-fe.de>.
  */
 
-/* disable to compile */
-#if 0
 #include "logging.h"
 
+/* unsigned int uint32_t*/
+#define uint32_t unsigned int
+
 uint32_t bc_log_channels = ( BC_LOG_STDERR );
-uint32_t bc_log_levels   =    LOG_MASK( LOG_EMERG ) 
+uint32_t bc_log_levels   =  0; /*  
+			      LOG_MASK( LOG_EMERG ) 
                             | LOG_MASK( LOG_ALERT )
                             | LOG_MASK( LOG_CRIT )
-                            | LOG_MASK( LOG_ERR ); /*
+                            | LOG_MASK( LOG_ERR )
                             | LOG_MASK( LOG_WARNING )
                             | LOG_MASK( LOG_NOTICE )
                             | LOG_MASK( LOG_INFO )
@@ -40,4 +42,3 @@ void set_log_config ( uint32_t channels, uint32_t levels )
     bc_log_levels   = levels;
 }
 /* -- */
-#endif

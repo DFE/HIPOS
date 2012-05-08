@@ -11,8 +11,6 @@
  * HidaV boot configuration user space tooling low level routines.
  */
 
-/* disable to compile */
-#if 0
 
 #include <malloc.h>         /* malloc, free, realloc*/
 #include <linux/ctype.h>    /* isalpha, isdigit */
@@ -23,7 +21,7 @@
 #include <stdarg.h>    /* va_list */
 
 #include "../fs/yaffs2/yaffscfg.h"
-/* #include <fcntl.h> */
+#include <fcntl.h> 
 #include "fcntl.h"
 #include "syslog.h"
 
@@ -31,6 +29,15 @@
 #include "logging.h"
 
 static int initialised = 0;
+
+/*
+	Compile-hacks
+*/
+# include <stdint.h>
+# include <linux/mtd/mtd.h>
+
+#define errno 0
+#define libmtd_t int 
 
 /*
  * private functions
@@ -348,6 +355,4 @@ int bc_ll_set_partition( struct bootconfig * bc, enum bt_ll_parttype which, unsi
     return 0;
 }
 
-
-#endif
 

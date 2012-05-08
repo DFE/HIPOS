@@ -51,7 +51,7 @@ update_dev() {
 initialize_ubi() {
     logger -s -p syslog.notice -t rootfs-overlay \
         "Initialising empty UBIFS at $application_fs_mtd."
-    ubiformat $application_fs_mtd
+    ubiformat --yes $application_fs_mtd
     ubiattach -p $application_fs_mtd
 }
 # ----

@@ -183,7 +183,7 @@ if __name__ == '__main__':
 
         print "Boot config:"
         print "  Kernel:      /dev/mtd%s" % dev.bootconfig["kernel"]
-        print "  rootfs: /dev/mtdblock%s" % dev.bootconfig["rootfs"]
+        print "  rootfs: /dev/blockdev%s" % dev.bootconfig["rootfs"]
         print "  epoch :             #%s" % dev.bootconfig["epoch"]
 
         print "Waiting for Networking to come up..."

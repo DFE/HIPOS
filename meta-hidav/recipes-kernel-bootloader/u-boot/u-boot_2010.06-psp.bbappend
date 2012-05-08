@@ -12,7 +12,8 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-enable-icache.patch \
                    file://hidav-nand-do-not-use-bad_block_table.patch \
 		   file://boot-config.patch \
-		   file://u-boot/src/* "
+		   file://u-boot/src/include/* \
+		   file://u-boot/src/lib/* "
 
 do_install_boot_config() {
 	cp ${WORKDIR}/u-boot/src/include/*.h ${S}/include/

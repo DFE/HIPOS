@@ -10,7 +10,16 @@ SRCREV = "2ec1a17817e422b9417289b91c027980b45c7d65"
 SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-fast-flash-settings.patch \
                    file://hidav-enable-icache.patch \
-                   file://hidav-nand-do-not-use-bad_block_table.patch "
+                   file://hidav-nand-do-not-use-bad_block_table.patch \
+		   file://boot-config.patch \
+		   file://u-boot/src/* "
+
+do_install_boot_config() {
+	cp ${WORKDIR}/u-boot/src/*.h ${S}/include/
+	cp ${WORKDIR}/u-boot/src/*.c ${S}/lib/
+}
+
+addtask install_boot_config after do_unpack before do_patch
 
 do_configure() {
     # tfm: do nothing; we re-configure and re-compile u-boot at least ttwwiiccee in the "compile" stage.

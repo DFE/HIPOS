@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 PR_append = "+r9"
-=======
-PR_append = "+r8"
->>>>>>> d69659ab9dce461149a279279ff262b938d313af
 
 COMPATIBLE_MACHINE = "hidav"
 

@@ -23,7 +23,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
                    file://mtd-blockrom-glue.patch \ 
                    "
 
-MACHINE_KERNEL_PR = "r48"
+MACHINE_KERNEL_PR = "r49"
 
 # this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
 # so we insert it manually.
@@ -57,6 +57,7 @@ do_make_check_blockrom() {
     
     cp ${WORKDIR}/src/src/drivers/mtd/blockrom.c ${WORKDIR}/tests/tests
     cd ${WORKDIR}/tests/tests
+    oe_runmake clean
     oe_runmake
 }
 addtask make_check_blockrom after do_configure before do_compile

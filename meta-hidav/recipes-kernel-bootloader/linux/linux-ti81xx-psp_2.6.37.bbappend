@@ -55,8 +55,8 @@ addtask create_ti816x_conf after do_setup_additional_sources before do_configure
 do_make_check_blockrom() {
     # unit tests stage for HidaV blockrom kernel MTD FTL
     
-    cp ${WORKDIR}/src/src/drivers/mtd/blockrom.c ${WORKDIR}/tests
-    cd ${WORKDIR}/tests
+    cp ${WORKDIR}/src/src/drivers/mtd/blockrom.c ${WORKDIR}/tests/tests
+    cd ${WORKDIR}/tests/tests
     oe_runmake
 }
 addtask make_check_blockrom after do_configure before do_compile

@@ -1,13 +1,13 @@
 diff --git a/drivers/mtd/Kconfig b/drivers/mtd/Kconfig
-index 1e2cbf5..bbcbabc 100644
+index 1e2cbf5..bcfd8fc 100644
 --- a/drivers/mtd/Kconfig
 +++ b/drivers/mtd/Kconfig
-@@ -226,6 +226,20 @@ config MTD_BLOCK_RO
+@@ -226,6 +226,42 @@ config MTD_BLOCK_RO
  	  You do not need this option for use with the DiskOnChip devices. For
  	  those, enable NFTL support (CONFIG_NFTL) instead.
  
 +config MTD_BLOCK_ROM_BBFREE
-+	tristate "Bad-block-skipiping readonly access to MTD devices"
++	tristate "Bad-block-skipiping readonly 'blockrom' access to MTD devices"
 +	depends on MTD_BLOCK!=y && MTD
 +	help
 +	  The blockrom MTD driver provides bad block free read access to MTDs via
@@ -19,6 +19,28 @@ index 1e2cbf5..bbcbabc 100644
 +	  the tool performing the write (e.g. nandwrite). To successfully mount 
 +	  these filesystems, however, you will need a translation layer that skips 
 +	  bad blocks upon read as well. blockrom is such a translation layer.
++
++config MTD_BLOCK_ROM_DELAYED_INIT
++	bool "Blockrom delayed initialisation"
++	depends on MTD_BLOCK_ROM_BBFREE
++	help
++	  This option will cause the bad-block-skipping readonly blockrom MTD
++	  translation layer to do its initial bad block scan asynchronously in a 
++	  background kernel thread instead of synchronously upon initialisation.
++
++	  Selecting this option may speed up boot time since lower index MTDs 
++	  are already usable (e.g. for root fs mount) while higher index MTDs 
++	  are still being scanned.
++
++config MTD_BLOCK_ROM_BIT_SCRUBBING
++	bool "Blockrom bit scrubbing support"
++	depends on MTD_BLOCK_ROM_BBFREE
++	help
++	  (NOTE: This feature is not yet implemented)
++	  This option will add bit scrubbing support to the bad-block-skipping 
++	  readonly blockrom MTD translation layer. The bit scrubber will erase
++	  and re-write an erase block if a corrected bit error was encountered
++	  upon read.
 +
  config FTL
  	tristate "FTL (Flash Translation Layer) support"

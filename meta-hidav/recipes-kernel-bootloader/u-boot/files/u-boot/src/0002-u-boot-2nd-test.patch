@@ -1,0 +1,27 @@
+From 71ef9a30f5d2909d7665f3b35809f0bdec33b9c2 Mon Sep 17 00:00:00 2001
+From: Eik Binschek <binschek@dresearch-fe.de>
+Date: Tue, 8 May 2012 10:09:18 +0200
+Subject: [PATCH 2/2] u-boot: 2nd test
+
+	2nd sdhsakdhsjka
+
+Signed-off-by: Eik Binschek <binschek@dresearch-fe.de>
+---
+ lib/boot_config.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/lib/boot_config.c b/lib/boot_config.c
+index b41f518..28cbd02 100644
+--- a/lib/boot_config.c
++++ b/lib/boot_config.c
+@@ -17,3 +17,7 @@ blabla(){
+ 
+ }
+ 
++blub(){
++
++}
++
+-- 
+1.7.7
+

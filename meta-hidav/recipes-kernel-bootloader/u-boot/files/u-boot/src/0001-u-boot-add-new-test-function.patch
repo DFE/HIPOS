@@ -1,0 +1,27 @@
+From 0cc0b9c629f7d9d8b32aa6b3ffe10aa28b73ecbb Mon Sep 17 00:00:00 2001
+From: Eik Binschek <binschek@dresearch-fe.de>
+Date: Tue, 8 May 2012 10:04:25 +0200
+Subject: [PATCH 1/2] u-boot: add new test function
+
+	demo test
+
+Signed-off-by: Eik Binschek <binschek@dresearch-fe.de>
+---
+ lib/boot_config.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/lib/boot_config.c b/lib/boot_config.c
+index 7275273..b41f518 100644
+--- a/lib/boot_config.c
++++ b/lib/boot_config.c
+@@ -13,3 +13,7 @@
+ 
+ #include "lowlevel.h"
+ 
++blabla(){
++
++}
++
+-- 
+1.7.7
+

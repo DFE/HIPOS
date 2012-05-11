@@ -1,4 +1,4 @@
-PR_append = "+r9"
+PR_append = "+r10"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -12,6 +12,7 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-enable-icache.patch \
                    file://hidav-nand-do-not-use-bad_block_table.patch \
 		   file://boot-config.patch \
+		   file://u-boot-bootconfig-glue.patch \
 		   file://u-boot/src/include/* \
 		   file://u-boot/src/lib/* "
 

@@ -15,14 +15,12 @@
 #include "mocks.h"
 #include <stdio.h>
 
-#define printk( fmt, args...) 	printf( "### PRINTK MOCK:" fmt "\n",  ##args);
+#define printk( fmt, args...) 	printf( "### PRINTK MOCK:" fmt,  ##args);
 
 #define module_init( func )	int  (*_mock_init_cb)(void) = func
 #define module_exit( func )	void (*_mock_exit_cb)(void) = func
 
-#define IS_ERR( what )	( what == NULL )
-
-typedef enum gfp { GFP_KERNEL = 99999 } gfp_t;
+typedef enum gfp { GFP_KERNEL } gfp_t;
 
 MOCK_2(  void*, kzalloc, size_t, gfp_t);
 MOCK_1V(        kfree,   void*);
@@ -40,7 +38,7 @@ MOCK_5( struct task_struct *, kthread_run, _thread_func_t, void*, char*, char *,
 
 MOCK_5( int, mtd_read, 	struct mtd_info *, loff_t, size_t, size_t *, u_char *);
 MOCK_5( int, mtd_write,	struct mtd_info *, loff_t, size_t, size_t *, const u_char *);
-MOCK_2( int, mtd_block_isbad, struct mtd_info *,	loff_t);
+MOCK_1( int, mtd_block_isbad,	loff_t);
 
 
 

@@ -112,20 +112,6 @@
     }                                                   \
 }
 
-/**
- * Convenience assert macro for checking whether a mocked function was called N times.
- * \param func name of the mocked function.
- * \param count expected call count of the function.
- */
-#define TEST_ASSERT_CALLED( func, count )                                       \
-{                                                                               \
-    if ( _##func##_called_count != count -1 ) {                                 \
-        printf("%s:%s, line %u function " #func                                \
-                " called %d times, expected %ld times. TEST_FAIL.\n",            \
-         __FILE__, __func__, __LINE__, count, _##func##_called_count + 1);      \
-    }                                                                           \
-}
-
 #define TEST_FAIL( msg )                                \
 {                                                       \
         printf("%s:%s, line %u: %s. TEST FAIL.\n",      \
@@ -263,7 +249,7 @@ static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
  *    This variable is initialized to -1 and increased each time
  *    the harnessed code calls the mocked function.
  *    NOTE: This variable MUST be re-set by the unit test code
- *    when multiple tests are run (using MOCK_RESET( <func> )!
+ *    when multiple tests are run!
  * - create global arrays named _[function]_exp_arg<n>[MAX_NUM_FUNC_CALL]
  *    depending on the number of arguments the function takes.
  *    Unit tests should set these to the expected argument values
@@ -284,9 +270,9 @@ static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
  *    _[function]_ret. 
  * - create a global function pointer variable _[function]_cb, which
  *    will be initialized to 0. Unit tests may set this callback to their
- *    own function body implementation by using MOCK_CB_SET( func, cb ). If set, 
- *    the callback will be run by the harness after checking the input 
- *    arguments and before returning the result.
+ *    own function body implementation. If set, the callback will be run
+ *    by the harness after checking the input arguments and before returning
+ *    the result.
  *    NOTE: the callback's return value WILL NOT BE RETURNED by the harness.
  *    _[function]_ret will always be returned. So if the unit test callback
  *    is supposed to return anything useful to the harnessed business logic,
@@ -294,26 +280,6 @@ static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
  *
  *
 */
-
-/**
- * Convenience macro to set a custom callback for a mocked function.
- * \param func name of the mocked function.
- * \param cb callback to be installed
- */
-#define MOCK_CB_SET( func, cb )                 \
-{                                               \
-    _##func##_cb = cb;                          \
-}
-
-/**
- * Convenience macro to remove a custom callback from a mocked function.
- * \param func name of the mocked function.
- */
-#define MOCK_CB_CLEAR( func )                   \
-{                                               \
-    _##func##_cb = 0;                           \
-}
-
 
 #define MAX_NUM_FUNC_CALL   50
 

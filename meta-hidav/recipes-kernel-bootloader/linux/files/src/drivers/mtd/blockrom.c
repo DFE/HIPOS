@@ -146,7 +146,7 @@ static int blockrom_readsect(struct mtd_blktrans_dev *dev,
 	/* convert HDD block no. to flash block no. */
 	flash_block = (block * 512) / map->dev.mtd->erasesize;
 
-	if (flash_block >= map->blocks_total) {
+	if (flash_block >= user_blocks(map)) {
 		printk(KERN_ERR "blockrom%d: "
 				"trying to access beyond end of device.",
 				map->dev.devnum);

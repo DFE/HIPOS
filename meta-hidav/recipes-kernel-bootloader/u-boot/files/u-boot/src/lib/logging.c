@@ -18,17 +18,20 @@
 /* unsigned int uint32_t*/
 #define uint32_t unsigned int
 
-uint32_t bc_log_channels = ( BC_LOG_STDERR );
-uint32_t bc_log_levels   =  0; /*  
-			      LOG_MASK( LOG_EMERG ) 
+uint32_t bc_log_channels = ( BC_LOG_STDOUT );
+
+#if 1
+uint32_t bc_log_levels   =  0;
+#else
+uint32_t bc_log_levels   =    LOG_MASK( LOG_EMERG ) 
                             | LOG_MASK( LOG_ALERT )
                             | LOG_MASK( LOG_CRIT )
                             | LOG_MASK( LOG_ERR )
                             | LOG_MASK( LOG_WARNING )
                             | LOG_MASK( LOG_NOTICE )
                             | LOG_MASK( LOG_INFO )
-                            | LOG_MASK( LOG_DEBUG ); */
-
+                            | LOG_MASK( LOG_DEBUG );
+#endif
 void get_log_config ( uint32_t * channels, uint32_t * levels )
 {
     *channels = bc_log_channels;

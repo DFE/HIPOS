@@ -16,6 +16,21 @@
 #ifndef __BOOTINFO_LOG_H_
 #define __BOOTINFO_LOG_H_
 
+#include <common.h>
+
+
+#define LOG_EMERG	1
+#define LOG_ALERT	2
+#define LOG_CRIT	3
+#define LOG_ERR		4
+#define LOG_WARNING	5
+#define LOG_NOTICE	6
+#define LOG_INFO	7
+#define LOG_DEBUG	8
+
+
+#define LOG_MASK( lvl )	(1 << lvl)
+
 /*
  * Available log channels 
  */
@@ -37,7 +52,7 @@ void set_log_config ( uint32_t   channels, uint32_t   levels );
     extern uint32_t bc_log_channels, bc_log_levels;                                         \
     if ( bc_log_levels  & LOG_MASK( severity ) ) {                                          \
         if ( bc_log_channels & BC_LOG_STDOUT )                                              \
-            printf( "%s::%s:%d " #format, __FILE__, __func__, __LINE__, ##args );           \
+            printf( "%s::%s:%d " #format "\n", __FILE__, __func__, __LINE__, ##args );           \
     }                                                                                       \
 }
 

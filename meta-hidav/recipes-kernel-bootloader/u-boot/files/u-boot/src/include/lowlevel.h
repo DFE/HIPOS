@@ -51,7 +51,6 @@ struct bootconfig {
 #else
     struct    mtd_info *mtd;
 #endif
-    struct mtd_info info;
 };
 /* -- */
 

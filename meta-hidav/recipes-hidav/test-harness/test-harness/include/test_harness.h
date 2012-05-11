@@ -83,12 +83,12 @@
  */
 #define TEST_ASSERT( exp, got, type )                       \
 {                                                       \
-    void *e, *g;                                        \
+    void *e=NULL, *g=NULL;                              \
     type _got = ( got );                                \
     type _exp = ( exp );                                \
     memcpy(&e, &_exp, sizeof( type ));                   \
     memcpy(&g, &_got, sizeof( type ));                   \
-    if ( (exp) != (got)  ){                             \
+    if ( (_exp) != (_got)  ){                             \
         printf("%s:%s, line %u: " #got " should be %p (%s), is %p\n", \
          __FILE__, __func__, __LINE__, e, #exp, g);  \
         exit (ERR_TEST_FAILED);                         \

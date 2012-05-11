@@ -35,5 +35,5 @@ TESTS = test-lowlevel-init \
 # Also, the coverage files generated are not yet post-processed.
 #
 test-%: tests/test-%.c
-		${BUILD_CC} -Itests/include --coverage -ftest-coverage -o ${@} ${<}
+		${BUILD_CC} ${BUILD_CFLAGS} ${BUILD_LDFLAGS} -Itests/include --coverage -ftest-coverage -o ${@} ${<}
 

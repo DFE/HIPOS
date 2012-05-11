@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-#include "test_harness.h"
+#include <test_harness/test_harness.h>
 
 #include "mocks.c"
 

@@ -28,6 +28,7 @@
 #include <linux/slab.h>
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/blktrans.h>
+#include <linux/kthread.h>
 
 struct mtd_block_map {
 	struct  mtd_blktrans_dev dev;
@@ -37,6 +38,8 @@ struct mtd_block_map {
 	uint32_t blocks_bad;
 	uint32_t blocks_spare;
 	uint32_t blocks_mgmt;
+
+	struct task_struct* add_mtd_bh_thread;
 };
 
 /*
@@ -80,7 +83,7 @@ static uint32_t map_block(struct mtd_block_map * map, int32_t block)
 	return mapped;
 }
 
-static void map_all_blocks(struct mtd_block_map * map, struct mtd_info * mtd)
+static void map_all_blocks(struct mtd_block_map * map)
 {
 	unsigned int block, 
 		     expect_mapped = 0;
@@ -113,13 +116,6 @@ static struct mtd_block_map * init_map(struct mtd_info * mtd)
 		return NULL;
 	}
 
-	/* init first map entry, then fill mapping table */
-	map->block_map[0]  = 0;
-	map_all_blocks(map, mtd);
-
-	map->dev.size 	  = user_blocks(map) * (mtd->erasesize / 512);
-	map->dev.readonly = 1;
-
 	return map;
 }
 
@@ -140,10 +136,12 @@ static void print_mtd_info(struct mtd_block_map * map)
 static int blockrom_readsect(struct mtd_blktrans_dev *dev,
 			      unsigned long block, char *buf)
 {
-	size_t retlen;
+	size_t   retlen;
 	uint32_t flash_block;
-	struct mtd_block_map *map = container_of(dev, struct mtd_block_map, dev);
-	loff_t addr, offs;
+	struct   mtd_block_map *map = container_of(dev, struct mtd_block_map, dev);
+	loff_t	 addr, 
+		 offs;
+	int	 ret;
 
 	/* convert HDD block no. to flash block no. */
 	flash_block = (block * 512) / map->dev.mtd->erasesize;
@@ -155,24 +153,33 @@ static int blockrom_readsect(struct mtd_blktrans_dev *dev,
 		return -ENXIO;
 	}
 
+	/* get mapped block, calculate byte offset */
 	offs  = map->block_map[ flash_block ];
 	offs *= map->dev.mtd->erasesize;
 
+	/* merge mapped flash block's byte offset with 
+	 * low nibble of requested HDD block's byte offset */
 	addr = offs | ((block * 512) & (map->dev.mtd->erasesize - 1));
 
-	return dev->mtd->read(dev->mtd, addr, 512, &retlen, buf);
+	ret = dev->mtd->read(dev->mtd, addr, 512, &retlen, buf);
+
+#ifdef MTD_BLOCK_ROM_BIT_SCRUBBING
+	if (ret == EUCLEAN)
+		ret = blockrom_scrub(map, block*512);
+#endif
+
+	return ret;
 }
 
 static int blockrom_writesect(struct mtd_blktrans_dev *dev,
 			      unsigned long block, char *buf)
 {
-	size_t retlen;
-
-	if (dev->mtd->write(dev->mtd, (block * 512), 512, &retlen, buf))
-		return 1;
-
-	return 0;
+	/* mtd_blkdevs.c returns -EIO if no writesect callback is present.
+	 * I think this is wrong. */
+	return -EROFS;
 }
+
+static int blockrom_add_bottom(void * arg);
 
 static void blockrom_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
 {
@@ -189,11 +196,36 @@ static void blockrom_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
 
 	map->dev.tr  = tr;
 
+#ifdef CONFIG_MTD_BLOCK_ROM_DELAYED_INIT
+	map->add_mtd_bh_thread = kthread_run(blockrom_add_bottom, map,
+			"%s%dinit", tr->name, mtd->index);
+
+	if (IS_ERR(map->add_mtd_bh_thread))
+		free_map(map);
+#else
+	blockrom_add_bottom(map);
+#endif
+}
+
+static int blockrom_add_bottom(void * arg)
+{
+	struct mtd_block_map* map = arg;
+
+	/* init first map entry, then fill mapping table */
+	map->block_map[0]  = 0;
+	map_all_blocks(map);
+
+	map->dev.size 	  = user_blocks(map) * (map->dev.mtd->erasesize / 512);
+	map->dev.readonly = 1;
+
 	if (add_mtd_blktrans_dev(&(map->dev)))
 		free_map(map);
 	else
 		print_mtd_info(map);
+
+	return 0;
 }
+
 
 static void blockrom_remove_dev(struct mtd_blktrans_dev *dev)
 {

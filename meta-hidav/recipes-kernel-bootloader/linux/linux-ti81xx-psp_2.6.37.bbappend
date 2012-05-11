@@ -13,6 +13,7 @@ SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;tag
            file://defconfig \
            file://configs \
            file://src/ \
+           file://tests/ \
 "
 
 SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2.2-37;protocol=git;destsuffix=aufs;name=aufs;rev=c3fc5bd123a94fcfe9bb1aa2fd5f41b16ea7ac04 \
@@ -22,7 +23,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
                    file://mtd-blockrom-glue.patch \ 
                    "
 
-MACHINE_KERNEL_PR = "r47"
+MACHINE_KERNEL_PR = "r49"
 
 # this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
 # so we insert it manually.
@@ -37,7 +38,7 @@ do_setup_additional_sources() {
   patch -p1 < ${WORKDIR}/aufs/proc_map.patch
   patch -p1 < ${WORKDIR}/aufs/aufs2-standalone.patch
 
-  cp ${WORKDIR}/src/src/blockrom.c ${S}/drivers/mtd
+  cp ${WORKDIR}/src/src/drivers/mtd/blockrom.c ${S}/drivers/mtd
 }
 addtask setup_additional_sources after do_patch before do_configure
 
@@ -50,6 +51,16 @@ do_create_ti816x_conf() {
     sed -i -e 's/^CONFIG_MACH_TI8148EVM=y/CONFIG_MACH_TI8168EVM=y/' ${WORKDIR}/configs/ti816x
 }
 addtask create_ti816x_conf after do_setup_additional_sources before do_configure
+
+do_make_check_blockrom() {
+    # unit tests stage for HidaV blockrom kernel MTD FTL
+    
+    cp ${WORKDIR}/src/src/drivers/mtd/blockrom.c ${WORKDIR}/tests/tests
+    cd ${WORKDIR}/tests/tests
+    oe_runmake clean
+    oe_runmake
+}
+addtask make_check_blockrom after do_configure before do_compile
 
 do_compile_prepend() {
     # The TI layer can break the kernel's do_compile when you provide

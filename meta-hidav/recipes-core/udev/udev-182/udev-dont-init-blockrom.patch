@@ -1,0 +1,12 @@
+diff -urN udev-182/rules/60-persistent-storage.rules udev-new/rules/60-persistent-storage.rules
+--- udev-182/rules/60-persistent-storage.rules	2012-02-23 16:26:16.412136132 +0100
++++ udev-new/rules/60-persistent-storage.rules	2012-05-08 15:14:58.360732176 +0200
+@@ -14,7 +14,7 @@
+ SUBSYSTEM!="block", GOTO="persistent_storage_end"
+ 
+ # skip rules for inappropriate block devices
+-KERNEL=="fd*|mtd*|nbd*|gnbd*|btibm*|dm-*|md*", GOTO="persistent_storage_end"
++KERNEL=="fd*|blockrom*|mtd*|nbd*|gnbd*|btibm*|dm-*|md*", GOTO="persistent_storage_end"
+ 
+ # ignore partitions that span the entire disk
+ TEST=="whole_disk", GOTO="persistent_storage_end"

@@ -1,6 +1,6 @@
 COMPATIBLE_MACHINE = "hidav"
 
-DEPENDS += " lzop-native test-harness "
+DEPENDS += " lzop-native test-harness-native "
 
 RDEPENDS += " mtd-utils gawk busybox bootconfig "
 
@@ -23,7 +23,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
                    file://mtd-blockrom-glue.patch \ 
                    "
 
-MACHINE_KERNEL_PR = "r52"
+MACHINE_KERNEL_PR = "r53"
 
 # this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
 # so we insert it manually.

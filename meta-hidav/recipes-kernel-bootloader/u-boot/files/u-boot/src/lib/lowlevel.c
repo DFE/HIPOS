@@ -53,7 +53,7 @@ static int initialised = 0;
 #include <onenand_uboot.h>
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/partitions.h>
-
+#include <asm-generic/errno.h>
 /*
 extern int mtdparts_init(void);
 extern int find_dev_and_part(const char *id, struct mtd_device **dev,
@@ -67,10 +67,6 @@ extern struct mtd_device *device_find(u8 type, u8 num);
 /*
  * U-Boot wrapper
  */
-int strerror(int in)
-{
-	return in;
-}
 
 
 /*
@@ -134,8 +130,8 @@ static int _check_block( struct bootconfig * bc, unsigned int block_idx )
     err = bc->mtd->block_isbad(bc->mtd,(loff_t) ( BOOTCONFIG_MTDPART_START_ADDR + ( block_idx * bc->mtd->erasesize ) ) ); 
 
     if ( 0 > err ) {
-        bc_log( LOG_ERR, "Error %d while bad block checking block %d on %s: %s.",
-                errno, block_idx, bc->dev, strerror( errno ));
+        bc_log( LOG_ERR, "Error %d while bad block checking block %d on %s:",
+                errno, block_idx, bc->dev);
         return -1;
     } else if ( 0 < err ) {
         bc_log( LOG_WARNING, "Block %d on %s is bad. Sorry about that.", 
@@ -164,9 +160,13 @@ static int _read_bootblock(struct bootconfig * bc, unsigned int block_idx )
     }
 
     err = bc->mtd->read(bc->mtd, (BOOTCONFIG_MTDPART_START_ADDR + ( block_idx * bc->mtd->erasesize )) , sizeof( *bc->blocks ), &ret_len, &bc->blocks[ block_idx ]);
-    if( err ) {
-        bc_log( LOG_ERR, "Error %d while reading bootinfo block %d from %s: %s.",
-                errno, block_idx, bc->dev, strerror( errno ));
+    if ( (err * -1) == EUCLEAN )
+    {
+	bc_log( LOG_INFO, "Info: Block %d needs cleaning", block_idx );
+	return 0;
+    }
+    else if( err ) {
+        bc_log( LOG_ERR, "Error %d while reading bootinfo block %d", err, block_idx );
         return -1;
     }
 
@@ -182,19 +182,25 @@ static int _do_write_bootblock( struct bootconfig * bc, unsigned int block_idx )
     char  *page;
     int    ret_len=0;
 
-    page = malloc( bc->mtd->erasesize );
+    page = malloc( bc->mtd->writesize );
     if( NULL == page ) {
-        bc_log( LOG_ERR, "Error #%d malloc()ing %d bytes: %s.\n", 
-                errno, bc->mtd->erasesize, strerror(errno));
+        bc_log( LOG_ERR, "Error #%d malloc()ing %d bytes", 
+                errno, bc->mtd->writesize);
         return -1;
     }
 
-    memset( page, 0xFF, bc->mtd->erasesize );
+    memset( page, 0xFF, bc->mtd->writesize );
     memcpy( page, &bc->blocks[ block_idx ], sizeof( *bc->blocks ) );
+    ret_len = bc->mtd->writesize;
 
-    err = bc->mtd->write(bc->mtd, BOOTCONFIG_MTDPART_START_ADDR + ( block_idx * bc->mtd->erasesize ), bc->mtd->erasesize, &ret_len, page );
+    err = bc->mtd->write(bc->mtd, BOOTCONFIG_MTDPART_START_ADDR + ( block_idx * bc->mtd->erasesize ), bc->mtd->writesize, &ret_len, page );
     free( page );
 
+    bc_log( LOG_INFO, "bc->mtd->writesize=%d", bc->mtd->writesize );
+    bc_log( LOG_INFO, "ret_len=%d", ret_len );
+    bc_log( LOG_INFO, "BOOTCONFIG_MTDPART_START_ADDR + ( block_idx * bc->mtd->erasesize )=%#x", BOOTCONFIG_MTDPART_START_ADDR + ( block_idx * bc->mtd->erasesize ));
+    bc_log( LOG_INFO, "err=%d",err);
+    bc_log( LOG_INFO, "block_idx=%d",block_idx);
     if (0 > err)
         return 1;
 
@@ -223,8 +229,8 @@ static int _write_errorcheck_bootblock( struct bootconfig * bc, unsigned int blo
     }
 
     if (err)
-        bc_log( LOG_ERR, "Error #%d while erasing / writing block %d on %s: %s.\n",
-                no, block_idx, bc->dev, strerror(no));
+        bc_log( LOG_ERR, "Error #%d while erasing / writing block %d on %s",
+                no, block_idx, bc->dev);
 
     return err;
 }
@@ -262,17 +268,19 @@ static int _update_bootblock( struct bootconfig * bc, enum bt_ll_parttype which,
 static int _read_bootconfig( struct bootconfig * bc ) 
 {
     unsigned int block;
-    int          ret = 0;
+    int          ret = -1;
 
 
     for ( block = 0; block < (unsigned) ( BOOTCONFIG_MTDPART_SIZE/bc->mtd->erasesize ); block++ ) {
         if ( 0 > _read_bootblock( bc, block ) )
 	{
-            ret = -1;
 	    bc_log( LOG_INFO, "read_bootconfig Block %d io-error.", block );
 	}
 	else
+	{
+	    ret = 0;
 	    bc_log( LOG_INFO, "read_bootconfig Block %d ok.", block );
+	}
     }
 
     return ret;
@@ -334,7 +342,8 @@ struct btblock * bc_ll_get_current ( struct bootconfig * bc, uint32_t *block_ind
         if ( 0 != memcmp( "Boot", b->magic, 4 ) )
             continue;
         
-        if ( b->epoch > epoch_max ) {
+        if ( ( b->epoch > epoch_max ) && ( (b->kernel.n_booted != 0) || ( b->kernel.n_healthy != 1 ) ) && ( (b->rootfs.n_booted != 0) || ( b->rootfs.n_healthy != 1 )  ) ) 
+	{
             idx = block;
             epoch_max = b->epoch;
         }
@@ -393,4 +402,40 @@ int bc_ll_set_partition( struct bootconfig * bc, enum bt_ll_parttype which, unsi
     return 0;
 }
 
+int bc_ll_set_booted_flag_on_current( struct bootconfig * bc )
+{
+    uint32_t curr_bc_idx, new_bc_idx;
+    int	   err = 0;
+    struct btblock * curr;
+
+    if (! initialised) {
+        bc_log( LOG_ERR, "Internal error: called before initialisation!\n");
+        return -1;
+    }
+
+    curr = bc_ll_get_current( bc, &curr_bc_idx );
+
+    if ( ( curr->kernel.n_booted == 1 ) || ( curr->rootfs.n_booted == 1 ) )
+    {
+
+	if  ( curr->kernel.n_booted == 1 )
+	{
+		bc_log( LOG_INFO, "write kernel.n_booted\n");
+		curr->kernel.n_booted = 0;
+	}
+	if  ( curr->rootfs.n_booted == 1 )
+	{
+		bc_log( LOG_INFO, "write rootfs.n_booted\n");
+        	curr->rootfs.n_booted = 0;
+	}
+
+	/* This is a Hack to select used Partitions as healthy */
+	curr->kernel.n_healthy = 0;
+        curr->rootfs.n_healthy = 0;
+	/* End of Hack */
+	
+	err = _do_write_bootblock( bc, curr_bc_idx);
+    }
+    return err;
+}
 

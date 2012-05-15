@@ -107,4 +107,15 @@ enum bt_ll_parttype { kernel, rootfs };
 int bc_ll_set_partition( struct bootconfig * bc, enum bt_ll_parttype which, unsigned int partition );
 
 
+/**
+ * Set booted flag on partition for kernel and rootfs.
+ * This will modify the current logical config block
+ * and write it out to flash.
+ *
+ * @param bc        - bootconfig structure
+ * @return          - 0 if successful, < 0 otherwise.
+ *
+ */
+int bc_ll_set_booted_flag_on_current( struct bootconfig * bc );
+
 #endif /* __BOOTINFO_LL_H_ */

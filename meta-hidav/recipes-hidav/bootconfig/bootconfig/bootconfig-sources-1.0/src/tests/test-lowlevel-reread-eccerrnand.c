@@ -41,7 +41,7 @@ int main( int argc, char ** argv)
     bc.fd = 9;
 
     /* first run: no bootconfig available, all blocks are bad or read_error */
-/*    j=0;
+    j=0;
     for ( i = 0; i < bc.info.eb_cnt; i++ ) {
         int ret = 0;
 
@@ -53,30 +53,7 @@ int main( int argc, char ** argv)
 
         MOCK_3_CALL( ret, mtd_is_bad, &bc.info, bc.fd, i );
         if ( 0 == ret ) {
-            int ret2 = -1;
-            MOCK_6_CALL( ret2, mtd_read, &bc.info, bc.fd, i, 0, &bc.blocks[i], sizeof(struct btblock) );
-            j++;
-        }
-    }
-
-    res = bc_ll_reread( &bc );
-
-    TEST_ASSERT( -1, res, int);
-*/
-    /* first run: some mdt_is_bad errors, some read errors, some bad blocks */
-    j=0;
-    for ( i = 0; i < bc.info.eb_cnt; i++ ) {
-        int ret = 0;
-    
-        if ( 0 == ( i % 5 ) )
-            ret = 1;
-
-        if ( 0 == ( i % 11 ) )
-            ret = -1;
-
-        MOCK_3_CALL( ret, mtd_is_bad, &bc.info, bc.fd, i );
-        if ( 0 == ret ) {
-            int ret2 = ( 0 == ( i % 9 ) ) ? -1 : 0;
+            int ret2 = (EUCLEAN) * -1;
             MOCK_6_CALL( ret2, mtd_read, &bc.info, bc.fd, i, 0, &bc.blocks[i], sizeof(struct btblock) );
             j++;
         }

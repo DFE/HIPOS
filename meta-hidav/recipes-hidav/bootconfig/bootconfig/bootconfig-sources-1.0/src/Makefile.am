@@ -18,6 +18,8 @@ TESTS = test-lowlevel-init \
 		test-lowlevel-init-checkblock-err \
 		test-lowlevel-reread \
 		test-lowlevel-reread-noinit \
+		test-lowlevel-reread-badnand \
+		test-lowlevel-reread-eccerrnand \
 		test-lowlevel-getcurrent \
 		test-lowlevel-getcurrent-noinit \
 		test-lowlevel-setpartition \

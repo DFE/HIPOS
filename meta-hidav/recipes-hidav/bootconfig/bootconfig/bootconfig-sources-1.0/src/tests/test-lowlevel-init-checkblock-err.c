@@ -62,14 +62,16 @@ int main( int argc, char ** argv)
     MOCK_3_CALL( -1, mtd_is_bad, &bc.info, dev_fd, 2 );
     MOCK_3_CALL( 0, mtd_is_bad, &bc.info, dev_fd, 3 );
 
-    MOCK_6_CALL( 0, mtd_read, &bc.info, dev_fd, 0, 0, DONT_CHECK_PARAM, sizeof(struct btblock) );
-    MOCK_6_CALL( 0, mtd_read, &bc.info, dev_fd, 3, 0, DONT_CHECK_PARAM, sizeof(struct btblock) );
+    MOCK_6_CALL( 1, mtd_read, &bc.info, dev_fd, 0, 0, DONT_CHECK_PARAM, sizeof(struct btblock) );
+    MOCK_6_CALL( -1, mtd_read, &bc.info, dev_fd, 3, 0, DONT_CHECK_PARAM, sizeof(struct btblock) );
 
     MOCK_1V_CALL(       my_exit,  1 );
     _my_exit_cb = my_exit_cb;
 
 
     bc_ll_init( &bc, test_dev );
+
+    // TODO: FAIL here
 
     return 1;
 }

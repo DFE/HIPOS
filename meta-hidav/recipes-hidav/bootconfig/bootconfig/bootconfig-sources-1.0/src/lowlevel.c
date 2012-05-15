@@ -122,6 +122,12 @@ static int _read_bootblock( struct bootconfig * bc, unsigned int block_idx )
 
     err = mtd_read( &bc->info, bc->fd, block_idx, 0,
                     &bc->blocks[ block_idx ], sizeof( *bc->blocks ) );
+    if ( (err * -1) == EUCLEAN )
+    {
+        bc_log( LOG_INFO, "Info: Block %d needs cleaningi\n", block_idx );
+        return 0;
+    }
+
     if( err ) {
         bc_log( LOG_ERR, "Error %d while reading bootinfo block %d from %s: %s.\n",
                 errno, block_idx, bc->dev, strerror( errno ));
@@ -222,15 +228,14 @@ static int _update_bootblock( struct bootconfig * bc, enum bt_ll_parttype which,
 
 static int _read_bootconfig( struct bootconfig * bc ) 
 {
-    unsigned int block;
-    int          ret = 0;
+    unsigned int block, broken=0;
 
     for ( block = 0; block < (unsigned) bc->info.eb_cnt; block++ ) {
-        if ( 0 > _read_bootblock( bc, block ) )
-            ret = -1;
+        if ( 0 != _read_bootblock( bc, block ) )
+            broken++;
     }
 
-    return ret;
+    return - !!(broken == bc->info.eb_cnt);
 }
 /* -- */
 

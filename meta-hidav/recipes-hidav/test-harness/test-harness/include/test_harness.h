@@ -31,9 +31,9 @@
  *  then the macro will produce a function body and some globals:
  *
         long    _coredump_called_count = -1;
-        int     _coredump_ret [MAX_NUM_FUNC_CALL];
+        int     _coredump_ret [MOCK_MAX_NUM_FUNC_CALL];
         void    (*_coredump_cb) (void *) = 0;
-        void    *_coredump_exp_arg0[MAX_NUM_FUNC_CALL];
+        void    *_coredump_exp_arg0[MOCK_MAX_NUM_FUNC_CALL];
 
         int coredump( void * arg0 ) { ... }
             
@@ -202,7 +202,10 @@ void set_default_fail( enum fail_switch_t mode ) {
 
 static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
 #include <string.h>
-#define MAX_NUM_FUNC_CALL   50
+
+#ifndef MOCK_MAX_NUM_FUNC_CALL   
+#define MOCK_MAX_NUM_FUNC_CALL   50
+#endif
 
 #define CHECK_PARAM_P(func, param, type)                                        \
 {                                                                               \
@@ -210,9 +213,9 @@ static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
     void *exp=NULL, *got=NULL;                                                  \
     memcpy(&exp, &_##func##_exp_##param[_##func##_called_count], sizeof(type)); \
     memcpy(&got, &param, sizeof(type));                                         \
-    if (_##func##_called_count + 1 >= MAX_NUM_FUNC_CALL) {                      \
+    if (_##func##_called_count + 1 >= MOCK_MAX_NUM_FUNC_CALL) {                      \
         printf("INTERNAL TEST ERROR: Maximum number of mock function calls "    \
-                 "(%u) reached.\n", MAX_NUM_FUNC_CALL);                         \
+                 "(%u) reached.\n", MOCK_MAX_NUM_FUNC_CALL);                         \
         exit(ERR_PREPARATION_FAILED);                                           \
     }                                                                           \
     if (_##func##_called_count > _##func##_configured_calls) {                  \
@@ -264,7 +267,7 @@ static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
  *    the harnessed code calls the mocked function.
  *    NOTE: This variable MUST be re-set by the unit test code
  *    when multiple tests are run (using MOCK_RESET( <func> )!
- * - create global arrays named _[function]_exp_arg<n>[MAX_NUM_FUNC_CALL]
+ * - create global arrays named _[function]_exp_arg<n>[MOCK_MAX_NUM_FUNC_CALL]
  *    depending on the number of arguments the function takes.
  *    Unit tests should set these to the expected argument values
  *    the harnessed code is supposed to call the mocked function with
@@ -272,7 +275,7 @@ static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
  *    If the argument should not be checked by the harness the unit test
  *    should set it to \ref DONT_CHECK_PARAM.
  * - the non-void macros will also creata a global return 
- *    array _[function]_ret[MAX_NUM_FUNC_CALL]. Unit tests should store the 
+ *    array _[function]_ret[MOCK_MAX_NUM_FUNC_CALL]. Unit tests should store the 
  *    values the mocked function is supposed to return in successive calls
  *    to the harnessed code.
  * - create a function body with the return type and the argument types
@@ -315,7 +318,7 @@ static void * DONT_CHECK_PARAM = "Hey, don't check me. It's OK, really.";
 }
 
 
-#define MAX_NUM_FUNC_CALL   50
+#define MOCK_MAX_NUM_FUNC_CALL   50
 
 #define _MOCK_COMMON_V( func )                 \
 long _##func##_configured_calls = -1; \
@@ -323,7 +326,7 @@ long _##func##_called_count = -1;
 
 #define _MOCK_COMMON( ret_type, func )        \
 _MOCK_COMMON_V(func)                          \
-ret_type    _##func##_ret[MAX_NUM_FUNC_CALL];
+ret_type    _##func##_ret[MOCK_MAX_NUM_FUNC_CALL];
 
 
 #define MOCK_RESET( func )              \
@@ -373,7 +376,7 @@ void func(void) {                    \
 #define MOCK_1(ret_type, func, arg0_type)       \
 _MOCK_COMMON( ret_type, func )                  \
 void (*_##func##_cb)(arg0_type) = 0;            \
-arg0_type   _##func##_exp_arg0[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_arg0[MOCK_MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0) {                 \
     _##func##_called_count++;                   \
     CHECK_PARAM_P( func, arg0, arg0_type);      \
@@ -385,7 +388,7 @@ ret_type func(arg0_type arg0) {                 \
 #define MOCK_1V(func, arg0_type)                \
 _MOCK_COMMON_V(func)                            \
 void (*_##func##_cb)(arg0_type) = 0;            \
-arg0_type   _##func##_exp_arg0[MAX_NUM_FUNC_CALL]; \
+arg0_type   _##func##_exp_arg0[MOCK_MAX_NUM_FUNC_CALL]; \
 void    func(arg0_type arg0) {                  \
     _##func##_called_count++;                   \
     CHECK_PARAM_P( func, arg0, arg0_type);      \
@@ -412,8 +415,8 @@ void    func(arg0_type arg0) {                  \
 #define MOCK_2(ret_type, func, arg0_type, arg1_type)     \
 _MOCK_COMMON( ret_type, func )                           \
 void (*_##func##_cb)(arg0_type, arg1_type) = 0;          \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0, arg1_type arg1) {          \
     _##func##_called_count++;                            \
     CHECK_PARAM_P( func, arg0, arg0_type);               \
@@ -426,8 +429,8 @@ ret_type func(arg0_type arg0, arg1_type arg1) {          \
 #define MOCK_2V(func, arg0_type, arg1_type)             \
 _MOCK_COMMON_V(func)                                    \
 void (*_##func##_cb)(arg0_type, arg1_type) = 0;         \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
 void func(arg0_type arg0, arg1_type arg1) {             \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -454,9 +457,9 @@ void func(arg0_type arg0, arg1_type arg1) {             \
 #define MOCK_3(ret_type, func, arg0_type, arg1_type, arg2_type) \
 _MOCK_COMMON( ret_type, func )                                  \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type) = 0;      \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -470,9 +473,9 @@ ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2) { \
 #define MOCK_3V(func, arg0_type, arg1_type, arg2_type) \
 _MOCK_COMMON_V(func)                                   \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type) = 0;  \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
 void func(arg0_type arg0, arg1_type arg1, arg2_type arg2) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -503,10 +506,10 @@ void func(arg0_type arg0, arg1_type arg1, arg2_type arg2) { \
 #define MOCK_4(ret_type, func, arg0_type, arg1_type, arg2_type, arg3_type) \
 _MOCK_COMMON( ret_type, func )                                             \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type, arg3_type) = 0;      \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
-arg3_type   _##func##_exp_##arg3[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
+arg3_type   _##func##_exp_##arg3[MOCK_MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -521,10 +524,10 @@ ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3) { 
 #define MOCK_4V(func, arg0_type, arg1_type, arg2_type, arg3_type)       \
 _MOCK_COMMON_V(func)                                                    \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type, arg3_type) = 0;   \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
-arg3_type   _##func##_exp_##arg3[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
+arg3_type   _##func##_exp_##arg3[MOCK_MAX_NUM_FUNC_CALL];\
 void func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -556,11 +559,11 @@ void func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3) { \
 #define MOCK_5(ret_type, func, arg0_type, arg1_type, arg2_type, arg3_type, arg4_type) \
 _MOCK_COMMON( ret_type, func )                                                        \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type, arg3_type, arg4_type) = 0;      \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
-arg3_type   _##func##_exp_##arg3[MAX_NUM_FUNC_CALL];\
-arg4_type   _##func##_exp_##arg4[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
+arg3_type   _##func##_exp_##arg3[MOCK_MAX_NUM_FUNC_CALL];\
+arg4_type   _##func##_exp_##arg4[MOCK_MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_type arg4) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -576,11 +579,11 @@ ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, ar
 #define MOCK_5V(func, arg0_type, arg1_type, arg2_type, arg3_type, arg4_type)    \
 _MOCK_COMMON_V(func)                                                            \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type, arg3_type, arg4_type) = 0;\
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
-arg3_type   _##func##_exp_##arg3[MAX_NUM_FUNC_CALL];\
-arg4_type   _##func##_exp_##arg4[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
+arg3_type   _##func##_exp_##arg3[MOCK_MAX_NUM_FUNC_CALL];\
+arg4_type   _##func##_exp_##arg4[MOCK_MAX_NUM_FUNC_CALL];\
 void func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_type arg4) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -615,12 +618,12 @@ void func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_t
 #define MOCK_6(ret_type, func, arg0_type, arg1_type, arg2_type, arg3_type, arg4_type, arg5_type) \
 _MOCK_COMMON( ret_type, func )                                                                   \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type, arg3_type, arg4_type, arg5_type) = 0;      \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
-arg3_type   _##func##_exp_##arg3[MAX_NUM_FUNC_CALL];\
-arg4_type   _##func##_exp_##arg4[MAX_NUM_FUNC_CALL];\
-arg5_type   _##func##_exp_##arg5[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
+arg3_type   _##func##_exp_##arg3[MOCK_MAX_NUM_FUNC_CALL];\
+arg4_type   _##func##_exp_##arg4[MOCK_MAX_NUM_FUNC_CALL];\
+arg5_type   _##func##_exp_##arg5[MOCK_MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_type arg4, arg5_type arg5) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -637,12 +640,12 @@ ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, ar
 #define MOCK_6V(func, arg0_type, arg1_type, arg2_type, arg3_type, arg4_type, arg5_type)    \
 _MOCK_COMMON_V(func)                                                                       \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type, arg3_type, arg4_type, arg5_type) = 0;\
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
-arg3_type   _##func##_exp_##arg3[MAX_NUM_FUNC_CALL];\
-arg4_type   _##func##_exp_##arg4[MAX_NUM_FUNC_CALL];\
-arg5_type   _##func##_exp_##arg5[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
+arg3_type   _##func##_exp_##arg3[MOCK_MAX_NUM_FUNC_CALL];\
+arg4_type   _##func##_exp_##arg4[MOCK_MAX_NUM_FUNC_CALL];\
+arg5_type   _##func##_exp_##arg5[MOCK_MAX_NUM_FUNC_CALL];\
 void func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_type arg4, arg5_type arg5) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -684,16 +687,16 @@ void func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_t
 #define MOCK_10(ret_type, func, arg0_type, arg1_type, arg2_type, arg3_type, arg4_type, arg5_type, arg6_type, arg7_type, arg8_type, arg9_type) \
 _MOCK_COMMON( ret_type, func )                                                                   \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type, arg3_type, arg4_type, arg5_type, arg6_type, arg7_type, arg8_type, arg9_type) = 0;      \
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
-arg3_type   _##func##_exp_##arg3[MAX_NUM_FUNC_CALL];\
-arg4_type   _##func##_exp_##arg4[MAX_NUM_FUNC_CALL];\
-arg5_type   _##func##_exp_##arg5[MAX_NUM_FUNC_CALL];\
-arg6_type   _##func##_exp_##arg6[MAX_NUM_FUNC_CALL];\
-arg7_type   _##func##_exp_##arg7[MAX_NUM_FUNC_CALL];\
-arg8_type   _##func##_exp_##arg8[MAX_NUM_FUNC_CALL];\
-arg9_type   _##func##_exp_##arg9[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
+arg3_type   _##func##_exp_##arg3[MOCK_MAX_NUM_FUNC_CALL];\
+arg4_type   _##func##_exp_##arg4[MOCK_MAX_NUM_FUNC_CALL];\
+arg5_type   _##func##_exp_##arg5[MOCK_MAX_NUM_FUNC_CALL];\
+arg6_type   _##func##_exp_##arg6[MOCK_MAX_NUM_FUNC_CALL];\
+arg7_type   _##func##_exp_##arg7[MOCK_MAX_NUM_FUNC_CALL];\
+arg8_type   _##func##_exp_##arg8[MOCK_MAX_NUM_FUNC_CALL];\
+arg9_type   _##func##_exp_##arg9[MOCK_MAX_NUM_FUNC_CALL];\
 ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_type arg4, arg5_type arg5, arg6_type arg6, arg7_type arg7, arg8_type arg8, arg9_type arg9) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \
@@ -714,16 +717,16 @@ ret_type func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, ar
 #define MOCK_10V(func, arg0_type, arg1_type, arg2_type, arg3_type, arg4_type, arg5_type, arg6_type, arg7_type, arg8_type, arg9_type)    \
 _MOCK_COMMON_V(func)                                                                       \
 void (*_##func##_cb)(arg0_type, arg1_type, arg2_type, arg3_type, arg4_type, arg5_type, arg6_type, arg7_type, arg8_type, arg9_type) = 0;\
-arg0_type   _##func##_exp_##arg0[MAX_NUM_FUNC_CALL];\
-arg1_type   _##func##_exp_##arg1[MAX_NUM_FUNC_CALL];\
-arg2_type   _##func##_exp_##arg2[MAX_NUM_FUNC_CALL];\
-arg3_type   _##func##_exp_##arg3[MAX_NUM_FUNC_CALL];\
-arg4_type   _##func##_exp_##arg4[MAX_NUM_FUNC_CALL];\
-arg5_type   _##func##_exp_##arg5[MAX_NUM_FUNC_CALL];\
-arg6_type   _##func##_exp_##arg6[MAX_NUM_FUNC_CALL];\
-arg7_type   _##func##_exp_##arg7[MAX_NUM_FUNC_CALL];\
-arg8_type   _##func##_exp_##arg8[MAX_NUM_FUNC_CALL];\
-arg9_type   _##func##_exp_##arg9[MAX_NUM_FUNC_CALL];\
+arg0_type   _##func##_exp_##arg0[MOCK_MAX_NUM_FUNC_CALL];\
+arg1_type   _##func##_exp_##arg1[MOCK_MAX_NUM_FUNC_CALL];\
+arg2_type   _##func##_exp_##arg2[MOCK_MAX_NUM_FUNC_CALL];\
+arg3_type   _##func##_exp_##arg3[MOCK_MAX_NUM_FUNC_CALL];\
+arg4_type   _##func##_exp_##arg4[MOCK_MAX_NUM_FUNC_CALL];\
+arg5_type   _##func##_exp_##arg5[MOCK_MAX_NUM_FUNC_CALL];\
+arg6_type   _##func##_exp_##arg6[MOCK_MAX_NUM_FUNC_CALL];\
+arg7_type   _##func##_exp_##arg7[MOCK_MAX_NUM_FUNC_CALL];\
+arg8_type   _##func##_exp_##arg8[MOCK_MAX_NUM_FUNC_CALL];\
+arg9_type   _##func##_exp_##arg9[MOCK_MAX_NUM_FUNC_CALL];\
 void func(arg0_type arg0, arg1_type arg1, arg2_type arg2, arg3_type arg3, arg4_type arg4, arg5_type arg5, arg6_type arg6, arg7_type arg7, arg8_type arg8, arg9_type arg9) { \
     _##func##_called_count++;                           \
     CHECK_PARAM_P( func, arg0, arg0_type);              \

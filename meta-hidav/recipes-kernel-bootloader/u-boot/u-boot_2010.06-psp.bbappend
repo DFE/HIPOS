@@ -13,6 +13,7 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-nand-do-not-use-bad_block_table.patch \
 		   file://boot-config.patch \
 		   file://u-boot-bootconfig-glue.patch \
+                   file://hidav-u-boot-mem-196k.patch \
 		   file://u-boot/src/include/* \
 		   file://u-boot/src/lib/* "
 

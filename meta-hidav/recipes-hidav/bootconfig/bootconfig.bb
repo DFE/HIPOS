@@ -4,7 +4,7 @@ LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
 PR = "r9"
-PV = "1.0"
+PV = "1.1"
 
 export LDFLAGS += "-L${STAGING_LIBDIR}/libmtd.a" 
 

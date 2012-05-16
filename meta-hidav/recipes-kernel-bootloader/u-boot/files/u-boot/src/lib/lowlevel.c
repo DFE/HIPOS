@@ -443,11 +443,6 @@ int bc_ll_set_booted_flag_on_current( struct bootconfig * bc )
 		bc_log( LOG_INFO, "write rootfs.n_booted\n");
         	curr->rootfs.n_booted = 0;
 	}
-
-	/* This is a Hack to select used Partitions as healthy */
-	curr->kernel.n_healthy = 0;
-        curr->rootfs.n_healthy = 0;
-	/* End of Hack */
 	
 	err = _do_write_bootblock( bc, curr_bc_idx);
     }

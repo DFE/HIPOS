@@ -12,6 +12,7 @@ IMAGE_INSTALL += " \
   bash \
   portmap portmap-systemd \
   bootconfig \
+  healthy \
 "
 
 # profiling

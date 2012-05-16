@@ -341,14 +341,29 @@ struct btblock * bc_ll_get_current ( struct bootconfig * bc, uint32_t *block_ind
 
         if ( 0 != memcmp( "Boot", b->magic, 4 ) )
             continue;
-        
-        if ( ( b->epoch > epoch_max ) && ( (b->kernel.n_booted != 0) || ( b->kernel.n_healthy != 1 ) ) && ( (b->rootfs.n_booted != 0) || ( b->rootfs.n_healthy != 1 )  ) ) 
+        if ( b->epoch > epoch_max )
 	{
-            idx = block;
-            epoch_max = b->epoch;
-        }
-    }
+		/* valid bootconfig block ? */
+	        if ( ( (b->kernel.n_booted != 0) || ( b->kernel.n_healthy != 1 ) ) && ( (b->rootfs.n_booted != 0) || ( b->rootfs.n_healthy != 1 )  ) ) 
+		{
+	            idx = block;
+        	    epoch_max = b->epoch;
+        	}
+		else
+		{
+			int err = 0;
 
+			/* Remove not working bootconfig from nand flash */
+			bc_log( LOG_INFO, "Do not use Block %d.", block );
+			memcpy ( bc->blocks[ block ].magic, "DNU!", 4 );
+			err = _do_write_bootblock( bc, block );
+			if ( err != 0)
+		                bc_log( LOG_ERR, "Write to broken configuration Block %d failed.", block );
+		}
+
+	}
+    }
+    
     if( epoch_max ) {
         if ( NULL != block_index )
             *block_index = idx;

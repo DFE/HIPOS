@@ -349,9 +349,78 @@ int bc_ll_set_partition( struct bootconfig * bc, enum bt_ll_parttype which, unsi
 }
 
 
+int bc_ll_set_kernel_healthy( struct bootconfig * bc, unsigned int block )
+{
+	int    err;
+	char  *page;
+	struct btblock * curr;
+
+	if (! initialised) {
+        	bc_log( LOG_ERR, "Internal error: called before initialisation!\n");
+	        exit(1);
+	}
+
+	curr = &bc->blocks[ block ];
+	
+	if ( curr->kernel.n_healthy == 1)
+	{
+		curr->kernel.n_healthy = 0;
+	       	page = malloc( bc->info.min_io_size );
+		if( NULL == page ) 
+		{
+		        bc_log( LOG_ERR, "Error #%d malloc()ing %d bytes: %s.\n",errno, bc->info.min_io_size, strerror(errno));
+		        return -1;
+		}
+
+	        memset( page, 0xFF, bc->info.min_io_size );
+	        memcpy( page, &bc->blocks[ block ], sizeof( *bc->blocks ) );
+	    	err = mtd_write( bc->mtd, &bc->info, bc->fd, block, 0, page, bc->info.min_io_size , NULL, 0, 0 );
+		free( page );
+
+		if (0 > err)
+		        return 1;
+	}
+	
+	return 0;
+	
+}
 
 
+int bc_ll_set_rootfs_healthy( struct bootconfig * bc, unsigned int block )
+{
+        int    err;
+        char  *page;
+        struct btblock * curr;
 
+        if (! initialised) {
+                bc_log( LOG_ERR, "Internal error: called before initialisation!\n");
+                exit(1);
+        }
+
+        curr = &bc->blocks[ block ];
+
+        if ( curr->rootfs.n_healthy == 1)
+        {
+                curr->rootfs.n_healthy = 0;
+                page = malloc( bc->info.min_io_size );
+                if( NULL == page )
+                {
+                        bc_log( LOG_ERR, "Error #%d malloc()ing %d bytes: %s.\n",errno, bc->info.min_io_size, strerror(errno));
+                        return -1;
+                }
+
+                memset( page, 0xFF, bc->info.min_io_size );
+                memcpy( page, &bc->blocks[ block ], sizeof( *bc->blocks ) );
+                err = mtd_write( bc->mtd, &bc->info, bc->fd, block, 0, page, bc->info.min_io_size , NULL, 0, 0 );
+                free( page );
+
+                if (0 > err)
+                        return 1;
+        }
+
+	return 0;
+
+}
 
 
 

@@ -44,7 +44,7 @@ static void _print_config( struct bootconfig * bc )
     if ( NULL == bt ) {
         printf("No current boot config.\n");
     } else {
-        _print_block( bt );
+	_print_block( bt );
     }
 }
 /* -- */
@@ -89,7 +89,49 @@ static void _print_help( void )
     printf("  bootconfig set-rootfs <mtd>     Generate new boot configuration which sets <mtd>\n");
     printf("                                   to contain the latest root FS image. Clear all flags.\n");
     printf("                                   Write results to boot config partition.\n");
+    printf("  bootconfig set-kernel-healthy   Set currently used kernel healthy flag\n");
+    printf("  bootconfig set-rootfs-healthy   Set currently used rootfs healthy flag\n");
 };
+
+/* -- */
+static void _set_kernel_healthy( struct bootconfig * bc )
+{
+    unsigned int     block_idx = 0;
+    struct btblock * bt; 
+
+    bt = bc_ll_get_current( bc, &block_idx );
+
+    if ( NULL == bt ) {
+        printf("No current boot config.\n");
+    } else {
+	if ( bt->kernel.n_healthy  == 1 )
+	{
+		int err=0;
+		err = bc_ll_set_kernel_healthy( bc, block_idx );
+	}
+    }
+}
+
+/* -- */
+static void _set_rootfs_healthy( struct bootconfig * bc )
+{
+    unsigned int     block_idx = 0;
+    struct btblock * bt; 
+
+    bt = bc_ll_get_current( bc, &block_idx );
+
+    if ( NULL == bt ) { 
+        printf("No current boot config.\n");
+    } else {
+        if ( bt->rootfs.n_healthy  == 1 )
+        {
+                int err=0;
+                err = bc_ll_set_rootfs_healthy( bc, block_idx );
+        }
+    }
+}
+
+
 /* -- */
 
 static void _set( struct bootconfig * bc, const char * desc, 
@@ -142,6 +184,17 @@ int main(int argc, char ** argv)
 
     if ( 0 == strcmp( argv[1], "help" ) ) {
         ret = 0;
+    }
+
+    if ( 0 == strcmp( argv[1], "set-kernel-healthy" ) ) {
+	_set_kernel_healthy( &bc );
+	_print_config( &bc );
+        exit(0);
+    }
+    if ( 0 == strcmp( argv[1], "set-rootfs-healthy" ) ) {
+        _set_rootfs_healthy( &bc );
+        _print_config( &bc );
+        exit(0);
     }
 
     if ( argc == 3 ) {

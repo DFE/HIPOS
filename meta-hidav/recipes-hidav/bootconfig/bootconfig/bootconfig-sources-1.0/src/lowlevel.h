@@ -101,5 +101,26 @@ struct btblock * bc_ll_get_current ( struct bootconfig * bc, uint32_t * block_in
 enum bt_ll_parttype { kernel, rootfs };
 int bc_ll_set_partition( struct bootconfig * bc, enum bt_ll_parttype which, unsigned int partition );
 
+/**
+* Set the kernel of a boot config block to healthy.
+*
+* @param bc          - bootconfig structure
+* @param block       - index of bootconfig
+* @return            - 0 if successful, < 0 otherwise.
+* 
+* The function will call exit() upon error (i.e. library was not initialised).
+*/
+int bc_ll_set_kernel_healthy( struct bootconfig * bc, unsigned int block );
+
+/**
+* Set the rootfs of a boot config block to healthy.
+*
+* @param bc          - bootconfig structure
+* @param block       - index of bootconfig
+* @return            - 0 if successful, < 0 otherwise.
+* 
+* The function will call exit() upon error (i.e. library was not initialised).
+*/
+int bc_ll_set_rootfs_healthy( struct bootconfig * bc, unsigned int block );
 
 #endif /* __BOOTINFO_LL_H_ */

@@ -27,6 +27,7 @@ TESTS = test-lowlevel-init \
 		test-lowlevel-setpartition-allempty \
 		test-lowlevel-setpartition-noinit	\
 		test-lowlevel-setpartition-illegalpart \
+		test-lowlevel-sethealthy \
 		test-lowlevel-alloc-bootblock-fail	\
 		test-lowlevel-write-block-alloc-fail
 

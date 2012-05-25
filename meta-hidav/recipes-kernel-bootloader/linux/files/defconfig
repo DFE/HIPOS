@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux/arm 2.6.37 Kernel Configuration
-# Thu May 10 10:45:17 2012
+# Fri May 25 15:51:40 2012
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -326,7 +326,7 @@ CONFIG_ARM_THUMB=y
 CONFIG_ARM_L1_CACHE_SHIFT=6
 CONFIG_ARM_DMA_MEM_BUFFERABLE=y
 CONFIG_CPU_HAS_PMU=y
-CONFIG_ARM_ERRATA_430973=y
+# CONFIG_ARM_ERRATA_430973 is not set
 # CONFIG_ARM_ERRATA_458693 is not set
 # CONFIG_ARM_ERRATA_460075 is not set
 # CONFIG_ARM_ERRATA_743622 is not set
@@ -835,7 +835,7 @@ CONFIG_TI_CPSW=y
 # CONFIG_NS83820 is not set
 # CONFIG_HAMACHI is not set
 # CONFIG_YELLOWFIN is not set
-# CONFIG_R8169 is not set
+CONFIG_R8169=y
 # CONFIG_SIS190 is not set
 # CONFIG_SKGE is not set
 # CONFIG_SKY2 is not set

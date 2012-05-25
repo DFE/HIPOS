@@ -1,4 +1,4 @@
-PR_append = "+r14"
+PR_append = "+r15"
 
 COMPATIBLE_MACHINE = "hidav"
 

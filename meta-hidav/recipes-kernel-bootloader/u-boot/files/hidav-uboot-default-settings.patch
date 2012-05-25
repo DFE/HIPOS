@@ -193,7 +193,7 @@ index 33f7bea..f4bc7ff 100644
 +#ifdef TI81XX_SECOND_STAGE
 +# define BOOTNAND_CMD \
 +    "bootnand=setenv verify no; setenv bootargs "\
-+                    "systemd.log_level=debug systemd.log_target=console console=ttyO0,115200n8 rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255;" \
++                    "console=ttyO0,115200n8 rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255;" \
 +                "nboot 0x80007FC0 0 ${kernel_offset}; bootm;\0"
 +#else 
 +# define BOOTNAND_CMD \
@@ -210,7 +210,7 @@ index 33f7bea..f4bc7ff 100644
 +                    "go 0x80800000\0" \
 +    "bootsd=mmc rescan 0;setenv verify no; "\
 +                            "setenv bootargs "\
-+                                "systemd.log_level=debug systemd.log_target=console console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg;" \
++                                "console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg;" \
 +                            "fatload mmc 0 0x80007FC0 uImage;"\
 +                            "bootm 0x80007FC0\0" \
 +    BOOTNAND_CMD \

@@ -299,6 +299,12 @@ void bc_ll_init( struct bootconfig * bc, const char * dev )
     bc->mtd     = _libmtd_init();
     bc->blocks  = _alloc_blocks( BOOTCONFIG_MTDPART_SIZE/bc->mtd->erasesize );
 
+    if ( bc->mtd->size == 0 )
+    {
+       bc_log( LOG_INFO,"Error: No NAND found.");
+       initialised = 0;
+       return;
+    }
 
     if ( 0 > _read_bootconfig( bc ) )
     {

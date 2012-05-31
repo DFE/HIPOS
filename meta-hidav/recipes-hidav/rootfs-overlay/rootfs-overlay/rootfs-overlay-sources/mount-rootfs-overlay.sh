@@ -21,6 +21,10 @@
 # The script supports many layers. Each layer is a directory in UBIFS.
 #
 
+# Uncomment for debugging
+# exec 2>/dev/kmsg
+# set -x
+
 # exit upon error: 
 set -e
 
@@ -125,7 +129,6 @@ list_moveable_mounts() {
 
                 # add it to the list of mounts to be processed
                 mounts_seen[ mounted_fs ]
-
             } 
         END {
             for (m in mounts_seen)
@@ -169,6 +172,12 @@ cd ${pivot_root_mountpoint}
 
 # now move everything mounted on the old root to the new root
 for mount in `list_moveable_mounts` ; do
+
+    # let's all laugh at Lennart for this:
+    [ "${mount}" = '/etc/machine-id\040(deleted)' ] && mount="/etc/machine-id"
+
+    [ -d "${mount}" ] && mkdir -p "${pivot_root_mountpoint}${mount}" 
+    [ -f "${mount}" ] && touch "${pivot_root_mountpoint}${mount}" 
     mount --move "$mount" "${pivot_root_mountpoint}${mount}" 
 done
 

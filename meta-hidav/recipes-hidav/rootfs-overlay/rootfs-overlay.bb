@@ -4,6 +4,7 @@ LICENSE = "GPLv2"
 PACKAGE_ARCH = "all"
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
+PV = "0.1.1"
 PR = "r30"
 
 # ubi tooling from mtd-utils
@@ -20,9 +21,10 @@ SRC_URI=" file://rootfs-overlay-sources/* \
 "
 
 FILES_${PN} += "/overlays \
-                /overlays/overlays-data \
-                /overlays/overlay-rootfs \
-                /overlays/original-rootfs "
+                /overlays/overlays-data 	\
+                /overlays/overlay-rootfs 	\
+                /overlays/original-rootfs 	\
+		"
 
 # systemd
 PACKAGES =+ "${PN}-systemd"
@@ -34,7 +36,6 @@ SYSTEMD_SERVICE_${PN}-systemd = "mount-rootfs.target mount-rootfs-overlay.servic
 
 FILES_${PN} += "${base_libdir}/systemd"
 
-PV = "0.1"
 S = "${WORKDIR}/rootfs-overlay-sources"
 
 CONFFILES_${PN} = " ${sysconfdir}/default/rootfs-overlay "

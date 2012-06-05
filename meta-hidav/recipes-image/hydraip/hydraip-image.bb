@@ -10,3 +10,5 @@ IMAGE_INSTALL_append_hidav += " \
   rootfs-overlay rootfs-overlay-systemd rootfs-overlay-tools \
 "
 
+addtask package_write after do_rootfs before do_build
+

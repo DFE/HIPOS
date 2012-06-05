@@ -1,0 +1,79 @@
+From 2b98f9c6c91d7491547da85d7458f928ce8049ba Mon Sep 17 00:00:00 2001
+From: Eik Binschek <binschek@dresearch-fe.de>
+Date: Tue, 5 Jun 2012 17:55:30 +0200
+Subject: [PATCH] kernel: use only 16Bit NAND
+
+	We do not have a bw mode pin on HidaV.
+	Now, only 16Bit nand flash is used.
+
+Signed-off-by: Eik Binschek <binschek@dresearch-fe.de>
+---
+ arch/arm/mach-omap2/board-flash.c     |   24 +++++++++++++-----------
+ arch/arm/mach-omap2/board-ti8148evm.c |    4 ++++
+ 2 files changed, 17 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/board-flash.c b/arch/arm/mach-omap2/board-flash.c
+index 31021d9..7c32ee4 100644
+--- a/arch/arm/mach-omap2/board-flash.c
++++ b/arch/arm/mach-omap2/board-flash.c
+@@ -136,21 +136,23 @@ static struct gpmc_timings nand_timings_ti814x = {
+ 	.sync_clk = 0,
+ 
+ 	.cs_on = 0,
+-	.cs_rd_off = 31,
+-	.cs_wr_off = 31,
++	.cs_rd_off = 53,
++	.cs_wr_off = 53,
+ 
+-	.adv_on = 5,
+-	.adv_rd_off = 21,
+-	.adv_wr_off = 31,
++	.adv_on = 0,
++	.adv_rd_off = 0,
++	.adv_wr_off = 0,
+ 
+-	.we_off = 26,
+-	.oe_off = 42,
++	.we_off = 36,
++	.we_on  =  0,
++	.oe_off = 36,
++	.oe_on  =  0,
+ 
+-	.access = 47,
+-	.rd_cycle = 63,
+-	.wr_cycle = 63,
++	.access = 54,
++	.rd_cycle = 54,
++	.wr_cycle = 54,
+ 
+-	.wr_access = 26,
++	.wr_access = 0,
+ 	.wr_data_mux_bus = 0,
+ };
+ 
+diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
+index 6a3aea4..779c2a4 100644
+--- a/arch/arm/mach-omap2/board-ti8148evm.c
++++ b/arch/arm/mach-omap2/board-ti8148evm.c
+@@ -537,7 +537,10 @@ static void __init ti8148_evm_init(void)
+ 	omap2_hsmmc_init(mmc);
+ 
+ 	/* nand initialisation */
++#if 0
++# HidaV do not have a BTMODE BW pin on board
+ 	if (cpu_is_ti814x()) {
++
+ 		u32 *control_status = TI81XX_CTRL_REGADDR(0x40);
+ 		if (*control_status & (1<<16))
+ 			bw = 0; /*8-bit nand if BTMODE BW pin on board is ON*/
+@@ -547,6 +550,7 @@ static void __init ti8148_evm_init(void)
+ 		board_nand_init(ti814x_nand_partitions,
+ 			ARRAY_SIZE(ti814x_nand_partitions), 0, bw);
+ 	} else
++#endif
+ 		board_nand_init(ti814x_nand_partitions,
+ 		ARRAY_SIZE(ti814x_nand_partitions), 0, NAND_BUSWIDTH_16);
+ 
+-- 
+1.7.7
+

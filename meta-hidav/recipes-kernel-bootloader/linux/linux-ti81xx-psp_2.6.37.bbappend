@@ -24,7 +24,7 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 		   file://use-only-16Bit-NAND.patch \
                    "
 
-MACHINE_KERNEL_PR = "r55"
+MACHINE_KERNEL_PR = "r56"
 
 # this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
 # so we insert it manually.

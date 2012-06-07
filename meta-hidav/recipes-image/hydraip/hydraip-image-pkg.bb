@@ -11,18 +11,6 @@ PR = "r6"
 
 FILES_${PN} = "/tmp/hydraip-image-hidav.squashfs"
 
-# wait for do_rootfs of hydraip-image
-do_compile(){
-#!/bin/bash
-	while [ ! -f ${DEPLOY_DIR_IMAGE}/hydraip-image-hidav.squashfs ]
-	do
-		sleep 1;
-		if [ "`ps axf | grep -v grep | grep hydraip-image | grep do_rootfs`" == "" ]; then
-			break;
-		fi
-	done
-}
-
 do_install() {
 	install -d ${D}/tmp
 	install -m644 ${DEPLOY_DIR_IMAGE}/hydraip-image-hidav.squashfs ${D}/tmp/hydraip-image-hidav.squashfs
@@ -107,5 +95,5 @@ pkg_prerm_${PN} () {
 }
 
 do_configure[noexec] = "1"
-
+do_install[depends] = "hydraip-image:do_rootfs"
 

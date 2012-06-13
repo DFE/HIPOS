@@ -22,9 +22,10 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
                    file://btrfs-kobject-include.patch \ 
                    file://mtd-blockrom-glue.patch \
 		   file://use-only-16Bit-NAND.patch \
+		   file://kernel-BTMODE12-inverse.patch \
                    "
 
-MACHINE_KERNEL_PR = "r56"
+MACHINE_KERNEL_PR = "r57"
 
 # this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
 # so we insert it manually.

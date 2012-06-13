@@ -1,0 +1,130 @@
+From 066df65dd436cd0e00fae480cf0966b01cd1ea91 Mon Sep 17 00:00:00 2001
+From: Eik Binschek <binschek@dresearch-fe.de>
+Date: Wed, 13 Jun 2012 17:43:32 +0200
+Subject: [PATCH] u-boot: invert BTMODE12
+
+	fix BTMODE12 to select 16Bit NAND falsh
+
+Signed-off-by: Eik Binschek <binschek@dresearch-fe.de>
+---
+ arch/arm/cpu/arm_cortexa8/ti81xx/sys_info.c |    6 +++---
+ common/main.c                               |   16 ++++++++--------
+ drivers/mtd/nand/nand_base.c                |   15 +++++++++++++--
+ 3 files changed, 24 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/cpu/arm_cortexa8/ti81xx/sys_info.c b/arch/arm/cpu/arm_cortexa8/ti81xx/sys_info.c
+index 446f0d2..13fcd34 100644
+--- a/arch/arm/cpu/arm_cortexa8/ti81xx/sys_info.c
++++ b/arch/arm/cpu/arm_cortexa8/ti81xx/sys_info.c
+@@ -135,10 +135,10 @@ u32 get_sysboot_bw(void)
+ 	int bw;
+ 	bw = __raw_readl(CONTROL_STATUS) & (SYSBOOT_BW_MASK);
+ 	bw >>= SYSBOOT_BW_POS;
+-	if (bw == 0)	/* 8-bit nand if BTMODE BW pin on board is ON */
+-		return 1;
+-	else if (bw == 1)/* 16-bit nand if BTMODE BW pin on board is OFF */
++	if (bw == 0)	/* 8-bit nand if BTMODE BW pin on board is OFF */
+ 		return 0;
++	else if (bw == 1)/* 16-bit nand if BTMODE BW pin on board is ON */
++		return 1;
+ 
+ 	/* Failed to detect */
+ 	return -1;
+diff --git a/common/main.c b/common/main.c
+index abdb0ab..c3e83fc 100644
+--- a/common/main.c
++++ b/common/main.c
+@@ -388,10 +388,10 @@ void main_loop (void)
+ 	{
+ 		printf ("NAND-BootConfig:\n");
+ 	        printf ("Epoch = %d\n", btblock_test->epoch);
+-	        printf ("Kernel booted = %d\n", btblock_test->kernel.n_booted );
+-	        printf ("Kernel healthy = %d\n", btblock_test->kernel.n_healthy );
+-	        printf ("Rootfs booted = %d\n", btblock_test->rootfs.n_booted );
+-	        printf ("Rootfs healthy = %d\n", btblock_test->rootfs.n_healthy );
++	        printf ("Kernel not booted  = %d\n", btblock_test->kernel.n_booted );
++	        printf ("Kernel not healthy = %d\n", btblock_test->kernel.n_healthy );
++	        printf ("Rootfs not booted  = %d\n", btblock_test->rootfs.n_booted );
++	        printf ("Rootfs not healthy = %d\n", btblock_test->rootfs.n_healthy );
+ 
+ 	        /* rootfs_device=/dev/blockrom4\0       */
+ 		/* kernel_offset=0x200000\0 */
+@@ -428,10 +428,10 @@ void main_loop (void)
+ 	                bc_ll_set_booted_flag_on_current( &bc );
+ 	        	printf ("NEW NAND-BootConfig:\n");
+ 		        printf ("Epoch = %d\n", btblock_test->epoch);
+-	        	printf ("Kernel booted = %d\n", btblock_test->kernel.n_booted );
+-	        	printf ("Kernel healthy = %d\n", btblock_test->kernel.n_healthy );
+-	        	printf ("Rootfs booted = %d\n", btblock_test->rootfs.n_booted );
+-	        	printf ("Rootfs healthy = %d\n", btblock_test->rootfs.n_healthy );
++	        	printf ("Kernel not booted  = %d\n", btblock_test->kernel.n_booted );
++	        	printf ("Kernel not healthy = %d\n", btblock_test->kernel.n_healthy );
++	        	printf ("Rootfs not booted  = %d\n", btblock_test->rootfs.n_booted );
++	        	printf ("Rootfs not healthy = %d\n", btblock_test->rootfs.n_healthy );
+ 	        }
+ 	}
+ 
+diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+index aeb7cfd..75d76a2 100644
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -2663,6 +2663,8 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
+ 			break;
+ 		}
+ 	}
++	
++	busw = type->options & NAND_BUSWIDTH_16;
+ 
+ 	if (!type)
+ 		return ERR_PTR(-ENODEV);
+@@ -2672,6 +2674,7 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
+ 
+ 	chip->chipsize = (uint64_t)type->chipsize << 20;
+ 
++	/* HidaV use SLC nand falsh */
+ 	/* Newer devices have all the information in additional id bytes */
+ 	if (!type->pagesize) {
+ 		int extid;
+@@ -2689,9 +2692,10 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
+ 		mtd->erasesize = (64 * 1024) << (extid & 0x03);
+ 		extid >>= 2;
+ 		/* Get buswidth information */
+-		busw = (extid & 0x01) ? NAND_BUSWIDTH_16 : 0;
++		busw = (extid & 0x01) ? NAND_BUSWIDTH_16 : 0; 
+ 
+-	} else {
++	} else 
++	{
+ 		/*
+ 		 * Old devices have chip data hardcoded in the device id table
+ 		 */
+@@ -2701,12 +2705,18 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
+ 		busw = type->options & NAND_BUSWIDTH_16;
+ 	}
+ 
++	if ( mtd->oobsize == 0 )
++		mtd->oobsize = mtd->writesize / 32;
++
++	busw = chip->options & NAND_BUSWIDTH_16;
++
+ 	/* Try to identify manufacturer */
+ 	for (maf_idx = 0; nand_manuf_ids[maf_idx].id != 0x0; maf_idx++) {
+ 		if (nand_manuf_ids[maf_idx].id == *maf_id)
+ 			break;
+ 	}
+ 
++	
+ 	/*
+ 	 * Check, if buswidth is correct. Hardware drivers should set
+ 	 * chip correct !
+@@ -2787,6 +2797,7 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips)
+ 
+ 	/* Get buswidth to select the correct functions */
+ 	busw = chip->options & NAND_BUSWIDTH_16;
++	
+ 	/* Set the default functions */
+ 	nand_set_defaults(chip, busw);
+ 
+-- 
+1.7.7
+

@@ -1,4 +1,4 @@
-PR_append = "+r15"
+PR_append = "+r16"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -15,6 +15,7 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
 		   file://u-boot-bootconfig-glue.patch \
                    file://hidav-u-boot-mem-196k.patch \
 		   file://u-boot-change-to-1GiB-RAM.patch \
+		   file://u-boot-invert-BTMODE12.patch \
 		   file://u-boot/src/include/* \
 		   file://u-boot/src/lib/* "
 

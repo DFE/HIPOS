@@ -1,0 +1,36 @@
+From 7c404d5c2f64b426488a472fc9a92b572557455d Mon Sep 17 00:00:00 2001
+From: Eik Binschek <binschek@dresearch-fe.de>
+Date: Thu, 14 Jun 2012 12:00:41 +0200
+Subject: [PATCH] kernel: inverse BTMODE12 fix
+
+	fix BTMODE12 to select 16 bit NAND flash
+	BTMODE12 is used to select 8 or 16 bit bandwidth of used nand flash.
+	Now 16 bit nand flash is used, if BTMODE12 is "1".
+	Now BTMODE12 is implemented like description in data-sheet "SPRS647B - 
+	MARCH 2011 - REVISED SEPTEMBER 2011", chapter "3.2.1 Boot Configuration".
+	Bit 8 on switch 1 on Mistral-TMDXEVM8148 has to be "on" to select 16 bit nand flash.
+
+Signed-off-by: Eik Binschek <binschek@dresearch-fe.de>
+---
+ arch/arm/mach-omap2/board-ti8148evm.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
+index 6a3aea4..08e76d5 100644
+--- a/arch/arm/mach-omap2/board-ti8148evm.c
++++ b/arch/arm/mach-omap2/board-ti8148evm.c
+@@ -540,9 +540,9 @@ static void __init ti8148_evm_init(void)
+ 	if (cpu_is_ti814x()) {
+ 		u32 *control_status = TI81XX_CTRL_REGADDR(0x40);
+ 		if (*control_status & (1<<16))
+-			bw = 0; /*8-bit nand if BTMODE BW pin on board is ON*/
++			bw = 2; /*16-bit nand if BTMODE BW pin on board is ON*/
+ 		else
+-			bw = 2; /*16-bit nand if BTMODE BW pin on board is OFF*/
++			bw = 0; /*8-bit nand if BTMODE BW pin on board is OFF*/
+ 
+ 		board_nand_init(ti814x_nand_partitions,
+ 			ARRAY_SIZE(ti814x_nand_partitions), 0, bw);
+-- 
+1.7.7
+

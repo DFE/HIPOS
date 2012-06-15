@@ -1,0 +1,44 @@
+diff --git a/drivers/net/cpsw.c b/drivers/net/cpsw.c
+index dba480e..f674095 100644
+--- a/drivers/net/cpsw.c
++++ b/drivers/net/cpsw.c
+@@ -839,6 +839,9 @@ static ssize_t cpsw_hw_stats_show(struct device *dev,
+ DEVICE_ATTR(hw_stats, S_IRUGO, cpsw_hw_stats_show, NULL);
+ 
+ #define PHY_CONFIG_REG	22
++#define MARVELL_88E15xx               0x1410dd1
++#define MARVELL_MII_PAGE2_MAC_CONTROL 21
++#define MARVELL_MII_PAGE_ADDRESS      22
+ static void cpsw_set_phy_config(struct cpsw_priv *priv, struct phy_device *phy)
+ {
+ 	struct cpsw_platform_data *pdata = priv->pdev->dev.platform_data;
+@@ -891,6 +894,26 @@ static void cpsw_set_phy_config(struct cpsw_priv *priv, struct phy_device *phy)
+ 		val |= BIT(5);
+ 		miibus->write(miibus, phy_addr, PHY_CONFIG_REG, val);
+ 		tmp = miibus->read(miibus, phy_addr, PHY_CONFIG_REG);
++	} else if (phy->phy_id == MARVELL_88E15xx) {
++		/* This disables internally transmit clock delay */
++		int timeout;
++		miibus->write(miibus, phy_addr, MARVELL_MII_PAGE_ADDRESS, 2); /* select page 2 */
++		val = miibus->read(miibus, phy_addr, MARVELL_MII_PAGE2_MAC_CONTROL);
++		val &= ~0x10; /* RGMII Transmit Timing Control */
++		miibus->write(miibus, phy_addr, MARVELL_MII_PAGE2_MAC_CONTROL, val);
++		miibus->write(miibus, phy_addr, MARVELL_MII_PAGE_ADDRESS, 0); /* back to page 0 */
++		/* Changes to MAC CONTROL register must be followed by software reset to take effekt */
++		val = miibus->read(miibus, phy_addr, MII_BMCR);
++		val |= BMCR_RESET;
++		miibus->write(miibus, phy_addr, MII_BMCR, val);
++		timeout = 100;
++		while (--timeout) {
++			if (!(miibus->read(miibus, phy_addr, MII_BMCR) & BMCR_RESET))
++				break;
++			udelay(1);
++		}
++		if (!timeout)
++			printk(KERN_ERR "Marvell phy addr %d BMCR reset failed.\n", phy_addr);
+ 	}
+ 
+ 	return;
+-- 
+1.7.9.5
+

@@ -1,0 +1,34 @@
+diff --git a/board/ti/ti8148/evm.c b/board/ti/ti8148/evm.c
+index 5206dde..baf390e 100644
+--- a/board/ti/ti8148/evm.c
++++ b/board/ti/ti8148/evm.c
+@@ -1145,6 +1145,9 @@ void reset_cpu (ulong addr)
+ #define LSI_PHY_ID		0x0282F014
+ #define PHY_CONF_REG		22
+ #define PHY_CONF_TXCLKEN	(1 << 5)
++#define MARVELL_88E15xx               0x1410dd1
++#define MARVELL_MII_PAGE2_MAC_CONTROL 21
++#define MARVELL_MII_PAGE_ADDRESS      22
+ 
+ /* TODO : Check for the board specific PHY */
+ static void phy_init(char *name, int addr)
+@@ -1169,6 +1172,16 @@ static void phy_init(char *name, int addr)
+ 		val |= PHY_CONF_TXCLKEN;
+ 		miiphy_write(name, addr, PHY_CONF_REG, val);
+ 		miiphy_read(name, addr, PHY_CONF_REG, &val);
++	} else if (phy_id == MARVELL_88E15xx) {
++		printf("Configuring Marvell Phy\n\n");
++		/* This disables internally transmit clock delay */
++		miiphy_write(name, addr, MARVELL_MII_PAGE_ADDRESS, 2); /* select page 2 */
++		miiphy_read(name, addr, MARVELL_MII_PAGE2_MAC_CONTROL, &val);
++		val &= ~0x10;                                         /* RGMII Transmit Timing Control */
++		miiphy_write(name, addr, MARVELL_MII_PAGE2_MAC_CONTROL, val);
++		miiphy_write(name, addr, MARVELL_MII_PAGE_ADDRESS, 0); /* back to page 0 */
++		/* Changes to MAC CONTROL register must be followed by software reset to take effekt */
++		miiphy_reset(name, addr);
+ 	}
+ 
+ 	/* Enable Autonegotiation */
+-- 
+1.7.9.5
+

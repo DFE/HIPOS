@@ -1,4 +1,4 @@
-PR_append = "+r18"
+PR_append = "+r19"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -17,6 +17,7 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
 		   file://u-boot-change-to-1GiB-RAM.patch \
 		   file://u-boot-bootconfig-print.patch \
 		   file://u-boot-inverse-BTMODE12-fix.patch \
+		   file://u-boot-marvell-phy-88E15xx-support.patch \
 		   file://u-boot/src/include/* \
 		   file://u-boot/src/lib/* "
 

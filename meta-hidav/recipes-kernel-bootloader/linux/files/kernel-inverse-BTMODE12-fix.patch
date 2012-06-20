@@ -24,7 +24,7 @@ index 6a3aea4..08e76d5 100644
  		u32 *control_status = TI81XX_CTRL_REGADDR(0x40);
  		if (*control_status & (1<<16))
 -			bw = 0; /*8-bit nand if BTMODE BW pin on board is ON*/
-+			bw = 2; /*16-bit nand if BTMODE BW pin on board is ON*/
++			bw = NAND_BUSWIDTH_16; /*16-bit nand if BTMODE BW pin on board is ON*/
  		else
 -			bw = 2; /*16-bit nand if BTMODE BW pin on board is OFF*/
 +			bw = 0; /*8-bit nand if BTMODE BW pin on board is OFF*/

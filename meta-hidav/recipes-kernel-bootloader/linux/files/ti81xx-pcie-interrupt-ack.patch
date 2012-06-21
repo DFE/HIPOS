@@ -1,0 +1,28 @@
+From 10ddfbd1250edf8a49c541d4931e8a5a2f9095e6 Mon Sep 17 00:00:00 2001
+From: Mario Schuknecht <schuknecht@dresearch-fe.de>
+Date: Thu, 21 Jun 2012 10:03:55 +0200
+Subject: [PATCH] [TI81xx] fix pcie interrupt ack
+
+Fix wrong MSI0_IRQ_STATUS acknowledge.
+
+Signed-off-by: Mario Schuknecht <schuknecht@dresearch-fe.de>
+---
+ arch/arm/mach-omap2/pcie-ti81xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-omap2/pcie-ti81xx.c b/arch/arm/mach-omap2/pcie-ti81xx.c
+index e1555577..c2af110 100644
+--- a/arch/arm/mach-omap2/pcie-ti81xx.c
++++ b/arch/arm/mach-omap2/pcie-ti81xx.c
+@@ -428,7 +428,7 @@ static void ti81xx_msi_handler(unsigned int irq, struct irq_desc *desc)
+ static void ack_msi(unsigned int irq)
+ {
+ 	unsigned int msi_num = irq - msi_irq_base;
+-	__raw_writel(~(1 << (msi_num & 0x1f)), reg_virt + MSI0_IRQ_STATUS);
++	__raw_writel(1 << (msi_num & 0x1f), reg_virt + MSI0_IRQ_STATUS);
+ }
+ 
+ static void mask_msi(unsigned int irq)
+-- 
+1.7.9.5
+

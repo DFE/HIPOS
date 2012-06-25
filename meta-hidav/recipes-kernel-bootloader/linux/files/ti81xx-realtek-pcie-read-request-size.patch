@@ -1,0 +1,97 @@
+From 393eaa26cbd7f9effcdd3b28596d84fd28aabe9a Mon Sep 17 00:00:00 2001
+From: Mario Schuknecht <schuknecht@dresearch-fe.de>
+Date: Mon, 25 Jun 2012 08:54:50 +0200
+Subject: [PATCH] [TI81xx] r8169 driver: set pcie read request size
+
+Since TI81xx RC supports pcie maximum remote read request
+size (MRRQS) as 256 bytes, set size to 256 bytes.
+
+Signed-off-by: Mario Schuknecht <schuknecht@dresearch-fe.de>
+---
+ drivers/net/r8169.c |   21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/r8169.c b/drivers/net/r8169.c
+index 53b13de..858c789 100644
+--- a/drivers/net/r8169.c
++++ b/drivers/net/r8169.c
+@@ -60,6 +60,13 @@ static const int multicast_filter_limit = 32;
+ #define MAC_ADDR_LEN	6
+ 
+ #define MAX_READ_REQUEST_SHIFT	12
++#ifdef CONFIG_ARCH_TI81XX
++/* DM81xx RC supports maximum remote read request size (MRRQS) of 256 bytes. */
++#define MAX_READ_REQUEST_SIZE	(0x1)
++#else
++/* RealTek default maximum remote read request size (MRRQS) of 4096 bytes. */
++#define MAX_READ_REQUEST_SIZE	(0x5)
++#endif
+ #define RX_FIFO_THRESH	7	/* 7 means NO threshold, Rx buffer level before first PCI xfer. */
+ #define RX_DMA_BURST	6	/* Maximum PCI burst, '6' is 1024 */
+ #define TX_DMA_BURST	6	/* Maximum PCI burst, '6' is 1024 */
+@@ -3575,7 +3582,7 @@ static void rtl_hw_start_8168bb(void __iomem *ioaddr, struct pci_dev *pdev)
+ 	RTL_W16(CPlusCmd, RTL_R16(CPlusCmd) & ~R8168_CPCMD_QUIRK_MASK);
+ 
+ 	rtl_tx_performance_tweak(pdev,
+-		(0x5 << MAX_READ_REQUEST_SHIFT) | PCI_EXP_DEVCTL_NOSNOOP_EN);
++		(MAX_READ_REQUEST_SIZE << MAX_READ_REQUEST_SHIFT) | PCI_EXP_DEVCTL_NOSNOOP_EN);
+ }
+ 
+ static void rtl_hw_start_8168bef(void __iomem *ioaddr, struct pci_dev *pdev)
+@@ -3593,7 +3600,7 @@ static void __rtl_hw_start_8168cp(void __iomem *ioaddr, struct pci_dev *pdev)
+ 
+ 	RTL_W8(Config3, RTL_R8(Config3) & ~Beacon_en);
+ 
+-	rtl_tx_performance_tweak(pdev, 0x5 << MAX_READ_REQUEST_SHIFT);
++	rtl_tx_performance_tweak(pdev, MAX_READ_REQUEST_SIZE << MAX_READ_REQUEST_SHIFT);
+ 
+ 	rtl_disable_clock_request(pdev);
+ 
+@@ -3623,7 +3630,7 @@ static void rtl_hw_start_8168cp_2(void __iomem *ioaddr, struct pci_dev *pdev)
+ 
+ 	RTL_W8(Config3, RTL_R8(Config3) & ~Beacon_en);
+ 
+-	rtl_tx_performance_tweak(pdev, 0x5 << MAX_READ_REQUEST_SHIFT);
++	rtl_tx_performance_tweak(pdev, MAX_READ_REQUEST_SIZE << MAX_READ_REQUEST_SHIFT);
+ 
+ 	RTL_W16(CPlusCmd, RTL_R16(CPlusCmd) & ~R8168_CPCMD_QUIRK_MASK);
+ }
+@@ -3639,7 +3646,7 @@ static void rtl_hw_start_8168cp_3(void __iomem *ioaddr, struct pci_dev *pdev)
+ 
+ 	RTL_W8(EarlyTxThres, EarlyTxThld);
+ 
+-	rtl_tx_performance_tweak(pdev, 0x5 << MAX_READ_REQUEST_SHIFT);
++	rtl_tx_performance_tweak(pdev, MAX_READ_REQUEST_SIZE << MAX_READ_REQUEST_SHIFT);
+ 
+ 	RTL_W16(CPlusCmd, RTL_R16(CPlusCmd) & ~R8168_CPCMD_QUIRK_MASK);
+ }
+@@ -3695,7 +3702,7 @@ static void rtl_hw_start_8168d(void __iomem *ioaddr, struct pci_dev *pdev)
+ 
+ 	RTL_W8(EarlyTxThres, EarlyTxThld);
+ 
+-	rtl_tx_performance_tweak(pdev, 0x5 << MAX_READ_REQUEST_SHIFT);
++	rtl_tx_performance_tweak(pdev, MAX_READ_REQUEST_SIZE << MAX_READ_REQUEST_SHIFT);
+ 
+ 	RTL_W16(CPlusCmd, RTL_R16(CPlusCmd) & ~R8168_CPCMD_QUIRK_MASK);
+ }
+@@ -3822,7 +3829,7 @@ static void rtl_hw_start_8102e_1(void __iomem *ioaddr, struct pci_dev *pdev)
+ 
+ 	RTL_W8(DBG_REG, FIX_NAK_1);
+ 
+-	rtl_tx_performance_tweak(pdev, 0x5 << MAX_READ_REQUEST_SHIFT);
++	rtl_tx_performance_tweak(pdev, MAX_READ_REQUEST_SIZE << MAX_READ_REQUEST_SHIFT);
+ 
+ 	RTL_W8(Config1,
+ 	       LEDS1 | LEDS0 | Speed_down | MEMMAP | IOMAP | VPD | PMEnable);
+@@ -3841,7 +3848,7 @@ static void rtl_hw_start_8102e_2(void __iomem *ioaddr, struct pci_dev *pdev)
+ {
+ 	rtl_csi_access_enable(ioaddr);
+ 
+-	rtl_tx_performance_tweak(pdev, 0x5 << MAX_READ_REQUEST_SHIFT);
++	rtl_tx_performance_tweak(pdev, MAX_READ_REQUEST_SIZE << MAX_READ_REQUEST_SHIFT);
+ 
+ 	RTL_W8(Config1, MEMMAP | IOMAP | VPD | PMEnable);
+ 	RTL_W8(Config3, RTL_R8(Config3) & ~Beacon_en);
+-- 
+1.7.9.5
+

@@ -1,11 +1,15 @@
-PR_append = "+r19"
+PR_append = "+r20"
 
 COMPATIBLE_MACHINE = "hidav"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 BRANCH = "ti81xx-master"
+BRANCH_ti814x = "ti81xx-master"
+BRANCH_ti816x = "ti81xx-master"
 SRCREV = "2ec1a17817e422b9417289b91c027980b45c7d65"
+SRCREV_pn-${PN}_ti814x = "2ec1a17817e422b9417289b91c027980b45c7d65"
+SRCREV_pn-${PN}_ti816x = "2ec1a17817e422b9417289b91c027980b45c7d65"
 
 SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-fast-flash-settings.patch \
@@ -27,7 +31,7 @@ do_install_boot_config() {
 }
 
 addtask install_boot_config after do_unpack before do_patch
-
+ 
 do_configure() {
     # tfm: do nothing; we re-configure and re-compile u-boot at least ttwwiiccee in the "compile" stage.
     true

@@ -25,9 +25,10 @@ SRC_URI_append = " git://git.c3sl.ufpr.br/aufs/aufs2-standalone.git;branch=aufs2
 		   file://marvell-phy-88E15xx-support.patch \
 		   file://ti81xx-pcie-interrupt-ack.patch \
 		   file://ti81xx-realtek-pcie-read-request-size.patch \
+		   file://ti81xx-realtek-rtl8168e-definition.patch \
                    "
 
-MACHINE_KERNEL_PR = "r63"
+MACHINE_KERNEL_PR = "r64"
 
 # this actually should be do_patch_append, but doing so triggers a syntax error in openembedded
 # so we insert it manually.

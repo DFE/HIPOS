@@ -1,0 +1,72 @@
+From 5ec06ed95832896e7cc86979a088e8e49766f062 Mon Sep 17 00:00:00 2001
+From: Eik Binschek <binschek@dresearch-fe.de>
+Date: Mon, 2 Jul 2012 14:50:04 +0200
+Subject: [PATCH] rtl8169: add rtl8168e definition
+
+	Now no work around of rtl8168b is used on rtl8186e.
+
+Signed-off-by: Eik Binschek <binschek@dresearch-fe.de>
+---
+ drivers/net/r8169.c |   18 ++++++++++++++++--
+ 1 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/r8169.c b/drivers/net/r8169.c
+index 858c789..ff38546 100644
+--- a/drivers/net/r8169.c
++++ b/drivers/net/r8169.c
+@@ -125,7 +125,10 @@ enum mac_version {
+ 	RTL_GIGA_MAC_VER_24 = 0x18, // 8168CP
+ 	RTL_GIGA_MAC_VER_25 = 0x19, // 8168D
+ 	RTL_GIGA_MAC_VER_26 = 0x1a, // 8168D
+-	RTL_GIGA_MAC_VER_27 = 0x1b  // 8168DP
++	RTL_GIGA_MAC_VER_27 = 0x1b, // 8168DP
++	RTL_GIGA_MAC_VER_32 = 0x20, // RTL8168e/8111e
++	RTL_GIGA_MAC_VER_33 = 0x21, // RTL8168e/8111e
++	RTL_GIGA_MAC_VER_34 = 0x22  // RTL8168evl/8111evl
+ };
+ 
+ #define _R(NAME,MAC,MASK) \
+@@ -162,7 +165,10 @@ static const struct {
+ 	_R("RTL8168cp/8111cp",	RTL_GIGA_MAC_VER_24, 0xff7e1880), // PCI-E
+ 	_R("RTL8168d/8111d",	RTL_GIGA_MAC_VER_25, 0xff7e1880), // PCI-E
+ 	_R("RTL8168d/8111d",	RTL_GIGA_MAC_VER_26, 0xff7e1880), // PCI-E
+-	_R("RTL8168dp/8111dp",	RTL_GIGA_MAC_VER_27, 0xff7e1880)  // PCI-E
++	_R("RTL8168dp/8111dp",	RTL_GIGA_MAC_VER_27, 0xff7e1880), // PCI-E
++	_R("RTL8168e/8111e",	RTL_GIGA_MAC_VER_32, 0xff7e1880), // PCI-E
++	_R("RTL8168e/8111e",	RTL_GIGA_MAC_VER_33, 0xff7e1880), // PCI-E
++	_R("RTL8168evl/8111evl",RTL_GIGA_MAC_VER_34, 0xff7e1880)  // PCI-E
+ };
+ #undef _R
+ 
+@@ -1323,6 +1329,12 @@ static void rtl8169_get_mac_version(struct rtl8169_private *tp,
+ 		u32 val;
+ 		int mac_version;
+ 	} mac_info[] = {
++		/* 8168E family. */
++		{ 0x7c800000, 0x2c800000,       RTL_GIGA_MAC_VER_34 },
++		{ 0x7cf00000, 0x2c200000,       RTL_GIGA_MAC_VER_33 },
++		{ 0x7cf00000, 0x2c100000,       RTL_GIGA_MAC_VER_32 },
++		{ 0x7c800000, 0x2c000000,       RTL_GIGA_MAC_VER_33 },
++
+ 		/* 8168D family. */
+ 		{ 0x7cf00000, 0x28300000,	RTL_GIGA_MAC_VER_26 },
+ 		{ 0x7cf00000, 0x28100000,	RTL_GIGA_MAC_VER_25 },
+@@ -2676,6 +2688,7 @@ static void rtl_hw_phy_config(struct net_device *dev)
+ 	case RTL_GIGA_MAC_VER_09:
+ 		rtl8102e_hw_phy_config(ioaddr);
+ 		break;
++	case RTL_GIGA_MAC_VER_33:
+ 	case RTL_GIGA_MAC_VER_11:
+ 		rtl8168bb_hw_phy_config(ioaddr);
+ 		break;
+@@ -3741,6 +3754,7 @@ static void rtl_hw_start_8168(struct net_device *dev)
+ 	RTL_R8(IntrMask);
+ 
+ 	switch (tp->mac_version) {
++	case RTL_GIGA_MAC_VER_33:
+ 	case RTL_GIGA_MAC_VER_11:
+ 		rtl_hw_start_8168bb(ioaddr, pdev);
+ 	break;
+-- 
+1.7.7
+

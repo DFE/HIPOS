@@ -1,4 +1,4 @@
-PR_append = "+r22"
+PR_append = "+r23"
 
 COMPATIBLE_MACHINE = "hidav"
 
@@ -15,7 +15,6 @@ SRC_URI_append = " file://hidav-uboot-default-settings.patch \
                    file://hidav-fast-flash-settings.patch \
                    file://hidav-enable-icache.patch \
                    file://hidav-nand-do-not-use-bad_block_table.patch \
-		   file://boot-config.patch \
 		   file://u-boot-bootconfig-glue.patch \
                    file://hidav-u-boot-mem-196k.patch \
 		   file://u-boot-change-to-1GiB-RAM.patch \

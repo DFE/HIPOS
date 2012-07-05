@@ -95,21 +95,18 @@ index f7e7c1c..cd942d7 100644
  #if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
  	s = getenv ("bootdelay");
  	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
- 
+
 diff --git a/lib/Makefile b/lib/Makefile
-index be518e6..5ab5684 100644
+index c45f07c..be518e6 100644
 --- a/lib/Makefile
 +++ b/lib/Makefile
-@@ -32,9 +32,8 @@ COBJS-$(CONFIG_BZIP2) += bzlib_decompress.o
+@@ -32,6 +32,8 @@ COBJS-$(CONFIG_BZIP2) += bzlib_decompress.o
  COBJS-$(CONFIG_BZIP2) += bzlib_randtable.o
  COBJS-$(CONFIG_BZIP2) += bzlib_huffman.o
  COBJS-$(CONFIG_USB_TTY) += circbuf.o
--COBJS-y += boot_config.o
--COBJS-y += lowlevel.o
--COBJS-y += logging.o
-+COBJS-$(CONFIG_NAND) += lowlevel.o
-+COBJS-$(CONFIG_NAND) += logging.o
++COBJS-y += lowlevel.o
++COBJS-y += logging.o
  COBJS-y += crc16.o
  COBJS-y += crc32.o
  COBJS-y += ctype.o
-
+ 

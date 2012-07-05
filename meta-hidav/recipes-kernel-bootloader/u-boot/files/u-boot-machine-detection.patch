@@ -1,0 +1,99 @@
+From 1958609b8e576ab8286dc87e8f837806f1b16ee8 Mon Sep 17 00:00:00 2001
+From: Mario Schuknecht <schuknecht@dresearch-fe.de>
+Date: Thu, 5 Jul 2012 12:57:06 +0200
+Subject: [PATCH] [u-boot] Add machine name detection
+
+Detect machine with i2c_probe and set kernel boot
+argument 'machine_name'.
+
+Signed-off-by: Mario Schuknecht <schuknecht@dresearch-fe.de>
+---
+ common/main.c                          |    9 +++++++++
+ include/configs/ti8148_evm.h           |    9 +++++----
+ include/configs/ti8148_evm_quick_mmc.h |    1 +
+ 3 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/common/main.c b/common/main.c
+index b3e753b..57b573d 100644
+--- a/common/main.c
++++ b/common/main.c
+@@ -438,6 +438,15 @@ void main_loop (void)
+ }
+ #endif
+  
++#ifdef CONFIG_I2C
++	/* Detect device PCF8575 */
++	if(i2c_probe(0x20) == 0)
++        {
++                printf ("detected ti8148evm machine\n");
++                setenv ("machine_name", "ti8148evm\0");
++	}
++#endif /* CONFIG_I2C */
++
+ #if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
+ 	s = getenv ("bootdelay");
+ 	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
+diff --git a/include/configs/ti8148_evm.h b/include/configs/ti8148_evm.h
+index ca59575..b04b053 100644
+--- a/include/configs/ti8148_evm.h
++++ b/include/configs/ti8148_evm.h
+@@ -47,7 +47,6 @@
+ # undef CONFIG_SYS_HUSH_PARSER
+ # undef CONFIG_DISPLAY_CPUINFO
+ # undef CONFIG_SPI
+-# undef CONFIG_I2C
+ 
+ # define CONFIG_BOOTDELAY	0
+ # define CONFIG_SYS_AUTOLOAD	"no"
+@@ -62,16 +61,17 @@
+ #ifdef TI81XX_SECOND_STAGE
+ # define BOOTNAND_CMD \
+     "bootnand=setenv verify no; setenv bootargs "\
+-                    "console=ttyO0,115200n8 rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255;" \
++                    "console=ttyO0,115200n8 rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 machine_name=${machine_name};" \
+                 "nboot 0x80007FC0 0 ${kernel_offset}; bootm;\0"
+ #else 
+ # define BOOTNAND_CMD \
+     "bootnand=setenv verify no; setenv bootargs "\
+-                    "console=ttyO0,115200n8 quiet rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg;" \
++                    "console=ttyO0,115200n8 quiet rootwait root=${rootfs_device} ro rootfstype=squashfs mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg machine_name=${machine_name};" \
+                 "nboot 0x80007FC0 0 ${kernel_offset}; bootm;\0"
+ #endif
+ 
+ # define CONFIG_EXTRA_ENV_SETTINGS \
++    "machine_name=hidav\0"\
+     "kernel_offset=0x200000\0"\
+     "rootfs_device=/dev/blockrom4\0"\
+     "boot2nd=mmc rescan 0; "\
+@@ -79,7 +79,7 @@
+                     "go 0x80800000\0" \
+     "bootsd=mmc rescan 0;setenv verify no; "\
+                             "setenv bootargs "\
+-                                "console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg;" \
++                                "console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 ro rootfstype=ext4 mem=1024M earlyprink vram=50M ip=off noinitrd user_debug=255 systemd.log_target=kmsg machine_name=${machine_name};" \
+                             "fatload mmc 0 0x80007FC0 uImage;"\
+                             "bootm 0x80007FC0\0" \
+     BOOTNAND_CMD \
+@@ -114,6 +114,7 @@
+ # define TI814X_ENABLE_ICACHE
+ #endif
+ 
++#define CONFIG_I2C			1
+ #ifdef TI81XX_SECOND_STAGE
+ 
+ #define CONFIG_CMD_ASKENV
+diff --git a/include/configs/ti8148_evm_quick_mmc.h b/include/configs/ti8148_evm_quick_mmc.h
+index 0061e9f..5886362 100644
+--- a/include/configs/ti8148_evm_quick_mmc.h
++++ b/include/configs/ti8148_evm_quick_mmc.h
+@@ -58,6 +58,7 @@
+ 	"bootcmd=sf probe 0; sf read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
+ 
+ # elif defined(CONFIG_NAND_BOOT)		/* Autoload the 2nd stage from NAND */
++#  define CONFIG_I2C			1
+ #  define CONFIG_NAND			1
+ #  define CONFIG_EXTRA_ENV_SETTINGS \
+ 	"verify=yes\0" \
+-- 
+1.7.7
+

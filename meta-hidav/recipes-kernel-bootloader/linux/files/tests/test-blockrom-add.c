@@ -1,5 +1,5 @@
 
-#include <test_harness/test_harness.h>
+#include <test_harness.h>
 
 #include "mocks.c"
 #define CONFIG_MTD_BLOCK_ROM_DELAYED_INIT

@@ -18,4 +18,4 @@
 	url = git://github.com/woglinde/meta-java.git
 [submodule "night-owl"]
 	path = night-owl
-	url = ./night-owl
+	url = git://github.com/DFE/night-owl.git

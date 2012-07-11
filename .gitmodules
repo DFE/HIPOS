@@ -16,3 +16,6 @@
 [submodule "meta-java"]
 	path = meta-java
 	url = git://github.com/woglinde/meta-java.git
+[submodule "night-owl"]
+	path = night-owl
+	url = ./night-owl

@@ -1,5 +1,0 @@
-I'm just a placeholder. 
-
-The real ti8168 config will be generated from defconfig (which is ti8148) right after 
-OpenEmbedded's do_patch stage. See the recipe ../../linux-ti81xx-psp_2.6.37.bbappend
-for details.

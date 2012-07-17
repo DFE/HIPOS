@@ -22,3 +22,6 @@
 [submodule "meta-hidav-kirkwood"]
 	path = meta-hidav-kirkwood
 	url = git://github.com/DFE/meta-hidav-kirkwood.git
+[submodule "meta-hidav-ti81xx"]
+	path = meta-hidav-ti81xx
+	url = git://github.com/DFE/meta-hidav-ti81xx.git

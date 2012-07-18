@@ -54,9 +54,7 @@ function set_new() {
 				  return 1;;
 	esac
 
-	local signature="# Set by $USER at $(date)"
-
-	sed -i "s/^[[:space:]]*MACHINE[?:[:space:]]*=.*/MACHINE ?= \"$new\" $signature/" \
+	sed -i "s/^[[:space:]]*MACHINE[?:[:space:]]*=.*/MACHINE ?= \"$new\"/" \
 			$this/build/conf/local.conf
 	echo ""
 	echo "    The target machine is now $tmp."

@@ -56,6 +56,7 @@ update_bblayers_conf()
 
   echo "BBLAYERS = \" \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-hidav \\" >> ${BB_LAYER_CONF}
+  echo "${BASE}/meta-hidav-ti81xx \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-java \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-texasinstruments \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-angstrom \\" >> ${BB_LAYER_CONF}

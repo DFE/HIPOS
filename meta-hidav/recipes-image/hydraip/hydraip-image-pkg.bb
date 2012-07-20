@@ -13,7 +13,7 @@ FILES_${PN} = "/tmp/hydraip-image-hidav.squashfs"
 
 do_install() {
 	install -d ${D}/tmp
-	install -m644 ${DEPLOY_DIR_IMAGE}/hydraip-image-hidav.squashfs ${D}/tmp/hydraip-image-hidav.squashfs
+	install -m644 ${DEPLOY_DIR_IMAGE}/hydraip-image-${MACHINE}.squashfs ${D}/tmp/hydraip-image-hidav.squashfs
 }
 
 pkg_postinst_${PN} () {

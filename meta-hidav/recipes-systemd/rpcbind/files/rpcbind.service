@@ -1,0 +1,9 @@
+[Unit]
+Description=NFS port mapping server
+Requires=network.target
+
+[Service]
+EnvironmentFile=/etc/conf.d/rpcbind
+ExecStart=/sbin/rpcbind $RPCBIND_OPTS
+Type=forking
+Restart=always

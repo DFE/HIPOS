@@ -1,0 +1,6 @@
+[Unit]
+Description=Legacy quota daemon
+Requires=network.target
+
+[Service]
+ExecStart=/usr/sbin/rpc.rquotad --foreground $RQUOTAD_OPTS

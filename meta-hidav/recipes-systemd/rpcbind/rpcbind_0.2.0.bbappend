@@ -1,12 +1,13 @@
-# bbappend to openembedded-core/meta/recipes-connectivity/portmap/...
+# bbappend to openembedded-core/meta/recipes-extended/rpcbind/...
 # do not generate rc-links
 inherit systemd
 
-PR_append = "+r5"
+PR_append = "+r0"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-SRC_URI_append = " file://portmap.service "
+SRC_URI_append = " file://rpcbind.service \
+                 "
 
 # systemd
 PACKAGES =+ "${PN}-systemd"
@@ -15,11 +16,11 @@ FILES_${PN}-systemd += "${base_libdir}/systemd"
 RDEPENDS_${PN}-systemd += "${PN}"
 
 SYSTEMD_PACKAGES = "${PN}-systemd"
-SYSTEMD_SERVICE = "portmap.service"
+SYSTEMD_SERVICE = "rpcbind.service"
 
 do_install_append () {
   install -d ${D}${base_libdir}/systemd/system
-  install -m 0644 ${WORKDIR}/portmap.service ${D}${base_libdir}/systemd/system
+  install -m 0644 ${WORKDIR}/rpcbind.service ${D}${base_libdir}/systemd/system/
 }
 
 

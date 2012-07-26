@@ -14,7 +14,6 @@ function usage() {
     echo ""
     echo "   Available machine types are"
     echo "   hidav-machine.sh ti81xx     - build HidaV for Texas Instruments' DaVinci DM814x / DM816x"
-    echo "   hidav-machine.sh kirkwood   - build HidaV for Marvell Kirkwood (or 'Armada 3xx') 88F62xx"
     echo ""
 }
 # ---
@@ -26,11 +25,10 @@ function xtract_current() {
 
     case "$tmp" in
         "hidav-ti81xx")   current="ti81xx";;
-        "hidav-kirkwood") current="kirkwood";;
         *)        echo "" >&2
                   echo "    ERROR: unsupported value '$tmp' for MACHINE field in configuration file at" >&2
                       echo "    $this/build/conf/local.conf" >&2
-                      echo "    Supported values for MACHINE are 'hidav-ti81xx' and 'hidav-kirkwood'" >&2 
+                      echo "    Supported values for MACHINE is 'hidav-ti81xx'." >&2 
                       echo "" >&2
                   return 1;;
     esac
@@ -45,11 +43,9 @@ function set_new() {
 
     case "$tmp" in
         "ti81xx")   new="hidav-ti81xx";;
-        "kirkwood") new="hidav-kirkwood";;
         *)        echo "" >&2
                   echo "    ERROR: unsupported machine '$tmp'." >&2
-                      echo -n "    Supported machines are 'ti81xx' and"
-                  echo    " 'kirkwood'." >&2;
+                      echo -n "    Supported machine is 'ti81xx'." >&2;
                       echo "" >&2
                   return 1;;
     esac

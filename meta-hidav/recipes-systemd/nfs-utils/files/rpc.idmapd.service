@@ -1,8 +1,12 @@
 [Unit]
 Description=NFSv4 ID - Name Mapper
 Requires=rpcbind.target var-lib-nfs-rpc_pipefs.mount
+After=rpcbind.target
 
 [Service]
 EnvironmentFile=/etc/default/nfs
 ExecStart=/usr/sbin/rpc.idmapd -f $OPTS_RPC_IDMAPD
 Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

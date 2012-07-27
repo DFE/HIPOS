@@ -2,7 +2,7 @@
 
 inherit systemd
 
-PR_append = "+r1"
+PR_append = "+r2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -13,6 +13,7 @@ SRC_URI_append = " file://nfsd.service                  \
                    file://sm-notify.service             \
                    file://var-lib-nfs-rpc_pipefs.mount  \
                    file://nfs                           \
+                   file://exports                       \
                   "
 
 # systemd
@@ -36,6 +37,8 @@ do_install_append () {
 
   install -d ${D}${sysconfdir}/default
   install -m 0644 ${WORKDIR}/nfs ${D}${sysconfdir}/default/
+
+  install -m 0644 ${WORKDIR}/exports ${D}${sysconfdir}/
 }
 
 

@@ -10,7 +10,6 @@ IMAGE_INSTALL += "          \
   kernel-modules            \
   htop                      \
   bash                      \
-  portmap portmap-systemd   \
   bootconfig                \
   healthy                   \
 "

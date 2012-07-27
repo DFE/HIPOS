@@ -1,0 +1,2 @@
+# Everything, the whole root, writeable
+/ *(rw)

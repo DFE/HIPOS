@@ -2,7 +2,7 @@
 # do not generate rc-links
 inherit systemd
 
-PR_append = "+r1"
+PR_append = "+r2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 

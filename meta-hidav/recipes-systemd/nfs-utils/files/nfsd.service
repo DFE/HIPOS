@@ -1,6 +1,8 @@
 [Unit]
 Description=NFS server
-Requires=rpcbind.target rpc.statd.service rpc.mountd.service
+Requires=rpcbind.target
+After=rpcbind.target
+# rpc.idmapd.service
 
 [Service]
 Type=oneshot

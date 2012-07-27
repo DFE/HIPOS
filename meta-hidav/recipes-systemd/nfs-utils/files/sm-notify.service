@@ -4,7 +4,7 @@ Requires=rpc.statd.service
 Requires=network.target
 
 [Service]
-EnvironmentFile=/etc/conf.d/nfs
+EnvironmentFile=/etc/default/nfs
 ExecStart=/usr/sbin/sm-notify -d $OPTS_SMNOTIFY
 Type=oneshot
 Restart=on-failure

@@ -6,42 +6,45 @@ PR_append = "+r21"
 
 IMAGE_FEATURES += " package-management "
 
-IMAGE_INSTALL += " \
-  kernel-modules \
-  htop \
-  bash \
-  portmap portmap-systemd \
-  bootconfig \
-  healthy \
+IMAGE_INSTALL += "          \
+  kernel-modules            \
+  htop                      \
+  bash                      \
+  portmap portmap-systemd   \
+  bootconfig                \
+  healthy                   \
 "
 
 # profiling
-IMAGE_INSTALL += " \
-  systemd-analyze \
+IMAGE_INSTALL += "  \
+  systemd-analyze   \
 "
 
 # helpers
-IMAGE_INSTALL += " \
-  vim \
-  mtd-utils \
-  mc \
-  nano \  
+IMAGE_INSTALL += "  \
+  vim               \
+  mtd-utils         \
+  mc                \
+  nano              \
 "
 
 # system / plumbing level tools
 IMAGE_INSTALL += "  \
     ethtool         \
-    ltrace \
+    ltrace          \
 "
 
 # nfs support
-IMAGE_INSTALL += "  \
-    nfs-utils        \
-    nfs-utils-client \
-    nfs-utils-doc    \
-    nfs-utils-stats  \
-    rpcbind  \
-    quota  \
+IMAGE_INSTALL += "      \
+    nfs-utils           \
+    nfs-utils-systemd   \
+    nfs-utils-client    \
+    nfs-utils-doc       \
+    nfs-utils-stats     \
+    rpcbind             \
+    rpcbind-systemd     \
+    quota               \
+    quota-systemd       \
 "
 
 # smb support

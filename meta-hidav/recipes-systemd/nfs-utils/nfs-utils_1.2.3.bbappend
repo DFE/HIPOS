@@ -2,7 +2,7 @@
 
 inherit systemd
 
-PR_append = "+r0"
+PR_append = "+r1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -12,12 +12,15 @@ SRC_URI_append = " file://nfsd.service                  \
                    file://rpc.statd.service             \
                    file://sm-notify.service             \
                    file://var-lib-nfs-rpc_pipefs.mount  \
+                   file://nfs                           \
                   "
 
 # systemd
 PACKAGES =+ "${PN}-systemd"
 
-FILES_${PN}-systemd += "${base_libdir}/systemd"
+FILES_${PN}-systemd +=  "   ${base_libdir}/systemd      \
+                            ${sysconfdir}/default/nfsd  \
+                        "
 RDEPENDS_${PN}-systemd += "${PN}"
 
 SYSTEMD_PACKAGES = "${PN}-systemd"
@@ -30,6 +33,9 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/$service ${D}${base_libdir}/systemd/system/
   done
   install -m 0644 ${WORKDIR}/var-lib-nfs-rpc_pipefs.mount ${D}${base_libdir}/systemd/system/
+
+  install -d ${D}${sysconfdir}/default
+  install -m 0644 ${WORKDIR}/nfs ${D}${sysconfdir}/default/
 }
 
 

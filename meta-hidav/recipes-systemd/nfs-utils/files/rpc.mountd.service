@@ -1,7 +1,7 @@
 [Unit]
 Description=RPC mountd
-Requires=rpcbind.service
+Requires=rpcbind.target
 
 [Service]
-EnvironmentFile=/etc/conf.d/nfs
+EnvironmentFile=/etc/default/nfs
 ExecStart=/usr/sbin/rpc.mountd --foreground $OPTS_RPC_MOUNTD

@@ -1,9 +1,8 @@
 [Unit]
 Description=NFS status daemon
-Requires=rpcbind.service
-Requires=network.target
+Requires=rpcbind.target
 
 [Service]
-EnvironmentFile=/etc/conf.d/nfs
-ExecStart=/sbin/rpc.statd --no-notify -F $OPTS_RPC_STATD
+EnvironmentFile=/etc/default/nfs
+ExecStart=/usr/sbin/rpc.statd --no-notify -F $OPTS_RPC_STATD
 Restart=on-failure

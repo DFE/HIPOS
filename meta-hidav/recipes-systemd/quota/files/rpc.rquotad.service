@@ -3,4 +3,5 @@ Description=Legacy quota daemon
 Requires=network.target
 
 [Service]
+EnvironmentFile=/etc/default/quota
 ExecStart=/usr/sbin/rpc.rquotad --foreground $RQUOTAD_OPTS

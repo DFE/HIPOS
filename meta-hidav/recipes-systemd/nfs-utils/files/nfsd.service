@@ -1,11 +1,11 @@
 [Unit]
 Description=NFS server
-Requires=rpcbind.service rpc.statd.service rpc.mountd.service
+Requires=rpcbind.target rpc.statd.service rpc.mountd.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-EnvironmentFile=/etc/conf.d/nfs
+EnvironmentFile=/etc/default/nfs
 ExecStart=/usr/sbin/rpc.nfsd $OPTS_RPC_NFSD
 ExecStart=/usr/sbin/exportfs -r
 ExecStop=/usr/sbin/exportfs -ua

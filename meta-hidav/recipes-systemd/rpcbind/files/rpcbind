@@ -1,0 +1,3 @@
+# default command line options for rpcbind
+
+RPCBIND_OPTS=""

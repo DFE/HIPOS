@@ -2,11 +2,12 @@
 
 inherit systemd
 
-PR_append = "+r0"
+PR_append = "+r1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-SRC_URI_append = " file://samba.service "
+SRC_URI_append = " file://samba.service \
+                   file://netbios.service "
 
 # systemd
 PACKAGES =+ "${PN}-systemd"
@@ -17,7 +18,7 @@ RDEPENDS_${PN}-systemd += "${PN}"
 
 SYSTEMD_PACKAGES = "${PN}-systemd"
 
-SYSTEMD_SERVICE = "samba.service "
+SYSTEMD_SERVICE = "samba.service netbios.service "
 
 do_install_append () {
   install -d ${D}${base_libdir}/systemd/system

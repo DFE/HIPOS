@@ -1,11 +1,11 @@
 [Unit]
-Description=samba SMB/CIFS server
+Description=NetBIOS name server
 Requires=network.target
 
 [Service]
 Type=oneshot
 EnvironmentFile=/etc/samba/smb.conf
-ExecStart=/usr/sbin/smbd
+ExecStart=/usr/sbin/nmbd
 RemainAfterExit=yes
 StandardOutput=null
 

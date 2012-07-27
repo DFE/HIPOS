@@ -3,9 +3,7 @@ Description=port mapper service
 Requires=network.target
 
 [Service]
-Type=forking
-ExecStart=/sbin/portmap
-Sockets=portmap.socket
+ExecStart=/sbin/portmap -f
 StandardOutput=null
 
 [Install]

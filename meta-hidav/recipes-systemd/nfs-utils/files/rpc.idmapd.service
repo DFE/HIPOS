@@ -1,10 +1,8 @@
 [Unit]
 Description=NFSv4 ID - Name Mapper
-Requires=rpcbind.service
-Requires=var-lib-nfs-rpc_pipefs.mount
-Requires=network.target
+Requires=rpcbind.target var-lib-nfs-rpc_pipefs.mount
 
 [Service]
-EnvironmentFile=/etc/conf.d/nfs
+EnvironmentFile=/etc/default/nfs
 ExecStart=/usr/sbin/rpc.idmapd -f $OPTS_RPC_IDMAPD
 Restart=on-failure

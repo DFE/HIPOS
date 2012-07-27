@@ -2,7 +2,7 @@
 
 inherit systemd
 
-PR_append = "+r1"
+PR_append = "+r2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -26,5 +26,27 @@ do_install_append () {
   for service in $SYSTEMD_SERVICE; do
     install -m 0644 ${WORKDIR}/$service ${D}${base_libdir}/systemd/system/
   done
+
+}
+
+pkg_postinst_${PN} () {
+
+if grep "comment = HidaV public share" /etc/samba/smb.conf; then
+exit 0
+fi
+
+mkdir -p /mnt/pub
+chmod 777 /mnt/pub
+
+echo "
+
+[pub]
+comment = HidaV public share
+path = /mnt/pub
+public = yes
+writable = yes
+
+" >>/etc/samba/smb.conf
+
 }
 

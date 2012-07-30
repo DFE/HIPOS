@@ -1,2 +1,2 @@
 # Everything, the whole root, writeable
-/ *(rw)
+/ *(rw,fsid=0)

@@ -2,7 +2,7 @@
 
 inherit systemd
 
-PR_append = "+r2"
+PR_append = "+r3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 

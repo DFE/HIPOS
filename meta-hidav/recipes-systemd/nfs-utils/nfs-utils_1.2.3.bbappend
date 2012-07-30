@@ -2,7 +2,7 @@
 
 inherit systemd
 
-PR_append = "+r3"
+PR_append = "+r4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -14,6 +14,8 @@ SRC_URI_append = " file://nfsd.service                  \
                    file://var-lib-nfs-rpc_pipefs.mount  \
                    file://nfs                           \
                    file://exports                       \
+                   file://idmapd.conf                   \
+                   file://sunrpc.conf                   \
                   "
 
 # systemd
@@ -39,6 +41,10 @@ do_install_append () {
   install -m 0644 ${WORKDIR}/nfs ${D}${sysconfdir}/default/
 
   install -m 0644 ${WORKDIR}/exports ${D}${sysconfdir}/
+  install -m 0644 ${WORKDIR}/idmapd.conf ${D}${sysconfdir}/
+
+  install -d ${D}${sysconfdir}/modules-load.d
+  install -m 0644 ${WORKDIR}/sunrpc.conf ${D}${sysconfdir}/modules-load.d
 }
 
 

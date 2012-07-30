@@ -1,5 +1,7 @@
 [Unit]
 Description=rpc_pipefs
+Requires=rpcbind.target
+After=rpcbind.target
 
 [Mount]
 What=rpc_pipefs

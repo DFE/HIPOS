@@ -1,14 +1,16 @@
-PR_append = "+r4"
+PR_append = "+r5"
 
-URI = "http://hydraip-integration:8080/userContent/hidav-packages"
 
 do_compile() {
     mkdir -p ${S}/${sysconfdir}/opkg
 
+    pkg_dir=`echo "${MACHINE}" | sed -e 's/-/-packages-/'`
+    URI="http://hydraip-integration:8080/userContent/$pkg_dir"
+
     # replace "-" in machine name with "_" since bitbake/OE will name the 
     # package archive directories alike
-    for feed in all ${MACHINE/-/_} ${FEED_ARCH} ; do
-        echo "src/gz ${feed} ${URI}/${feed}" > ${S}/${sysconfdir}/opkg/${feed}-feed.conf
+    for feed in all ${MACHINE} ${FEED_ARCH} ; do
+        echo "src/gz ${feed} ${URI}/${feed/-/_}" > ${S}/${sysconfdir}/opkg/${feed}-feed.conf
     done
 }
 

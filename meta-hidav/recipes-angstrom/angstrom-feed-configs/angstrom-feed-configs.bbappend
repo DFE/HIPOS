@@ -1,4 +1,4 @@
-PR_append = "+r5"
+PR_append = "+r6"
 
 
 do_compile() {
@@ -7,10 +7,11 @@ do_compile() {
     pkg_dir=`echo "${MACHINE}" | sed -e 's/-/-packages-/'`
     URI="http://hydraip-integration:8080/userContent/$pkg_dir"
 
-    # replace "-" in machine name with "_" since bitbake/OE will name the 
-    # package archive directories alike
     for feed in all ${MACHINE} ${FEED_ARCH} ; do
-        echo "src/gz ${feed} ${URI}/${feed/-/_}" > ${S}/${sysconfdir}/opkg/${feed}-feed.conf
+        # replace "-" in machine name with "_" since bitbake/OE will name the 
+        # package archive directories alike
+        escaped_feed=`echo "${feed}" | sed -e 's/-/_/g'`
+        echo "src/gz ${feed} ${URI}/${escaped_feed}" > ${S}/${sysconfdir}/opkg/${feed}-feed.conf
     done
 }
 

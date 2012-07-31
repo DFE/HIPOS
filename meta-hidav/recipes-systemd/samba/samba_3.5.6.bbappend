@@ -2,7 +2,7 @@
 
 inherit systemd
 
-PR_append = "+r2"
+PR_append = "+r3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -12,7 +12,14 @@ SRC_URI_append = " file://samba.service \
 # systemd
 PACKAGES =+ "${PN}-systemd"
 
-FILES_${PN}-systemd += "${base_libdir}/systemd"
+FILES_${PN}-systemd += " ${base_libdir}/systemd "
+
+FILES_${PN} += " /usr/lib/pdb \
+		 /usr/lib/gpext \
+		 /usr/lib/rpc \
+		 /usr/lib/idmap \
+		 /usr/lib/nss_info \
+		 /usr/lib/perfcount "
 
 RDEPENDS_${PN}-systemd += "${PN}"
 
@@ -31,7 +38,7 @@ do_install_append () {
 
 pkg_postinst_${PN} () {
 
-if grep "comment = HidaV public share" /etc/samba/smb.conf; then
+if grep "\[pub\]" /etc/samba/smb.conf 2>&1 >/dev/null; then
 exit 0
 fi
 

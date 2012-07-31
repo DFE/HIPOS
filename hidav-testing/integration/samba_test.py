@@ -16,37 +16,47 @@ import smbc
 import os
 import sys
 
-if len(sys.argv) != 2:
-	print("usage: {0} <server_ip>".format(sys.argv[0]))
-	sys.exit(2)
+class samba_test( object ):
 
-print( "Server: {0}".format(sys.argv[1]) )
+	def __init__(self,server_ip):
 
-PID    = os.getpid()
+		self._PID    = os.getpid()
 
-server = sys.argv[1]
-share  = "pub"
+		self._server = server_ip
+		self._share  = "pub"
 
-smb_string = "smb://{0}/{1}/{2}test.txt".format(server,share,PID)
+		self._smb_string = "smb://{0}/{1}/{2}test.txt".format(self._server,self._share,self._PID)
 
-print( "Testfile: {0}".format(smb_string))
-print( "writing..." )
-ctx = smbc.Context()
-file_write = ctx.open(smb_string, os.O_CREAT | os.O_WRONLY)
-file_write.write( smb_string )
-file_write.close()
+	def test(self):
+		print( "Testfile: {0}".format(self._smb_string))
+		print( "writing..." )
+		ctx = smbc.Context()
+		file_write = ctx.open(self._smb_string, os.O_CREAT | os.O_WRONLY)
+		file_write.write( self._smb_string )
+		file_write.close()
 
-print( "reading..." )
-file = ctx.open ( smb_string )
-read_data = file.read()
-file.close()
+		print( "reading..." )
+		file = ctx.open( self._smb_string )
+		read_data = file.read()
+		file.close()
 
-print( "testing..." )
-if  smb_string == read_data:
-	print( " ok " )
-	sys.exit(0)
-else:
-	print( " failed " )
-	sys.exit(1)
+		print( "testing..." )
+		if  self._smb_string == read_data:
+			print( " ok " )
+			sys.exit(0)
+		else:
+			print( " failed " )
+			sys.exit(1)
+
+if __name__ == '__main__':
+	def standalone():
+                if len(sys.argv) != 2:
+                        print("usage: {0} <server_ip>".format(sys.argv[0]))
+                        sys.exit(2)
+
+                print( "Server: {0}".format(sys.argv[1]) )
+		s=samba_test(sys.argv[1])
+		s.test()
+	standalone()
 
 

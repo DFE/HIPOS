@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r22"
+PR_append = "+r23"
 
 IMAGE_FEATURES += " package-management "
 
@@ -50,4 +50,8 @@ IMAGE_INSTALL += "      \
 IMAGE_INSTALL += " samba-systemd "
 
 # http/webdav support
-IMAGE_INSTALL += " lighttpd "
+IMAGE_INSTALL += "         \
+    lighttpd               \
+    lighttpd-module-webdav \
+    lighttpd-module-alias  \
+"

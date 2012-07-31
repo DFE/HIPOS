@@ -14,7 +14,7 @@
 """ Package for the device class """
 
 import time
-import connection, logger
+import connection, logger, bcc
 
 class Device( object ):
     """ This class abstracts access to a device, i.e. one single 
@@ -22,14 +22,14 @@ class Device( object ):
 
     DEVICE_TYPES = { 
         "hidav" : { 
-            "network_setup" : ( None, "eth0" ),
+            "network_setup" : ( None, "eth1" ),
             "login"         : ( "root", "" ),
             "boot_prompt"   : "HidaV boot on",
-            "hw_reset"      : True,
+            "reset_cb"      : True,
             "serial_skip_pw": True },
         "hipox" : {
             "network_setup" : ( None, "eth1" ),
-            "login"         : ( "root", "" ),
+            "login"         : ( "root", "hydra01" ),
             "boot_prompt"   : "$ ",
             "hw_reset"      : False,
             "serial_skip_pw": False },
@@ -43,11 +43,18 @@ class Device( object ):
         except KeyError:
             raise Exception("Unknown device type %s." % devtype)
 
+        self.bcc = bcc.Bcc()
+        rst = self.__rst if self._setup["reset_cb"] == True else None
+
         self.conn = connection.Connection( 
             network_setup = self._setup["network_setup"], 
             login = self._setup["login"],
-            serial_skip_pw = self._setup["serial_skip_pw"] )
+            serial_skip_pw = self._setup["serial_skip_pw"],
+            reset_cb = rst )
         self._logger = logger.init()
+
+    def __rst( self ):
+        self.bcc.reset = 1
 
     def reboot( self, to_nand = False ):
         """ Reboot the device. Return after reboot was successful.
@@ -97,9 +104,13 @@ class Device( object ):
                 +   """awk '/kernel/{ k=$2 } /rootfs/{ r=$2 } """
                 +       """ /epoch/{ e=$2 } END{ print k " " r " " e }'"""
                         )[1].split(" ")
-            self._bootconfig = { "kernel" : int(ret[0]), 
-                                 "rootfs" : int(ret[1]),
-                                 "epoch"  : int(ret[2])  }
+            try:
+                self._bootconfig = { "kernel" : int(ret[0]), 
+                                     "rootfs" : int(ret[1]),
+                                     "epoch"  : int(ret[2])  }
+            except:
+                self._logger.warn("Unable to determine boot configuration.")
+                self._bootconfig = { "kernel" : 2, "rootfs" : 4, "epoch" : 0 }
             return self._bootconfig
 
     @bootconfig.setter              # pylint: disable-msg=E1101
@@ -171,6 +182,7 @@ class Device( object ):
 
 
 if __name__ == '__main__':
+    import time
     def standalone():
         """ Standalone function; only defined if the class is run by itself. 
             This function uses some basic capabilities of the class. It is
@@ -178,6 +190,11 @@ if __name__ == '__main__':
             and for a showcase on how to use the class. """
         import sys
         dev = Device( devtype = "hidav" )
+
+        while not dev.bcc.ignition:
+            print "Please switch on the device."
+            time.sleep(1)
+
         print "Connecting to device..."
         print "Firmware version: %s" % dev.firmware_version
 
@@ -192,22 +209,26 @@ if __name__ == '__main__':
             sys.stdout.write(".")
         print "\nWe now have networking."
 
-        print "Diffstat is not there:"
-        retc, msg = dev.conn.cmd( "diffstat --help" )
+        print " Checking package install functionality:"
+        print " ----------------------"
+        print " Package 'zip' is not installed:"
+        retc, msg = dev.conn.cmd( "zip --help" )
         print "Retcode: %s" % retc
         print msg
         print "----------------------"
 
-        dev.install_package( "diffstat" )
-        print "Now diffstat is  there:"
-        retc, msg = dev.conn.cmd( "diffstat --help" )
+        print " Installing zip"
+        dev.install_package( "zip" )
+        print "Now zip is  there:"
+        retc, msg = dev.conn.cmd( "zip --help" )
         print "Retcode: %s" % retc
         print msg
         print "----------------------"
 
-        dev.remove_package ( "diffstat" )
-        print "Now diffstat is gone:"
-        retc, msg = dev.conn.cmd( "diffstat --help" )
+        print " Removing zip"
+        dev.remove_package ( "zip" )
+        print "Now zip is gone:"
+        retc, msg = dev.conn.cmd( "zip --help" )
         print "Retcode: %s" % retc
         print msg
         print "----------------------"

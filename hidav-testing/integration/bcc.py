@@ -71,18 +71,14 @@ class Bcc( object ):
             then un-set self.__reset.
         """
         while True:
-            if self.ignition:
-
-                if self.reset:
-                    self.hddpower = 0
-                    self.heartbeat = 0
-                    time.sleep( 1 )
-                    self.reset = False
-
+            if  self.ignition and not self.reset:
                 self.heartbeat = 2
                 self.hddpower = 1
-            else:
-                self.hddpower = 0
+                continue
+
+            self.reset = False
+            self.hddpower  = 0
+            self.heartbeat = 0
             
             time.sleep( 1 )
                 
@@ -105,7 +101,7 @@ class Bcc( object ):
             @return: string value representing the field's status
         """
         s = re.search( what + r': (?P<stat>\w+)',
-                      self.status,
+                       self.status,
                     ).group('stat')
 
         return s

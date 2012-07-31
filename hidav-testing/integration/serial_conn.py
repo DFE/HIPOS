@@ -13,7 +13,7 @@
 
 """ Package for the Serial Connection class """
 
-import serial, re, urllib, power, time
+import serial, re, urllib, time
 
 class SerialConn( serial.Serial ):
     """Serial connection to a device.
@@ -21,14 +21,14 @@ class SerialConn( serial.Serial ):
     """
     def __init__( self, logger, login = ( "root", ""), 
                   skip_pass = True, boot_prompt="HidaV boot on", 
-                  needs_hw_reset = True, *args, **kwargs ):
+                  reset_cb = None, *args, **kwargs ):
         """Initialise a new instance of the serial communication class.
             @param logger:         Log object to be used by this class.
             @param login:          tuple of ( username, pass )
             @param skip_pass:      True if the login does not prompt for a password
             @param boot_prompt:    The prompt to identify the boot loader with
-            @param needs_hw_reset: True if the device requires a HW reset for a reboot.
-                                   This requires additional hardware in the test setup.
+            @param reset_cb:       Custom RESET callback to run when the device
+                                    is rebooted.
         """
         self._logger = logger
         try:    
@@ -38,7 +38,7 @@ class SerialConn( serial.Serial ):
         self._login = login
         self._skip_pass = skip_pass
         self._boot_prompt = boot_prompt
-        self._needs_hw_reset = needs_hw_reset
+        self._reset_cb = reset_cb
 
     def read_until ( self, target, trigger_write="\n", timeout=None ):
         """ Read up to a trigger text, then stop.
@@ -212,11 +212,9 @@ class SerialConn( serial.Serial ):
         self.login()
         self.write( reboot_cmd + "\n" )
         buf = ""
-        if self._needs_hw_reset:
+        if self._reset_cb:
             buf += self.readline_until( "Detaching DM devices" )
-            power.power(0)
-            time.sleep(1)
-            power.power(1)
+            self._reset_cb()
         if stop_at_bootloader:
             buf += self.read_until("U-Boot")
             buf += self.read_until(self._boot_prompt, ".\n", 0.001)
@@ -276,21 +274,23 @@ class SerialConn( serial.Serial ):
 
 
 if __name__ == '__main__':
-    import logging, sys
+    import logger, sys, bcc
+
+    b = bcc.Bcc()
+    def rst():
+        b.reset = 1
+
     def standalone():
         """ Standalone function; only defined if the class is run by itself. 
             This function uses some basic capabilities of the class. It is
             thought to be used for interactive testing during development,
             and for a showcase on how to use the class. """
-        logging.basicConfig( level = logging.DEBUG, 
-            format = 
-            "%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): %(message)s" )
         if len(sys.argv) < 3:
             print "Usage: %s <username> <password> [<command>]" % sys.argv[0]
             sys.exit()
-        logger = logging.getLogger( __name__ + "-TEST" )
-        scn = SerialConn( logger, (sys.argv[1], sys.argv[2] ))
-        scn.port     = "/dev/ttyUSB0"
+        scn = SerialConn( logger.init(), (sys.argv[1], sys.argv[2] ),
+                reset_cb=rst )
+        scn.port     = "/dev/ttyUSB1"
         scn.baudrate = 115200
         scn.bytesize = 8
         scn.parity   = 'N'
@@ -307,6 +307,9 @@ if __name__ == '__main__':
                 print "\n\n#######\nRETCODE: %s, EXEC MSGS:\n%s" % (retcode, bla)
             sys.exit()
 
+        print " ######## "
+        print " ######## ls /"
+        print " ######## "
         print scn.cmd( "ls /" )[1]
         print " ######## "
         print " ######## Rebooting..."

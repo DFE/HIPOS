@@ -128,15 +128,11 @@ if __name__ == '__main__':
             This function uses some basic capabilities of the class. It is
             thought to be used for interactive testing during development,
             and for a showcase on how to use the class. """
-        import logging
-        logging.basicConfig( level = logging.INFO, format=
-           "%(asctime)s %(levelname)s %(filename)s::%(funcName)s():" 
-         + "%(message)s" )
+        import logger
         if len(sys.argv) != 4:
             print "Usage: %s <host> <username> <password>" % sys.argv[0]
             sys.exit()
-        log = logging.getLogger( __name__ + "-TEST" )
-        ssh = SshConn( log, sys.argv[1], (sys.argv[2], sys.argv[3] ) )
+        ssh = SshConn( logger.init(), sys.argv[1], (sys.argv[2], sys.argv[3] ) )
         print ssh.cmd("echo $PATH")[1]
         print ssh.cmd("ls /")[1]
         print ssh.cat( "/etc/resolv.conf" )

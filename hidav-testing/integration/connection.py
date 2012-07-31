@@ -21,10 +21,10 @@ class Connection( object ):
         It implements device command processing in a request/response manner.
     """
 
-    def __init__( self, serial_setup = ( "/dev/ttyUSB0", 115200, 8, 'N', 1, 1), 
+    def __init__( self, serial_setup = ( "/dev/ttyUSB1", 115200, 8, 'N', 1, 1), 
                   network_setup = ( None, "eth0" ), login = ( "root", "" ),
                   boot_prompt = "HidaV boot on", serial_skip_pw = True,
-                  hw_reset = True ):
+                  reset_cb = None ):
         """ Initialize a new connection instance.
             @param serial_setup:  Set of init options for the serial backend:
               ( "port", baudrate, data bits, parity, stop bits, timeout_sec )
@@ -35,15 +35,15 @@ class Connection( object ):
                                     with.
             @param serial_skip_pw: True if the serial login does not prompt
                                    for a password.
-            @param hw_reset: 	   True if the device requires a HW reset to reboot.
-                                   Will be passed to serial connection."""
+            @param reset_cb: 	   Callback to run when resetting the device. 
+        """
         self._logger = logger.init()
         self._login = login
         self._target_if = network_setup[1]
-        self._hw_reset = hw_reset
         self._serial = self._serial_setup( *serial_setup, 
                             skip_pass = serial_skip_pw, 
-                            boot_prompt = boot_prompt )
+                            boot_prompt = boot_prompt,
+                            reset_cb = reset_cb)
         if network_setup[0]:
             self.host = network_setup[0]
 
@@ -63,13 +63,13 @@ class Connection( object ):
         del self.__ssh
 
     def _serial_setup( self, port, baud, byte, parity, stop, timeout_sec, 
-                        skip_pass, boot_prompt ):
+                        skip_pass, boot_prompt, reset_cb ):
         """ Set up the serial communication back-end """
         self._logger.debug("(re)opening serial port %s" % port )
         ser = serial_conn.SerialConn( self._logger, 
                         login = self._login, skip_pass = skip_pass, 
                         boot_prompt = boot_prompt,
-                        needs_hw_reset = self._hw_reset )
+                        reset_cb = reset_cb )
         ser.port     = port
         ser.baudrate = baud
         ser.bytesize = byte
@@ -160,8 +160,8 @@ if __name__ == '__main__':
         if len(sys.argv) < 3:
             print "Usage: %s <username> <password> [<ip address>]" % sys.argv[0]
             sys.exit()
-        conn = Connection( network_setup = ( None, "eth0" ), 
+        conn = Connection( network_setup = ( None, "eth1" ), 
                             login = (sys.argv[1], sys.argv[2]) )
-        conn.cmd("ls /")
+        print conn.cmd("ls /")[1]
     standalone()
 

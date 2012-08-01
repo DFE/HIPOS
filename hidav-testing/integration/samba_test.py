@@ -15,6 +15,8 @@
 import smbc
 import os
 import sys
+import time
+import device
 
 class samba_test( object ):
 
@@ -50,13 +52,29 @@ class samba_test( object ):
 
 if __name__ == '__main__':
 	def standalone():
-                if len(sys.argv) != 2:
-                        print("usage: {0} <server_ip>".format(sys.argv[0]))
-                        sys.exit(2)
-
-                print( "Server: {0}".format(sys.argv[1]) )
-		s=samba_test(sys.argv[1])
-		s.test()
+		if len(sys.argv) == 2:
+			if (sys.argv[1] == "h") or (sys.argv[1] == "help") or (sys.argv[1] == "-h") or (sys.argv[1] == "-?"):
+				print("usage: {0} [<server_ip>]".format(sys.argv[0]))
+				sys.exit(2)
+			else:
+		                print( "Server: {0}".format(sys.argv[1]) )
+				s=samba_test(sys.argv[1])
+				s.test()
+		elif len(sys.argv) == 1:
+			print "Autodetect ServerIP"
+	                dev = device.Device( devtype = "hidav" )
+	                print "Waiting for Networking to come up..."
+        	        while not dev.conn.has_networking():
+                	    time.sleep(1)
+	                    sys.stdout.write(".")
+			server=dev.conn.host
+	        	print( "Server: {0}".format(server) )
+			s=samba_test(server)
+			s.test()
+		else:
+			print("usage: {0} [<server_ip>]".format(sys.argv[0]))
+			sys.exit(2)
+		sys.exit(0)
 	standalone()
 
 

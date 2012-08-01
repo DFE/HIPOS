@@ -17,28 +17,24 @@ from webdav.WebdavClient import ResourceStorer
 
 host = "localhost" #later switch to target IP/domain
 webdav_path = "webdav" #also needs to be adapted for target usage
-test_file = "davtest.txt" #again probably rename it
-test_content = 'dav\n'
+test_file = "davtest.txt"
+test_content = "testtext"
 
 class TestWebDAV(unittest.TestCase):
 
-    def test_read(self):
+    def test_complex(self):
+        #prepare
         url = "davs://{0}/{1}/{2}".format(
                 host,webdav_path,test_file,test_content)
-        expected = test_content
-        r = ResourceStorer(url)
-        result = r.downloadContent().read()
-        self.assertEquals(expected,result)
-
-    def test_complex(self):
-        url = "davs://{0}/{1}/2{2}".format(
-                host,webdav_path,test_file,test_content)
-        expected = 'vad\n'
+        expected = test_content+'\n'
+        #execute
         r = ResourceStorer(url)
         r.uploadContent(expected)
         result = r.downloadContent().read()
-        r.delete()
+        #assert
         self.assertEquals(expected,result)
+        #cleanup
+        r.delete()
 
 if __name__ == '__main__':
     unittest.main()

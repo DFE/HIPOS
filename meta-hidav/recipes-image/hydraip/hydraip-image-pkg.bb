@@ -3,11 +3,11 @@ DESCRIPTION = "hydraip rootfs pkg"
 LICENSE = "GPLv2"
 
 DEPENDS = "hydraip-image"
-RDEPENDS = "hydraip-image mtd-utils"
+RDEPENDS = "mtd-utils"
 RRECOMMENDS = "kernel"
 
 PACKAGES = "${PN}"
-PR = "r6"
+PR = "r7"
 
 FILES_${PN} = "/tmp/hydraip-image-hidav.squashfs"
 

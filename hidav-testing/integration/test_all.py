@@ -26,12 +26,6 @@ class update:
 	while not dev.conn.has_networking():
         	time.sleep(1)
 	        sys.stdout.write(".")
-	print "reboot ..."
-	dev.conn._serial.reboot( sync=True )
-	print "Waiting for Networking to come up..."
-	while not dev.conn.has_networking():
-                time.sleep(1)
-                sys.stdout.write(".")
 	print "Update: package index"
 	dev.update_package_index()
         print "Connecting to device..."

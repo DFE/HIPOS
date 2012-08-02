@@ -18,7 +18,7 @@
    port / FTDI cable. 
 """
 
-import subprocess, re, threading, time
+import subprocess, re, threading, time, atexit
 
 class Bcc( object ):
 
@@ -33,15 +33,26 @@ class Bcc( object ):
         self.__drbcc   = drbcc
         self.__port    = port
         self.__port_br = speed
-        # run an initial command to check the settings
-        self.__bcc_cmd()
+
+        # enable fake ignition (hard-wired to "1")
+        self.cmd( "debugset 16,010001" )
+        atexit.register( self.__restore_bcc )
 
         self.reset = False
         self.__wd_thread = threading.Thread( target = self.__wd )
         self.__wd_thread.daemon = True
         self.__wd_thread.start()
     
-    def __bcc_cmd( self, cmd="gets" ):
+
+    def __restore_bcc( self ):
+        """ Restore function to disable the debug mode set in __init__.
+            """
+        # stop faking ignition, set heartbeat to insanely high value
+        self.heartbeat = 65535
+        self.cmd( "debugset 16,00" )
+
+
+    def cmd( self, cmd="gets" ):
         """ Execute a BCC command.
             @kwparam cmd: command to be executed.
 
@@ -65,35 +76,29 @@ class Bcc( object ):
 
     def __wd( self ):
         """ Bcc watchdog thread.
-            This thread will read ignition and calm the watchdog & power the HDD
+            This thread will fake ignition and calm the watchdog & power the HDD
             if the device is switched on.
             It will power-cycle the device if self.__reset has been set,
             then un-set self.__reset.
         """
         while True:
-            if  self.ignition and not self.reset:
-                self.heartbeat = 2
+            if  not self.reset:
+                self.heartbeat = 65535
                 self.hddpower = 1
                 continue
 
-            self.reset = False
             self.hddpower  = 0
             self.heartbeat = 0
-            
             time.sleep( 1 )
-                
+            self.reset = False
+
     @property
     def status( self ):
         """ Bcc status information property.
             @return: 4 lines of text containing detailed bcc status, or the
-                        empty string if the request failed. Example output:
-
-            status_cb: raw data: 02 00 00 00 00 00 20 0b 0b 00 08 00 db 00 09 58 00 00 00 fe 00 a9 00 b2 00 00 00 00 00 00 00 00 00 00 00 00 00
-            SPIs/SPOs: Ignition: off, HDD-Sense: open, OXE_INT1: 0, OXE_INT2: 0, XOSC_ERR: 0, GPI-Power: off, HDD-Power: off
-            GPInputs 1..6: 0 0 0 0 0 0   GPOutputs 1..4: 0 0 0 0  RTC Temp : 32 deg C  Accel X, Y, Z: 42mg, 31mg, 855mg
-            Voltages: 23.92V  0.00V  2.54V  1.69V  1.78V  0.00V  0.00V  0.00V  0.00V  
+                        empty string if the request failed.
         """
-        return self.__bcc_cmd( "gets" )[1]
+        return self.cmd( "gets" )[1]
 
     def __status( self, what ):
         """ Helper method to extract several status values
@@ -103,7 +108,6 @@ class Bcc( object ):
         s = re.search( what + r': (?P<stat>\w+)',
                        self.status,
                     ).group('stat')
-
         return s
 
     @property
@@ -129,29 +133,46 @@ class Bcc( object ):
             @param power: True or False, i.e. whether to power the HDD or not.
         """
         ps = "1" if power else "0"
-        self.__bcc_cmd( "hdpower " + ps )
+        self.cmd( "hdpower " + ps )
 
     @property
     def heartbeat( self ):
         """ BCC heartbeat state property.
-            @return: tuple of ( max, curr ) representing the maximum count
+            @return: tuple of ( curr, max ) representing the maximum count
             upon which a RESET will be triggered as well as the current count 
             (in seconds).
         """
-        return ( 0,0 ) # not yet implemented in the board controller
+        text = self.cmd( "debugget 1" )[1]
+        values = re.search( r'data: (?P<v1>[0-9A-F]+) (?P<v2>[0-9A-F]+) '
+                                + r'(?P<m1>[0-9A-F]+) (?P<m2>[0-9A-F]+)',
+                            text )
+
+        current = int( values.group("v1") + values.group("v2"), 16)
+        maximum = int( values.group("m1") + values.group("m2"), 16)
+
+        return current, maximum
 
     @heartbeat.setter
     def heartbeat( self, seconds ):
         """ BCC heartbeat property setter
             @param seconds: number of seconds before RESET
         """
-        self.__bcc_cmd( "heartbeat %s" % seconds )
+        self.cmd( "heartbeat %s" % seconds )
 
 
 if __name__ == '__main__':
-    b = Bcc()
-    while True:
 
+    import sys
+    b = Bcc()
+
+    if len(sys.argv) > 1:
+        for cmd in sys.argv[1:]:
+            ret, txt =  b.cmd( cmd )
+            print "RETURN VALUE %s" %ret
+            print txt
+        sys.exit()
+
+    while True:
         banner = ">>>RST<<<" if b.reset    \
              else "~*~AN~*~" if b.ignition   \
              else "___AUS___"
@@ -160,12 +181,6 @@ if __name__ == '__main__':
         subprocess.call( ["banner", banner] )
 
         print b.status
+        c, m = b.heartbeat
+        print "Heartbeat timeout: %s seconds of %s total" % (c, m)
         time.sleep(1)
-
-
-
-
-
-            
-
-

@@ -102,8 +102,6 @@ class Connection( object ):
                 raise Exception(
                     "Unable to collect device's IP address via serial port %s"
                     % self._serial.port )
-            # HidaV FIXUP: re-fetch dhcp info to set dns servers etc. correctly
-            self._serial.cmd("ping -c 1 hydraip-integration || udhcpc")
         return self._host
 
     @host.setter # new-style properties unknown to pylint: disable-msg=E1101

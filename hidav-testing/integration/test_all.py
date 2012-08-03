@@ -28,6 +28,7 @@ class update:
     while not dev.conn.has_networking():
         time.sleep(1)
         print ("wait {0}s".format(max_wait))
+        sys.stdout.flush()
         max_wait -= 1
         if max_wait == 0:
             break

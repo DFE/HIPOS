@@ -1,7 +1,6 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
 #
-# NightOwl - who tests your unit tests?
 #
 # Copyright (C) 2012 DResearch Fahrzeugelektronik GmbH
 # Written and maintained by Erik Bernoth <bernoth@dresearch-fe.de>
@@ -27,22 +26,22 @@ test_content = "testtext"
 class TestWebDAV(unittest.TestCase):
     def test_complex(self):
         #prepare
-	print "Autodetect ServerIP"
+        print "Autodetect ServerIP"
         dev = device.Device( devtype = "hidav" )
         print "Waiting for Networking to come up..."
         max_wait=120
         while not dev.conn.has_networking():
-	        time.sleep(1)
-        	print ("wait {0}s".format(max_wait))
-	        max_wait -= 1
-	        if max_wait == 0:
-        		break
+            time.sleep(1)
+            print ("wait {0}s".format(max_wait))
+            max_wait -= 1
+            if max_wait == 0:
+                break
         server=dev.conn.host
         print( "Server: {0}".format(server) )
-	host=server	
+        host=server
         url = "davs://{0}/{1}/{2}".format(
                 host,webdav_path,test_file,test_content)
-	print url
+        print url
         expected = test_content+'\n'
         #execute
         r = ResourceStorer(url)
@@ -54,13 +53,13 @@ class TestWebDAV(unittest.TestCase):
         r.delete()
 
 def main():
-	if len(sys.argv) == 1:
-		unittest.main()
-	else:
-		print("usage: {0}".format(sys.argv[0]))
-		sys.exit(2)
-	sys.exit(0)
-	
+    if len(sys.argv) == 1:
+        unittest.main()
+    else:
+        print("usage: {0}".format(sys.argv[0]))
+        sys.exit(2)
+    sys.exit(0)
+    
 if __name__ == '__main__':
     main()
 

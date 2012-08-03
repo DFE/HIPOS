@@ -49,14 +49,14 @@ class TestWebDAV(unittest.TestCase):
         #cleanup
         r.delete()
 
+def main():
+	if len(sys.argv) == 1:
+		unittest.main()
+	else:
+		print("usage: {0}".format(sys.argv[0]))
+		sys.exit(2)
+	sys.exit(0)
+	
 if __name__ == '__main__':
-    def standalone():
-                if len(sys.argv) == 1:
-        	        unittest.main()
-                else:
-                        print("usage: {0}".format(sys.argv[0]))
-                        sys.exit(2)
-                sys.exit(0)
-
-    standalone()
+    main()
 

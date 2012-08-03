@@ -26,9 +26,14 @@ class TestSamba(unittest.TestCase):
                 print "Autodetect ServerIP"
                 dev = device.Device( devtype = "hidav" )
                 print "Waiting for Networking to come up..."
+		max_wait=120;
                 while not dev.conn.has_networking():
                         time.sleep(1)
-	                sys.stdout.write(".")
+	                print (maxwait)
+			maxwait -= 1;
+			if maxwait == 0:
+				break
+		
                 server=dev.conn.host
                 print( "Server: {0}".format(server) )
 		
@@ -54,14 +59,15 @@ class TestSamba(unittest.TestCase):
 		print( "testing..." )
 		self.assertEquals(self._smb_string,read_data)
 
+def main():
+	if len(sys.argv) == 1:
+		unittest.main()
+	else:
+		print("usage: {0}".format(sys.argv[0]))
+		sys.exit(2)
+	sys.exit(0)
+
 if __name__ == '__main__':
-	def standalone():
-		if len(sys.argv) == 1:
-			unittest.main()
-		else:
-			print("usage: {0}".format(sys.argv[0]))
-			sys.exit(2)
-		sys.exit(0)
-	standalone()
+	main()
 
 

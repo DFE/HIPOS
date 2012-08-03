@@ -11,7 +11,7 @@
 # 2 of the License, or (at your option) any later version.
 #
 
-import unittest, tempfile, subprocess
+import unittest, tempfile, subprocess, time, sys
 import device, logger
 
 class TestNFS( unittest.TestCase ):
@@ -51,6 +51,11 @@ class TestNFS( unittest.TestCase ):
 
     def setUp( self ):
         self._dev = device.Device( devtype="hidav" )
+        print "Waiting for Networking to come up..."
+        while not self._dev.conn.has_networking():
+        	time.sleep(1)
+                sys.stdout.write(".")
+
         self._remote = self._dev.conn.host
         self._logger = logger.init()
 

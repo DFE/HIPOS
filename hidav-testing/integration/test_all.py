@@ -18,6 +18,7 @@ import device
 
 from test_samba import TestSamba
 from test_webdav import TestWebDAV
+from test_nfs import TestNFS
 
 class update:
 	dev = device.Device( devtype = "hidav" )

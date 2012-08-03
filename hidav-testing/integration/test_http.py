@@ -32,19 +32,16 @@ class TestHTTP(unittest.TestCase):
             time.sleep(1)
         server=dev.conn.host
         print( "Server: {0}".format(server) )
-        host=server
-        url = "davs://{0}".format(
-                host,webdav_path,test_file,test_content)
-        print url
+        url=server
         expected = test_html
-        connection = httplib.HttpConnection(url)
+        connection = httplib.HTTPConnection(url)
         #execute
         connection.request('GET','')
         result = connection.getresponse().read()
         #assert
         self.assertEquals(expected,result)
         #cleanup
-        r.delete()
+        connection.close()
 
 def main():
     if len(sys.argv) == 1:

@@ -23,10 +23,14 @@ from test_nfs import TestNFS
 class update:
 	dev = device.Device( devtype = "hidav" )
 
-	print "Waiting for Networking to come up..."
-	while not dev.conn.has_networking():
-        	time.sleep(1)
-	        sys.stdout.write(".")
+        print "Waiting for Networking to come up..."
+        max_wait=120
+        while not dev.conn.has_networking():
+	        time.sleep(1)
+	        print ("wait {0}s".format(max_wait))
+	        max_wait -= 1
+        	if max_wait == 0:
+        		break
 	print "Update: package index"
 	dev.update_package_index()
         print "Connecting to device..."

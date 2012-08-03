@@ -30,9 +30,13 @@ class TestWebDAV(unittest.TestCase):
 	print "Autodetect ServerIP"
         dev = device.Device( devtype = "hidav" )
         print "Waiting for Networking to come up..."
+        max_wait=120
         while not dev.conn.has_networking():
-        	time.sleep(1)
-                sys.stdout.write(".")
+	        time.sleep(1)
+        	print ("wait {0}s".format(max_wait))
+	        max_wait -= 1
+	        if max_wait == 0:
+        		break
         server=dev.conn.host
         print( "Server: {0}".format(server) )
 	host=server	

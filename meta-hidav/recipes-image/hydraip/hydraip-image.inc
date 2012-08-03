@@ -55,3 +55,6 @@ IMAGE_INSTALL += "         \
     lighttpd-module-webdav \
     lighttpd-module-alias  \
 "
+
+# iscsi target support
+IMAGE_INSTALL += " iscsi-target "

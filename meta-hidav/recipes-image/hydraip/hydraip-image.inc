@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r23"
+PR_append = "+r24"
 
 IMAGE_FEATURES += " package-management "
 
@@ -56,5 +56,10 @@ IMAGE_INSTALL += "         \
     lighttpd-module-alias  \
 "
 
-# iscsi target support
-IMAGE_INSTALL += " iscsi-target "
+# iscsi support
+IMAGE_INSTALL += "
+    iscsi-target      \
+    open-iscsi-kernel \
+    open-iscsi-user   \
+"
+

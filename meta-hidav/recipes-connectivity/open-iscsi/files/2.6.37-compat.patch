@@ -1,0 +1,12 @@
+diff -Nurd a/kernel/Makefile b/kernel/Makefile
+--- a/kernel/Makefile	2012-08-06 10:35:29.382358654 +0200
++++ b/kernel/Makefile	2012-08-06 10:36:05.790358045 +0200
+@@ -114,6 +114,8 @@
+ 
+ linux_2_6_35: $(unpatch_code)
+ 
++linux_2_6_37: $(unpatch_code)
++
+ do_unpatch_code:
+ 	echo "Un-patching source code for use with linux-2.6.14 and up ..."
+ 	patch -R -E -p1 < $(cur_patched)

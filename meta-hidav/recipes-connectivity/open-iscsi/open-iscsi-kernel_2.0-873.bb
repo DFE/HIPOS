@@ -2,7 +2,7 @@ DESCRIPTION = "Open-iSCSI project is a high performance, transport independent, 
 HOMEPAGE = "http://www.open-iscsi.org/"
 LICENSE = "GPL"
 MACHINE_KERNEL_PR_append = "a"
-PR = "r0"
+PR = "r1"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=393a5ca445f6965873eca0259a17f833"
 
@@ -23,5 +23,5 @@ do_install() {
 }
 
 
-SRC_URI[md5sum] = "0c403e8c9ad41607571ba0e6e8ff196e"
-SRC_URI[sha256sum] = "bcea8746ae82f2ada7bc05d2aa59bcda1ca0d5197f05f2e16744aae59f0a7dcb"
+SRC_URI[md5sum] = "8b8316d7c9469149a6cc6234478347f7"
+SRC_URI[sha256sum] = "7dd9f2f97da417560349a8da44ea4fcfe98bfd5ef284240a2cc4ff8e88ac7cd9"

@@ -154,12 +154,29 @@ if __name__ == '__main__':
             This function uses some basic capabilities of the class. It is
             thought to be used for interactive testing during development,
             and for a showcase on how to use the class. """
-        import sys
+        import sys, time
         if len(sys.argv) < 3:
             print "Usage: %s <username> <password> [<ip address>]" % sys.argv[0]
             sys.exit()
+
+        import bcc
+        b = bcc.Bcc()
+
         conn = Connection( network_setup = ( None, "eth1" ), 
                             login = (sys.argv[1], sys.argv[2]) )
+
+        print "Waiting for Networking to come up..."
+        while not conn.has_networking():
+            time.sleep(1)
+            sys.stdout.write(".")
+        print "\nWe now have networking."
+
+        print "Executing ls /"
         print conn.cmd("ls /")[1]
+
+        print "Now shutting down the device."
+        b.shutdown()
+        conn._serial.reboot()
+
     standalone()
 

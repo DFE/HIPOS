@@ -85,22 +85,17 @@ class SerialConn( serial.Serial ):
         buf += self.readline()
         return buf
 
-    def _is_logged_in(self):
-        """ Check whether we are currently logged in at the remote system. """
-        self.write("\n")
-        buf = self.readline()
-        self.write("\n")
-        buf += self.readline()
-        return ( self._login[0] + "@" in buf )
+    def __boot_state( self ):
+        """ Return the current system state.
+            @return: string containing  "bootloader", "login", "shell", or 
+                     "UNKNOWN"
+        """
+        buf = self.read_until( "\n", timeout=3 )
 
-    def _is_in_bootloader(self):
-        """ Check whether the boot loader prompt is currently active 
-            at the device. """
-        self.write("\n")
-        buf = self.readline()
-        self.write("\n")
-        buf += self.readline()
-        return ( self._boot_prompt in buf )
+        return "shell"  if self._login[0] + "@" in buf \
+                        else "login" if "login:" in buf \
+                        else "bootloader" if self._boot_prompt in buf \
+                        else "UNKNOWN"
 
     def login( self ):
         """ Login to a device.
@@ -108,11 +103,16 @@ class SerialConn( serial.Serial ):
             already logged in (in which case the method succeeds early), and 
             whether we're currently in the boot loader (in which case the 
             method will boot the device, then log in)."""
-        if self._is_logged_in( ):
-            self._logger.debug( "User %s already logged in." % self._login[0] )
+
+        while self.__boot_state() == "UNKNOWN":
+            self._logger.debug("Waiting for a known system state...")
+            time.sleep(1)
+
+        if self.__boot_state() == "shell":
+            self._logger.debug("Already logged in.")
             return
 
-        if self._is_in_bootloader( ):
+        if self.__boot_state( ) == "bootloader":
             self._logger.debug( "System has stopped at bootloader; booting..." )
             # the bootloader loses bytes on the serial line, so repeat this 
             self.write("\nboot\n")
@@ -126,7 +126,7 @@ class SerialConn( serial.Serial ):
         self.flushInput()
         self.flushOutput()
 
-        self.read_until("login:", "exit\n")
+        self.read_until("login:", "exit\n", timeout=20 )
         self.write( self._login[0] + "\n" )
 
         if not self._skip_pass:
@@ -139,6 +139,35 @@ class SerialConn( serial.Serial ):
         # make sure no kernel messages go to the serial console while
         # we are remote-controlling the device
         self.write( 'echo "0 0 0 0" > /proc/sys/kernel/printk\n')
+
+
+    def __run_cmd( self, cmd ):
+        """ Generic command executor for both boot loader and linux shell cmds.
+            This method will run a command, wrapping the command's output into
+            boundaries for later extraction,
+            @param cmd: command to execute
+            @return:    string buffer containing command output.
+        """
+        self.flushInput( )
+        self.flushOutput( )
+
+        self.read_until( "\n", timeout=30 )
+        
+        self.write(   r'remote_trigger="OUTPUT";'
+                    + r'echo "===${remote_trigger} STARTS===";' 
+                    + cmd 
+                    + r';echo "===${remote_trigger} ENDS==="' + "\n" )
+
+        buf = self.readline_until( "===OUTPUT ENDS==="  )
+
+        start = buf.index("===OUTPUT STARTS===")
+        start = buf.index("\n", start)
+
+        end = buf.index("===OUTPUT ENDS===")
+        end = buf.rindex("\n", 0, end)
+
+        return buf[ start : end ].strip()
+
 
     def cmd( self, cmd ):
         """ Execute a linux user space command on the remote system.
@@ -155,37 +184,21 @@ class SerialConn( serial.Serial ):
 
             @param cmd: The command to run
             @return:    Tuple of (retcode, command output) """
-        self.flushInput( )
-        self.flushOutput( )
-
-        cmd = cmd.strip()
+        cmd = cmd.strip() + r'; echo -e "\nRETCODE=$?"'
         self._logger.info( "Executing command [%s]" % cmd )
 
         self.login()
+        buf = self.__run_cmd( cmd )
 
-        self.write(   r'_x="OUTPUT"; echo "===${_x} STARTS===";' 
-                    + cmd + r';echo "===${_x} ENDS=== $?"' + "\n" )
-
-        buf = self.readline_until( "===OUTPUT ENDS==="  )
-
-        start = buf.index("===OUTPUT STARTS===")
-        start = buf.index("\n", start)
-
-        end = buf.index("===OUTPUT ENDS===")
-        end = buf.rindex("\n", 0, end)
-
-        ret = buf[ start : end ].strip()
-
-        rcd = int( re.search(r"===OUTPUT ENDS=== (?P<retcode>[0-9]+)", 
-                        buf[ end: ]).group("retcode") )
+        rcd = int( re.search(r'RETCODE=(?P<retcode>[0-9]+)', 
+                        buf).group("retcode") )
 
         self._logger.info( "Command [%s] ret: #%d" % (cmd, rcd) )
-        self._logger.debug( "Command [%s] output:\n[%s]" % (cmd, ret) )
-        return rcd, ret
+        return rcd, buf
 
     def logout( self ):
         """ Log out of the system. """
-        if self._is_logged_in():
+        if self.__boot_state() == "shell":
             self._logger.debug( "Logging out." )
             self.write("\nexit\n")
             self.read_until("login:")

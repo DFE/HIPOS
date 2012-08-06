@@ -52,13 +52,13 @@ class TestNFS( unittest.TestCase ):
     def setUp( self ):
         self._dev = device.Device( devtype="hidav" )
         print "Waiting for Networking to come up..."
-	max_wait=120
+        max_wait=120
         while not self._dev.conn.has_networking():
-        	time.sleep(1)
-		print ("wait {0}s".format(max_wait))
-		max_wait -= 1
-                if max_wait == 0:
-                	break
+       	    time.sleep(1)
+            print ("wait {0}s".format(max_wait))
+            max_wait -= 1
+            if max_wait == 0:
+                break
 
         self._remote = self._dev.conn.host
         self._logger = logger.init()

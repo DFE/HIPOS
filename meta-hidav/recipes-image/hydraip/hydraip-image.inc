@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r24"
+PR_append = "+r25"
 
 IMAGE_FEATURES += " package-management "
 
@@ -57,7 +57,7 @@ IMAGE_INSTALL += "         \
 "
 
 # iscsi support
-IMAGE_INSTALL += "
+IMAGE_INSTALL += "    \
     iscsi-target      \
     open-iscsi-kernel \
     open-iscsi-user   \

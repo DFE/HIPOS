@@ -33,6 +33,22 @@ def update():
         max_wait -= 1
         if max_wait == 0:
             break
+    print "Boot to NAND ..."
+    dev.conn._serial.boot_to_nand(
+                    sync = True,
+                    kernel_partition = None,
+                    rootfs_partition = None )
+
+
+    print "Waiting for Networking to come up..."
+    max_wait=120
+    while not dev.conn.has_networking():
+        time.sleep(1)
+        print ("wait {0}s".format(max_wait))
+        sys.stdout.flush()
+        max_wait -= 1
+        if max_wait == 0:
+            break
     print "Update: package index"
     dev.update_package_index()
     print "Connecting to device..."
@@ -55,7 +71,12 @@ def update():
     print "  rootfs: /dev/blockdev%s" % dev.bootconfig["rootfs"]
     print "  epoch :             #%s" % dev.bootconfig["epoch"]
     print "reboot ..."
-    dev.conn._serial.reboot( sync=True )
+    print "Boot to NAND ..."
+    dev.conn._serial.boot_to_nand(
+                    sync = True,
+                    kernel_partition = None,
+                    rootfs_partition = None )
+
 
 def mount():
     dev = device.Device( devtype = "hidav" )

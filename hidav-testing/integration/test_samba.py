@@ -42,6 +42,9 @@ class TestSamba(unittest.TestCase):
                 self._server = server
                 self._share  = "pub"
 
+		retc, msg = dev.conn.cmd( "mount /dev/sda1 /mnt/pub" )
+		retc, msg = dev.conn.cmd( "chmod 777 /mnt/pub" )
+
                 self._smb_string = "smb://{0}/{1}/{2}test.txt".format(self._server,self._share,self._PID)
 
 		print( "Testfile: {0}".format(self._smb_string))
@@ -55,6 +58,10 @@ class TestSamba(unittest.TestCase):
 		file = ctx.open( self._smb_string )
 		read_data = file.read()
 		file.close()
+	
+		retc, msg = dev.conn.cmd( "rm /mnt/pub/{0}test.txt".format(self._PID) )
+		retc, msg = dev.conn.cmd( "umount /mnt/pub" )
+	
 
 		print( "testing..." )
 		self.assertEquals(self._smb_string,read_data)

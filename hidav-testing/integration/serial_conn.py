@@ -210,7 +210,7 @@ class SerialConn( serial.Serial ):
         self._logger.info( "Rebooting %s" % ("and stopping at bootloader" if
                 stop_at_bootloader else "synchronously" if sync else ".") )
         self.login()
-        self.write( reboot_cmd + "\n" )
+        self.write( "\n" + reboot_cmd + "\n" )
         buf = ""
         if self._reset_cb:
             buf += self.readline_until( "Detaching DM devices" )
@@ -251,20 +251,19 @@ class SerialConn( serial.Serial ):
         if kernel_partition != None:
 		self._logger.debug( "Setting kernel offset to %s." % kernel_offset )
 	        self.write("\nsetenv kernel_offset %s\n" % kernel_offset)
-
-        self.flush( )
-        time.sleep(1)
+	        self.flush( )
+        	time.sleep(1)
 
 	if rootfs_partition != None:
 	        self._logger.debug( "Setting kernel root to /dev/blockdev%s." 
                                 % rootfs_partition)
 	        self.write("\nsetenv rootfs_device /dev/blockdev%s\n" 
                                 % rootfs_partition )
-        self.flush( )
-        time.sleep(1)
+	        self.flush( )
+	        time.sleep(1)
 
         self._logger.debug( "Issuing 'run bootnand'." )
-        self.write("run bootnand\n")
+        self.write("\nrun bootnand\n")
         self.flush( )
         time.sleep(1)
         if sync:

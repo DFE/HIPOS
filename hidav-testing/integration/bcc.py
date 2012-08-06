@@ -39,6 +39,7 @@ class Bcc( object ):
         atexit.register( self.__restore_bcc )
 
         self.reset = False
+        self.__shutdown = False
         self.__wd_thread = threading.Thread( target = self.__wd )
         self.__wd_thread.daemon = True
         self.__wd_thread.start()
@@ -48,9 +49,11 @@ class Bcc( object ):
         """ Restore function to disable the debug mode set in __init__.
             """
         # stop faking ignition, set heartbeat to insanely high value
-        self.heartbeat = 65535
         self.cmd( "debugset 16,00" )
+        self.heartbeat = 65535 if not self.__shutdown else self.__shutdown
 
+    def shutdown( self, watchdog_timeout = 30 ):
+        self.__shutdown = watchdog_timeout
 
     def cmd( self, cmd="gets" ):
         """ Execute a BCC command.
@@ -81,7 +84,7 @@ class Bcc( object ):
             It will power-cycle the device if self.__reset has been set,
             then un-set self.__reset.
         """
-        while True:
+        while not self.__shutdown:
             if  not self.reset:
                 self.heartbeat = 65535
                 self.hddpower = 1
@@ -91,6 +94,9 @@ class Bcc( object ):
             self.heartbeat = 0
             time.sleep( 1 )
             self.reset = False
+
+        if self.__shutdown:
+            self.heartbeat = self.__shutdown
 
     @property
     def status( self ):
@@ -170,6 +176,7 @@ if __name__ == '__main__':
             ret, txt =  b.cmd( cmd )
             print "RETURN VALUE %s" %ret
             print txt
+        b.shutdown(1)
         sys.exit()
 
     while True:

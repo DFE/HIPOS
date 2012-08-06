@@ -13,7 +13,7 @@
 
 """ Package for the device class """
 
-import time
+import time, atexit
 import connection, logger, bcc
 
 class Device( object ):
@@ -43,6 +43,7 @@ class Device( object ):
         except KeyError:
             raise Exception("Unknown device type %s." % devtype)
 
+        atexit.register( self.__shutdown_bcc )
         self.bcc = bcc.Bcc()
         rst = self.__rst if self._setup["reset_cb"] == True else None
 
@@ -55,6 +56,12 @@ class Device( object ):
 
     def __rst( self ):
         self.bcc.reset = 1
+
+    def __shutdown_bcc( self ):
+        self._logger.debug( "Shutting down the device." )
+        self.bcc.shutdown()
+        self.conn._reset_cb = None
+        self.conn._serial.reboot()
 
     def reboot( self, to_nand = False ):
         """ Reboot the device. Return after reboot was successful.

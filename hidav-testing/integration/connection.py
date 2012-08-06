@@ -175,7 +175,8 @@ if __name__ == '__main__':
         print conn.cmd("ls /")[1]
 
         print "Now shutting down the device."
-        b.shutdown()
+        b.heartbeat = 30
+        conn._serial._reset_cb = None
         conn._serial.reboot()
 
     standalone()

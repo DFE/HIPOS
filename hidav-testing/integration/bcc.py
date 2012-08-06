@@ -34,26 +34,13 @@ class Bcc( object ):
         self.__port    = port
         self.__port_br = speed
 
-        # enable fake ignition (hard-wired to "1")
-        self.cmd( "debugset 16,010001" )
-        atexit.register( self.__restore_bcc )
+        self.poweron()
 
-        self.reset = False
-        self.__shutdown = False
-        self.__wd_thread = threading.Thread( target = self.__wd )
-        self.__wd_thread.daemon = True
-        self.__wd_thread.start()
-    
-
-    def __restore_bcc( self ):
+    def __del__( self ):
         """ Restore function to disable the debug mode set in __init__.
             """
         # stop faking ignition, set heartbeat to insanely high value
         self.cmd( "debugset 16,00" )
-        self.heartbeat = 65535 if not self.__shutdown else self.__shutdown
-
-    def shutdown( self, watchdog_timeout = 30 ):
-        self.__shutdown = watchdog_timeout
 
     def cmd( self, cmd="gets" ):
         """ Execute a BCC command.
@@ -77,26 +64,18 @@ class Bcc( object ):
 
         return rc, text
 
-    def __wd( self ):
-        """ Bcc watchdog thread.
-            This thread will fake ignition and calm the watchdog & power the HDD
-            if the device is switched on.
-            It will power-cycle the device if self.__reset has been set,
-            then un-set self.__reset.
-        """
-        while not self.__shutdown:
-            if  not self.reset:
-                self.heartbeat = 65535
-                self.hddpower = 1
-                continue
+    def reset( self ):
+        self.poweroff()
+        time.sleep(1)
+        self.poweron()
 
-            self.hddpower  = 0
-            self.heartbeat = 0
-            time.sleep( 1 )
-            self.reset = False
+    def poweron( self ):
+        self.cmd( "debugset 16,010001" )
+        self.heartbeat = 65535
 
-        if self.__shutdown:
-            self.heartbeat = self.__shutdown
+    def poweroff( self ):
+        self.cmd( "debugset 16,010000" )
+        self.heartbeat = 0
 
     @property
     def status( self ):
@@ -173,15 +152,22 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1:
         for cmd in sys.argv[1:]:
+            if cmd == "reset":
+                b.reset()
+                continue
+            if cmd == "off":
+                b.poweroff()
+                continue
+            if cmd == "on":
+                b.poweron()
+                continue
             ret, txt =  b.cmd( cmd )
             print "RETURN VALUE %s" %ret
             print txt
-        b.shutdown(1)
         sys.exit()
 
     while True:
-        banner = ">>>RST<<<" if b.reset    \
-             else "~*~AN~*~" if b.ignition   \
+        banner = "~*~AN~*~" if b.ignition   \
              else "___AUS___"
 
         subprocess.call("clear")

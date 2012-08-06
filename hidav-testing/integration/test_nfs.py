@@ -15,10 +15,12 @@ import unittest, tempfile, subprocess, time, sys
 import device, logger
 
 class TestNFS( unittest.TestCase ):
+
     def test_exports( self ):
         expected =  "Export list for %s:\n" % self._remote
-        expected += "/           *\n"
-        expected += "/media/sda1 *\n"
+        expected += "/                         *\n"
+        expected += "/media/sda1/nfs-forbidden 1.1.1.2\n"
+        expected += "/media/sda1/nfs-allowed   %s\n" % self._remote
         exports = subprocess.check_output( ["showmount", "-e", self._remote] )
         self.assertEqual( exports, expected )
 
@@ -49,6 +51,36 @@ class TestNFS( unittest.TestCase ):
                     result = subprocess.check_output( ['rpcinfo', '-T{}'.format(p), self._remote, s['prognum'], v] )
                     self.assertEqual( result, expected )
 
+    def test_mount_cpy( self) :
+        ret, output = self._dev.conn.cmd("mount -t nfs "
+                                            +"%s:/media/sda1/nfs-allowed " 
+                                                    % self._remote
+                                            +"/media/sda1/nfs-mount")
+        self.assertEqual( ret, 0 )
+
+        ret, output = self._dev.conn.cmd("dd if=/dev/urandom bs=102400 "
+                                            +"count=100 "
+                                            +"of=/media/sda1/nfs-mount/blob")
+        self.assertEqual( ret, 0 )
+
+        ret, output = self._dev.conn.cmd("cd /media/sda1/nfs-mount/ "
+                                           +"&& md5sum blob > blob.md5")
+        self.assertEqual( ret, 0 )
+
+        ret, output = self._dev.conn.cmd("cd /media/sda1/nfs-allowed/ "
+                                           +"&& md5sum -c blob.md5")
+        self.assertEqual( ret, 0 )
+
+        ret, output = self._dev.conn.cmd("umount /media/sda1/nfs-mount")
+        self.assertEqual( ret, 0 )
+
+    def test_invalid_mount( self) :
+        ret, output = self._dev.conn.cmd("mount -t nfs "
+                                            +"%s:/media/sda1/nfs-illegal " 
+                                                    % self._remote
+                                            +"/media/sda1/nfs-mount")
+        self.assertEqual( ret, 32 )
+
     def setUp( self ):
         self._dev = device.Device( devtype="hidav" )
         print "Waiting for Networking to come up..."
@@ -63,8 +95,17 @@ class TestNFS( unittest.TestCase ):
         self._remote = self._dev.conn.host
         self._logger = logger.init()
 
+        self._dev.conn.cmd( "mkdir -p /media/sda1/nfs-allowed "
+                                    +"/media/sda1/nfs-forbidden "
+                                    +"/media/sda1/nfs-mount" )
+        self._dev.conn.cmd( "chmod 777 /media/sda1/nfs-allowed "
+                                     +"/media/sda1/nfs-forbidden "
+                                     +"/media/sda1/nfs-mount" )
+
         my_exports = tempfile.TemporaryFile()
-        my_exports.write("/media/sda1 *(rw,fsid=0)\n")
+        my_exports.write("/media/sda1/nfs-allowed   %s(rw,fsid=0)\n" 
+                                                        % self._remote)
+        my_exports.write("/media/sda1/nfs-forbidden 1.1.1.2(rw)\n")
         my_exports.write("/ *(ro)\n")
 
         self._dev.conn.cmd("cp /etc/exports /etc/exports.orig")
@@ -72,6 +113,8 @@ class TestNFS( unittest.TestCase ):
         self._dev.conn.cmd("exportfs -ra")
 
     def tearDown( self ):
+        self._dev.conn.cmd("rm -f /media/sda1/nfs-mount/blob")
+        self._dev.conn.cmd("rm -f /media/sda1/nfs-mount/blob.md5")
         self._dev.conn.cmd("mv /etc/exports.orig /etc/exports")
         del self._logger
 

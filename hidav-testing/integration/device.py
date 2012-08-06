@@ -43,7 +43,6 @@ class Device( object ):
         except KeyError:
             raise Exception("Unknown device type %s." % devtype)
 
-        atexit.register( self.__shutdown_bcc )
         self.bcc = bcc.Bcc()
         rst = self.__rst if self._setup["reset_cb"] == True else None
 
@@ -57,10 +56,11 @@ class Device( object ):
     def __rst( self ):
         self.bcc.reset = 1
 
-    def __shutdown_bcc( self ):
+    def __del__( self ):
         self._logger.debug( "Shutting down the device." )
-        self.bcc.shutdown()
-        self.conn._reset_cb = None
+        self.bcc.heartbeat = 30
+        del self.bcc
+        self.conn._serial._reset_cb = None
         self.conn._serial.reboot()
 
     def reboot( self, to_nand = False ):
@@ -239,5 +239,8 @@ if __name__ == '__main__':
         print "Retcode: %s" % retc
         print msg
         print "----------------------"
+
+        print "Now shutting down the device."
+        del dev
     standalone()
 

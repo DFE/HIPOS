@@ -20,7 +20,7 @@ from test_samba import TestSamba
 from test_webdav import TestWebDAV
 from test_nfs import TestNFS
 
-class update:
+def update():
     dev = device.Device( devtype = "hidav" )
 
     print "Waiting for Networking to come up..."
@@ -55,12 +55,88 @@ class update:
     print "  epoch :             #%s" % dev.bootconfig["epoch"]
     print "reboot ..."
     dev.conn._serial.reboot( sync=True )
+
+def mount():
+    dev = device.Device( devtype = "hidav" )
+    print "Waiting for Networking to come up..."
+    max_wait=120
+    while not dev.conn.has_networking():
+        time.sleep(1)
+        print ("wait {0}s".format(max_wait))
+        sys.stdout.flush()
+        max_wait -= 1
+        if max_wait == 0:
+            break
+    retc, msg = dev.conn.cmd( "mount | grep /dev/sda1" )
+    if retc == 0:
+	return
+    retc, msg = dev.conn.cmd( "ls /dev/sda" )
+    if retc != 0:
+	print "error: /dev/sda not found"
+	sys.exit(255)
+    retc, msg = dev.conn.cmd( "ls /dev/sda1" )
+    if retc != 0:
+	print "Creating Partition"
+	retc, msg = dev.conn.cmd( """fdisk /dev/sda << EOF
+o
+n
+p
+1
+
+
+w
+EOF
+""" )
+	print msg
+	if retc != 0:
+		print "error: Creating Partition failed"
+	        sys.exit(255)
+	print "make ext4 filesystem on /dev/sda1"
+	dev.update_package_index()
+	dev.install_package( "e2fsprogs-mke2fs" )
+	retc, msg = dev.conn.cmd( "mke2fs -t ext4 /dev/sda1" )
+	print msg
+	if retc != 0:
+		print "error: make ext4 filesystem"
+		sys.exit(255)
+    retc, msg = dev.conn.cmd( "ls -l /media/sda1" )
+    if retc != 0:
+	retc, msg = dev.conn.cmd( "mkdir -p /media/sda1" )
+	print msg
+    	if retc != 0:
+                print "error: mkdir -p /media/sda1 failed"
+                sys.exit(255)
+    print "mount /dev/sda1"
+    retc, msg = dev.conn.cmd( "mount /dev/sda1 /media/sda1" )
+    if retc != 0:
+	print msag
+        print "make ext4 filesystem on /dev/sda1"
+        dev.update_package_index()
+        dev.install_package( "e2fsprogs-mke2fs" )
+        retc, msg = dev.conn.cmd( "mke2fs -t ext4 /dev/sda1" )
+        print msg
+        if retc != 0:
+                print "error: make ext4 filesystem"
+                sys.exit(255)
+	retc, msg = dev.conn.cmd( "mount /dev/sda1 /media/sda1" )
+	if retc != 0:
+		print msg
+		print "error: mount /dev/sda1 failed"
+		sys.exit(255)
+    retc, msg = dev.conn.cmd( "grep /dev/sda1 /etc/fstab" )
+    if retc != 0:
+	retc, msg = dev.conn.cmd( """echo "/dev/sda1            /media/sda1          ext4       defaults,errors=remount-ro,noatime	0	2">>/etc/fstab """ )
+	if retc != 0:
+		print "error: unable to add /dev/sda1 to /etc/fstab"
+		sys.exit(255)
+
         
 if __name__ == '__main__':
 
     def standalone():
         if len(sys.argv) == 1:
-            update()
+	    update()
+	    mount()
             print "start tests..."
             unittest.main()
         else:

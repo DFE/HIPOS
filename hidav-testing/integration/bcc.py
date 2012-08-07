@@ -34,13 +34,17 @@ class Bcc( object ):
         self.__port    = port
         self.__port_br = speed
 
+        atexit.register( self.__cleanup )
         self.poweron()
 
-    def __del__( self ):
+    def __cleanup( self ):
         """ Restore function to disable the debug mode set in __init__.
             """
-        # stop faking ignition, set heartbeat to insanely high value
-        self.cmd( "debugset 16,00" )
+        try:
+            # stop faking ignition
+            self.cmd( "debugset 16,00" )
+        except:
+            pass
 
     def cmd( self, cmd="gets" ):
         """ Execute a BCC command.

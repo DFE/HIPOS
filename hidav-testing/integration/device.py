@@ -52,16 +52,20 @@ class Device( object ):
             serial_skip_pw = self._setup["serial_skip_pw"],
             reset_cb = rst )
         self._logger = logger.init()
+        atexit.register( self.__cleanup )
 
     def __rst( self ):
         self.bcc.reset = 1
 
-    def __del__( self ):
-        self._logger.debug( "Shutting down the device." )
-        self.bcc.heartbeat = 30
-        del self.bcc
-        self.conn._serial._reset_cb = None
-        self.conn._serial.reboot()
+    def __cleanup( self ):
+        try:
+            self._logger.debug( "Shutting down the device." )
+            self.bcc.heartbeat = 30
+            del self.bcc
+            self.conn._serial._reset_cb = None
+            self.conn._serial.reboot()
+        except:
+            pass
 
     def reboot( self, to_nand = False ):
         """ Reboot the device. Return after reboot was successful.

@@ -106,7 +106,6 @@ class SerialConn( serial.Serial ):
 
         while self.__boot_state() == "UNKNOWN":
             self._logger.debug("Waiting for a known system state...")
-            time.sleep(1)
 
         if self.__boot_state() == "shell":
             self._logger.debug("Already logged in.")

@@ -13,10 +13,14 @@
 
 """ Package for the device class """
 
-import time, atexit
-import connection, logger, bcc
+import time
+import atexit
 
-class Device( object ):
+import connection
+import logger
+import bcc
+
+class Device(object):
     """ This class abstracts access to a device, i.e. one single 
         physical system. """
 
@@ -35,7 +39,7 @@ class Device( object ):
             "serial_skip_pw": False },
     }
 
-    def __init__( self, devtype = "HidaV" ):
+    def __init__(self, devtype = "HidaV"):
         """ Initialise a device instance.
             @param devtype: Device type, either "hidav" or "hipox" """
         try:
@@ -44,7 +48,8 @@ class Device( object ):
             raise Exception("Unknown device type %s." % devtype)
 
         self.bcc = bcc.Bcc()
-        rst = self.__rst if self._setup["reset_cb"] == True else None
+        rst = self.bcc.reset if self._setup["reset_cb"] == True else None
+        atexit.register(self.__shutdown)
 
         self.conn = connection.Connection( 
             network_setup = self._setup["network_setup"], 
@@ -52,22 +57,23 @@ class Device( object ):
             serial_skip_pw = self._setup["serial_skip_pw"],
             reset_cb = rst )
         self._logger = logger.init()
-        atexit.register( self.__cleanup )
 
-    def __rst( self ):
-        self.bcc.reset = 1
-
-    def __cleanup( self ):
-        try:
+    def __shutdown(self):
+        """ Shut down the device. This function is atexit() registered.
+            Shuts down the device by setting a low WD timeout, then
+            issuing reboot() via serial. """
+        try: 
             self._logger.debug( "Shutting down the device." )
-            self.bcc.heartbeat = 30
-            del self.bcc
             self.conn._serial._reset_cb = None
             self.conn._serial.reboot()
+            self.bcc.heartbeat = 10
+            del self.bcc
         except:
+            # Interpreter Shutdown Time Pokemon Exception Handling (ISTPEH):
+            # gotta catch them all!
             pass
 
-    def reboot( self, to_nand = False ):
+    def reboot(self, to_nand = False):
         """ Reboot the device. Return after reboot was successful.
             Optionally reboot to NAND flash into the currently
             active kernel / root fs combination (see bootconfig).

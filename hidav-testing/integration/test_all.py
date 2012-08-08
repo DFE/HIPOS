@@ -131,7 +131,7 @@ EOF
     print "mount /dev/sda1"
     retc, msg = dev.conn.cmd( "mount /dev/sda1 /media/sda1" )
     if retc != 0:
-	print msag
+	print msg
         print "make ext4 filesystem on /dev/sda1"
         dev.update_package_index()
         dev.install_package( "e2fsprogs-mke2fs" )

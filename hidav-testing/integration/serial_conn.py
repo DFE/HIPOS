@@ -132,7 +132,8 @@ class SerialConn( serial.Serial ):
             return
 
         if self.__boot_state( ) == "bootloader":
-            self._logger.debug( "System has stopped at bootloader; booting..." )
+            self._logger.debug( "System has stopped at"
+                                + " bootloader; booting..." )
             # the bootloader loses bytes on the serial line, so repeat this 
             self.write("\nboot\n")
             self.flush()
@@ -280,10 +281,11 @@ class SerialConn( serial.Serial ):
                 the point the method stopped reading.
             """
         buf = ""
-	if kernel_partition != None:
-	        kernel_offset = "0x200000" if kernel_partition == 2 else "0xC00000"
-	        self._logger.info( "Rebooting to NAND (kernel: mtd%s, rootfs: mtd%s)."
-                            % (kernel_partition, rootfs_partition) )
+        if kernel_partition != None:
+            kernel_offset = "0x200000" if kernel_partition == 2 else "0xC00000"
+            self._logger.info( "Rebooting to NAND" 
+                                + " (kernel: mtd%s, rootfs: mtd%s)."
+                                % (kernel_partition, rootfs_partition) )
 
         buf += self.reboot( sync=True, stop_at_bootloader = True )
 
@@ -293,18 +295,19 @@ class SerialConn( serial.Serial ):
         time.sleep(1)
 
         if kernel_partition != None:
-		self._logger.debug( "Setting kernel offset to %s." % kernel_offset )
-	        self.write("\nsetenv kernel_offset %s\n" % kernel_offset)
-	        self.flush( )
-        	time.sleep(1)
+            self._logger.debug( "Setting kernel offset to %s." 
+                                % kernel_offset )
+            self.write("\nsetenv kernel_offset %s\n" % kernel_offset)
+            self.flush( )
+            time.sleep(1)
 
-	if rootfs_partition != None:
-	        self._logger.debug( "Setting kernel root to /dev/blockdev%s." 
+        if rootfs_partition != None:
+            self._logger.debug( "Setting kernel root to /dev/blockdev%s." 
                                 % rootfs_partition)
-	        self.write("\nsetenv rootfs_device /dev/blockdev%s\n" 
-                                % rootfs_partition )
-	        self.flush( )
-	        time.sleep(1)
+            self.write("\nsetenv rootfs_device /dev/blockdev%s\n" 
+                        % rootfs_partition )
+            self.flush( )
+            time.sleep(1)
 
         self._logger.debug( "Issuing 'run bootnand'." )
         self.write("\nrun bootnand\n")

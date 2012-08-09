@@ -17,6 +17,7 @@ import logger, serial_conn, ssh_conn, re
 
 class Connection( object ):
     """ Connection to a device.
+
         The connection class abstracts a device connection via serial and/or IP.
         It implements device command processing in a request/response manner.
     """
@@ -26,16 +27,17 @@ class Connection( object ):
                   boot_prompt = "HidaV boot on", serial_skip_pw = True,
                   reset_cb = None ):
         """ Initialize a new connection instance.
-            @param serial_setup:  Set of init options for the serial backend:
-              ( "port", baudrate, data bits, parity, stop bits, timeout_sec )
-            @param network_setup: Set of init options for network connections:
+
+            :param serial_setup:  Set of init options for the serial backend:
+                ( "port", baudrate, data bits, parity, stop bits, timeout_sec )
+            :param network_setup: Set of init options for network connections:
                 ( "ip or hostname", "network dev ON THE DEVICE") 
-            @param login:         Tuple of ( username, pass ) for the device.
-            @param boot_prompt:   String to recognize the boot loader prompt
-                                    with.
-            @param serial_skip_pw: True if the serial login does not prompt
-                                   for a password.
-            @param reset_cb: 	   Callback to run when resetting the device. 
+            :param login:         Tuple of ( username, pass ) for the device.
+            :param boot_prompt:   String to recognize the boot loader prompt
+               with.
+            :param serial_skip_pw: True if the serial login does not prompt
+               for a password.
+            :param reset_cb: 	   Callback to run when resetting the device. 
         """
         self._logger = logger.init()
         self._login = login
@@ -119,12 +121,15 @@ class Connection( object ):
 
 
     def cmd( self, cmd ):
-        """Run a remote command on the device. The command will
+        """Run a remote command on the device. 
+
+           The command will
            be issued via SSH if the host name or IP address is known
            to the connection, (i.e. C{has_networking()} returns True),
            and via serial line otherwise.
-           @param cmd:  command to be issued
-           @return:     tuple of ( retcode, command_output ) """
+
+           :param cmd:  command to be issued
+           :return:     tuple of ( retcode, command_output ) """
 
         self._logger.info( "Ecexuting remote command [%s]" % cmd )
         try: 
@@ -146,38 +151,38 @@ class Connection( object ):
         except: 
             return False
         return True
-        
+    
+def main():
+    """ Standalone function; only defined if the class is run by itself. 
+        This function uses some basic capabilities of the class. It is
+        thought to be used for interactive testing during development,
+        and for a showcase on how to use the class. """
+    import sys, time
+    if len(sys.argv) < 3:
+        print "Usage: %s <username> <password> [<ip address>]" % sys.argv[0]
+        sys.exit()
+
+    import bcc
+    b = bcc.Bcc()
+
+    conn = Connection( network_setup = ( None, "eth1" ), 
+                        login = (sys.argv[1], sys.argv[2]) )
+
+    print "Waiting for Networking to come up..."
+    while not conn.has_networking():
+        time.sleep(1)
+        sys.stdout.write(".")
+    print "\nWe now have networking."
+
+    print "Executing ls /"
+    print conn.cmd("ls /")[1]
+
+    print "Now shutting down the device."
+    b.heartbeat = 30
+    conn._serial._reset_cb = None
+    conn._serial.reboot()
+
 
 if __name__ == '__main__':
-    def standalone():
-        """ Standalone function; only defined if the class is run by itself. 
-            This function uses some basic capabilities of the class. It is
-            thought to be used for interactive testing during development,
-            and for a showcase on how to use the class. """
-        import sys, time
-        if len(sys.argv) < 3:
-            print "Usage: %s <username> <password> [<ip address>]" % sys.argv[0]
-            sys.exit()
-
-        import bcc
-        b = bcc.Bcc()
-
-        conn = Connection( network_setup = ( None, "eth1" ), 
-                            login = (sys.argv[1], sys.argv[2]) )
-
-        print "Waiting for Networking to come up..."
-        while not conn.has_networking():
-            time.sleep(1)
-            sys.stdout.write(".")
-        print "\nWe now have networking."
-
-        print "Executing ls /"
-        print conn.cmd("ls /")[1]
-
-        print "Now shutting down the device."
-        b.heartbeat = 30
-        conn._serial._reset_cb = None
-        conn._serial.reboot()
-
-    standalone()
+    main()
 

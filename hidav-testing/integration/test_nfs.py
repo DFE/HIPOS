@@ -14,7 +14,6 @@
 """ This module implements integration tests for the device's 
     NFS server functions.
 """
-                                  # TestCase has too many public methods.
 import unittest
 import tempfile
 import subprocess
@@ -23,6 +22,7 @@ import time
 import device
 import logger
 
+                                  # TestCase has too many public methods.
 class TestNFS(unittest.TestCase): # pylint: disable-msg=R0904
     """ The NFS tests class. There's onlyone for now. """
 

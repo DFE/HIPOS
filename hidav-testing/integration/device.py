@@ -15,6 +15,7 @@
 
 import time
 import atexit
+import sys
 
 import connection
 import logger
@@ -41,7 +42,8 @@ class Device(object):
 
     def __init__(self, devtype = "HidaV"):
         """ Initialise a device instance.
-            @param devtype: Device type, either "hidav" or "hipox" """
+
+            :param devtype: Device type, either "hidav" or "hipox" """
         try:
             self._setup = Device.DEVICE_TYPES[ devtype.lower() ]
         except KeyError:
@@ -59,7 +61,9 @@ class Device(object):
         self._logger = logger.init()
 
     def __shutdown(self):
-        """ Shut down the device. This function is atexit() registered.
+        """ Shut down the device. 
+            
+            This function is atexit() registered.
             Shuts down the device by setting a low WD timeout, then
             issuing reboot() via serial. """
         try: 
@@ -75,10 +79,12 @@ class Device(object):
 
     def reboot(self, to_nand = False):
         """ Reboot the device. Return after reboot was successful.
+
             Optionally reboot to NAND flash into the currently
             active kernel / root fs combination (see bootconfig).
-            @param to_nand: Reboot into currently active NAND partitions.
-            @return: Buffer containing all the messages from the reboot.
+
+            :param to_nand: Reboot into currently active NAND partitions.
+            :return: Buffer containing all the messages from the reboot.
             """
         if to_nand:
             return self.conn._serial.boot_to_nand( 
@@ -110,9 +116,12 @@ class Device(object):
     def bootconfig( self ):
         """ Bootconfig property. This is a dictionary
             representing the device's boot partition configuration.
-            E.g. { "epoch" : 42, "kernel" : 2, "rootfs" : 5 } would mean
-            the current kernel is on mtd2, the current rootfs on mtd5,
-            and the entry is the 42nd ever written. """
+            E.g. 
+                
+                { "epoch" : 42, "kernel" : 2, "rootfs" : 5 } 
+             
+            would mean the current kernel is on mtd2, the current rootfs on 
+            mtd5, and the entry is the 42nd ever written. """
         try:
             return self._bootconfig
         except AttributeError:
@@ -133,9 +142,9 @@ class Device(object):
     @bootconfig.setter              # pylint: disable-msg=E1101
     def bootconfig( self, value ):  # pylint: disable-msg=E0102,E0202
         """ Set the bootconfig property (kernel and rootfs mtd; not the epoch).
-            @param value: dictionary containing kernel and rootfs partition number
-                          to be set, e.g.
-                          { "kernel" : 2, "rootfs" : 5 } """
+
+            :param value: dictionary containing kernel and rootfs partition number
+              to be set, e.g.  { "kernel" : 2, "rootfs" : 5 } """
         del self.bootconfig
         if value["kernel"] != self.bootconfig["kernel"]:
             self._logger.info("Setting kernel partition to mtd%s" 
@@ -159,7 +168,8 @@ class Device(object):
 
     def update_package_index( self ):
         """ Update the device's package index remotely.
-            @raise Exception: if the update failed."""
+
+            :raise Exception: if the update failed."""
         self._logger.debug("Updating the package index...")
         ret, msgs = self.conn.cmd("opkg update")
         if ret != 0:
@@ -170,9 +180,10 @@ class Device(object):
     def install_package( self, package_name, force = False ):
         """ Install a package at the device. The package index will be updated
             prior to the installation.
-            @param package_name: name of the package to be installed.
-            @param force: force re-installation of already installed package.
-            @raise Exception: if the install failed."""
+
+            :param package_name: name of the package to be installed.
+            :param force: force re-installation of already installed package.
+            :raise Exception: if the install failed."""
         f = "--force-reinstall" if force else ""
         self._logger.info("Installing package %s %s." 
                             % (package_name, f) )
@@ -185,8 +196,9 @@ class Device(object):
 
     def remove_package( self, package_name ):
         """ Remove a package from the device.
-            @param package_name: name of the package to be removed.
-            @raise Exception: if the install failed."""
+
+            :param package_name: name of the package to be removed.
+            :raise Exception: if the install failed."""
         self._logger.info("Removing package %s." % package_name)
         ret, msgs = self.conn.cmd(
                 "opkg remove --force-removal-of-dependent-packages %s" 
@@ -196,61 +208,58 @@ class Device(object):
                     % (package_name, ret, msgs))
 
 
+def main():
+    """ Standalone function; only defined if the class is run by itself. 
+        This function uses some basic capabilities of the class. It is
+        thought to be used for interactive testing during development,
+        and for a showcase on how to use the class. """
+    dev = Device( devtype = "hidav" )
+
+    while not dev.bcc.ignition:
+        print "Please switch on the device."
+        time.sleep(1)
+
+    print "Connecting to device..."
+    print "Firmware version: %s" % dev.firmware_version
+
+    print "Boot config:"
+    print "  Kernel:      /dev/mtd%s" % dev.bootconfig["kernel"]
+    print "  rootfs: /dev/blockdev%s" % dev.bootconfig["rootfs"]
+    print "  epoch :             #%s" % dev.bootconfig["epoch"]
+
+    print "Waiting for Networking to come up..."
+    while not dev.conn.has_networking():
+        time.sleep(1)
+        sys.stdout.write(".")
+    print "\nWe now have networking."
+
+    print " Checking package install functionality:"
+    print " ----------------------"
+    print " Package 'zip' is not installed:"
+    retc, msg = dev.conn.cmd( "zip --help" )
+    print "Retcode: %s" % retc
+    print msg
+    print "----------------------"
+
+    print " Installing zip"
+    dev.install_package( "zip" )
+    print "Now zip is  there:"
+    retc, msg = dev.conn.cmd( "zip --help" )
+    print "Retcode: %s" % retc
+    print msg
+    print "----------------------"
+
+    print " Removing zip"
+    dev.remove_package ( "zip" )
+    print "Now zip is gone:"
+    retc, msg = dev.conn.cmd( "zip --help" )
+    print "Retcode: %s" % retc
+    print msg
+    print "----------------------"
+
+    print "Now shutting down the device."
 
 
 if __name__ == '__main__':
-    import time
-    def standalone():
-        """ Standalone function; only defined if the class is run by itself. 
-            This function uses some basic capabilities of the class. It is
-            thought to be used for interactive testing during development,
-            and for a showcase on how to use the class. """
-        import sys
-        dev = Device( devtype = "hidav" )
-
-        while not dev.bcc.ignition:
-            print "Please switch on the device."
-            time.sleep(1)
-
-        print "Connecting to device..."
-        print "Firmware version: %s" % dev.firmware_version
-
-        print "Boot config:"
-        print "  Kernel:      /dev/mtd%s" % dev.bootconfig["kernel"]
-        print "  rootfs: /dev/blockdev%s" % dev.bootconfig["rootfs"]
-        print "  epoch :             #%s" % dev.bootconfig["epoch"]
-
-        print "Waiting for Networking to come up..."
-        while not dev.conn.has_networking():
-            time.sleep(1)
-            sys.stdout.write(".")
-        print "\nWe now have networking."
-
-        print " Checking package install functionality:"
-        print " ----------------------"
-        print " Package 'zip' is not installed:"
-        retc, msg = dev.conn.cmd( "zip --help" )
-        print "Retcode: %s" % retc
-        print msg
-        print "----------------------"
-
-        print " Installing zip"
-        dev.install_package( "zip" )
-        print "Now zip is  there:"
-        retc, msg = dev.conn.cmd( "zip --help" )
-        print "Retcode: %s" % retc
-        print msg
-        print "----------------------"
-
-        print " Removing zip"
-        dev.remove_package ( "zip" )
-        print "Now zip is gone:"
-        retc, msg = dev.conn.cmd( "zip --help" )
-        print "Retcode: %s" % retc
-        print msg
-        print "----------------------"
-
-        print "Now shutting down the device."
-        del dev
-    standalone()
+    main()
 

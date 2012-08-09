@@ -81,10 +81,12 @@ class Bcc( object ):
     def poweron( self ):
         self.cmd( "debugset 16,010001" )
         self.heartbeat = 65535
+        self.hddpower = True
 
     def poweroff( self ):
         self.cmd( "debugset 16,010000" )
         self.heartbeat = 0
+        self.hddpower = False
 
     @property
     def status( self ):

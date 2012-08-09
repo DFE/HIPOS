@@ -285,9 +285,9 @@ epub_copyright = u'2012, Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknec
 #epub_tocdup = True
 
 # -- Options for doc coverage -------------------------------------------------
-coverage_ignore_modules = [ "" ]
-coverage_ignore_functions = [ "" ]
-coverage_ignore_classes = [ "" ]
+coverage_ignore_modules = [ ]
+coverage_ignore_functions = [ ]
+coverage_ignore_classes = [ ]
 coverage_write_headline = True
 coverage_skip_undoc_in_source = False
 

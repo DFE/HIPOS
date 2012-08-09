@@ -11,12 +11,8 @@
 # 2 of the License, or (at your option) any later version.
 #
 
-"""The Board Controller class.
+""" Package for the board controller class """
 
-   This class represents the board controller of a connected device.
-   The BCC is supposed to be connected to a host PC via its external serrial 
-   port / FTDI cable. 
-"""
 
 import sys
 import subprocess
@@ -26,7 +22,12 @@ import time
 import atexit
 
 class Bcc( object ):
+    """The Board Controller class.
 
+       This class represents the board controller of a connected device.
+       The BCC is supposed to be connected to a host PC via its external serrial 
+       port / FTDI cable. 
+    """
     def __init__( self, port = "/dev/ttyUSB0", speed = 57600, drbcc = "drbcc" ):
         """ Create a new Bcc instance.
 
@@ -34,7 +35,7 @@ class Bcc( object ):
             :param speed: serial port speed
             :param drbcc: Path to drbcc binary
 
-            :raise: OSError if the drbcc binary was not found.
+            :raise: :py:exc:`OSError` if the drbcc binary was not found.
         """
         self.__drbcc   = drbcc
         self.__port    = port
@@ -58,7 +59,7 @@ class Bcc( object ):
             :param cmd: command to be executed.
             :return: (exit_code, text_result): exit code and textual result of 
                 command execution as returned by drbcc
-            :raise: OSError if the drbcc binary was not found.
+            :raise: :py:exc:`OSError` if the drbcc binary was not found.
         """
         text=""; rc = 0
         try:
@@ -74,16 +75,28 @@ class Bcc( object ):
         return rc, text
 
     def reset( self ):
+        """ Reset the system.
+            
+            This method will reset the system by calling :py:meth:`poweroff`, 
+            sleeping for a second, then calling :py:meth:`poweron`."""
         self.poweroff()
         time.sleep(1)
         self.poweron()
 
     def poweron( self ):
+        """ Power ON the system.
+
+            This method will fake the Ignition pin to 'ON', then set the
+            watchdog :py:meth:`heartbeat` to the maximum value. """
         self.cmd( "debugset 16,010001" )
         self.heartbeat = 65535
         self.hddpower = True
 
     def poweroff( self ):
+        """ Power ON the system.
+
+            This method will fake the Ignition pin to 'OFF', then set the
+            watchdog :py:meth:`heartbeat` to zero. """
         self.cmd( "debugset 16,010000" )
         self.heartbeat = 0
         self.hddpower = False
@@ -122,6 +135,8 @@ class Bcc( object ):
     def hddpower( self ):
         """ BCC harddisk power state property.
 
+            :param hddpower: can be set to True or False, i.e. whether 
+                to power the HDD or not.
             :return: True or False
         """
         h  = self.__status("HDD-Power")
@@ -129,10 +144,6 @@ class Bcc( object ):
 
     @hddpower.setter
     def hddpower( self, power ):
-        """ BCC harddisk power state property setter.
-
-            :param power: True or False, i.e. whether to power the HDD or not.
-        """
         ps = "1" if power else "0"
         self.cmd( "hdpower " + ps )
 
@@ -140,6 +151,7 @@ class Bcc( object ):
     def heartbeat( self ):
         """ BCC heartbeat state property.
 
+            :param heartbeat: number of seconds before RESET
             :return: tuple of ( curr, max ) representing the maximum count
                 upon which a RESET will be triggered as well as the current count 
                 (in seconds).
@@ -156,10 +168,6 @@ class Bcc( object ):
 
     @heartbeat.setter
     def heartbeat( self, seconds ):
-        """ BCC heartbeat property setter
-
-            :param seconds: number of seconds before RESET
-        """
         self.cmd( "heartbeat %s" % seconds )
 
 

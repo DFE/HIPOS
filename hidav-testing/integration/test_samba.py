@@ -22,49 +22,49 @@ import unittest
 
 class TestSamba(unittest.TestCase):
 
-	def test_complex(self):
-                print "Autodetect ServerIP"
-                dev = device.Device( devtype = "hidav" )
-                print "Waiting for Networking to come up..."
-		max_wait=120
-                while not dev.conn.has_networking():
-                        time.sleep(1)
-	                print ("wait {0}s".format(max_wait))
-			max_wait -= 1
-			if max_wait == 0:
-				break
-		
-                server=dev.conn.host
-                print( "Server: {0}".format(server) )
-		
-		self._PID    = os.getpid()
+    def test_complex(self):
+        print "Autodetect ServerIP"
+        dev = device.Device( devtype = "hidav" )
+        print "Waiting for Networking to come up..."
+        max_wait=120
+        while not dev.conn.has_networking():
+            time.sleep(1)
+            print ("wait {0}s".format(max_wait))
+            max_wait -= 1
+            if max_wait == 0:
+                break
 
-                self._server = server
-                self._share  = "pub"
+        server=dev.conn.host
+        print( "Server: {0}".format(server) )
 
-		retc, msg = dev.conn.cmd( "mount /dev/sda1 /mnt/pub" )
-		retc, msg = dev.conn.cmd( "chmod 777 /mnt/pub" )
+        self._PID    = os.getpid()
 
-                self._smb_string = "smb://{0}/{1}/{2}test.txt".format(self._server,self._share,self._PID)
+        self._server = server
+        self._share  = "pub"
 
-		print( "Testfile: {0}".format(self._smb_string))
-		print( "writing..." )
-		ctx = smbc.Context()
-		file_write = ctx.open(self._smb_string, os.O_CREAT | os.O_WRONLY)
-		file_write.write( self._smb_string )
-		file_write.close()
+        retc, msg = dev.conn.cmd( "mount /dev/sda1 /mnt/pub" )
+        retc, msg = dev.conn.cmd( "chmod 777 /mnt/pub" )
 
-		print( "reading..." )
-		file = ctx.open( self._smb_string )
-		read_data = file.read()
-		file.close()
-	
-		retc, msg = dev.conn.cmd( "rm /mnt/pub/{0}test.txt".format(self._PID) )
-		retc, msg = dev.conn.cmd( "umount /mnt/pub" )
-	
+        self._smb_string = "smb://{0}/{1}/{2}test.txt".format(self._server,self._share,self._PID)
 
-		print( "testing..." )
-		self.assertEquals(self._smb_string,read_data)
+        print( "Testfile: {0}".format(self._smb_string))
+        print( "writing..." )
+        ctx = smbc.Context()
+        file_write = ctx.open(self._smb_string, os.O_CREAT | os.O_WRONLY)
+        file_write.write( self._smb_string )
+        file_write.close()
+
+        print( "reading..." )
+        file = ctx.open( self._smb_string )
+        read_data = file.read()
+        file.close()
+
+        retc, msg = dev.conn.cmd( "rm /mnt/pub/{0}test.txt".format(self._PID) )
+        retc, msg = dev.conn.cmd( "umount /mnt/pub" )
+
+
+        print( "testing..." )
+        self.assertEquals(self._smb_string,read_data)
 
 def main():
 	if len(sys.argv) == 1:

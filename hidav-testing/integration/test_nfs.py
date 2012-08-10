@@ -64,9 +64,9 @@ class TestNFS(unittest.TestCase): # pylint: disable-msg=R0904
             The test calls the "rpcinfo" command line tool for this.
 
             NFS Documentation:
-            - http://nfsv4.bullopensource.org/doc/nfs_ipv6.php
-            - http://docs.fedoraproject.org/en-US/Fedora/14/html/Storage_Administration_Guide/ch-nfs.html#s2-nfs-how-daemons
-            - http://www.iana.org/assignments/rpc-program-numbers/rpc-program-numbers.xml
+                - http://nfsv4.bullopensource.org/doc/nfs_ipv6.php
+                - http://docs.fedoraproject.org/en-US/Fedora/14/html/Storage_Administration_Guide/ch-nfs.html#s2-nfs-how-daemons
+                - http://www.iana.org/assignments/rpc-program-numbers/rpc-program-numbers.xml
         """
         
         services = []

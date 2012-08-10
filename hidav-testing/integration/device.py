@@ -169,7 +169,7 @@ class Device(object):
     def update_package_index( self ):
         """ Update the device's package index remotely.
 
-            :raise Exception: if the update failed."""
+            :raise: Exception if the update failed."""
         self._logger.debug("Updating the package index...")
         ret, msgs = self.conn.cmd("opkg update")
         if ret != 0:
@@ -183,7 +183,7 @@ class Device(object):
 
             :param package_name: name of the package to be installed.
             :param force: force re-installation of already installed package.
-            :raise Exception: if the install failed."""
+            :raise: Exception if the install failed."""
         f = "--force-reinstall" if force else ""
         self._logger.info("Installing package %s %s." 
                             % (package_name, f) )
@@ -198,7 +198,7 @@ class Device(object):
         """ Remove a package from the device.
 
             :param package_name: name of the package to be removed.
-            :raise Exception: if the install failed."""
+            :raise: Exception if the install failed."""
         self._logger.info("Removing package %s." % package_name)
         ret, msgs = self.conn.cmd(
                 "opkg remove --force-removal-of-dependent-packages %s" 

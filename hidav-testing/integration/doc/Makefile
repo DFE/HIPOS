@@ -18,6 +18,7 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "  undocumented to output a list of all undocumented python objects"
 	@echo "  html       to make standalone HTML files"
 	@echo "  dirhtml    to make HTML files named index.html in directories"
 	@echo "  singlehtml to make a single large HTML file"
@@ -41,10 +42,13 @@ help:
 clean:
 	-rm -rf $(BUILDDIR)/*
 
-coverage:
-	$(SPHINXBUILD) -b coverage $(ALLSPHINXOPTS) $(BUILDDIR)/html
+undocumented:
+	@cd .. &&										\
+		pylint `ls -1 | grep -Ev '(uuid)|(webdav)'` 2>&1 \
+		| awk  '/^\*\*\*\*/ { mod=$$3 } /Missing docstring/ { if (old_mod != mod) { print "\nmodule :py:mod:`" mod "`\n"; old_mod = mod } print "* " $$0} END{ if (! old_mod) "Everything is documented!" }' \
+		| tee doc/source/undocumented.inc
 
-html:
+html: undocumented
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

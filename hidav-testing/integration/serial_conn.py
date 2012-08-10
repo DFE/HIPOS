@@ -22,6 +22,7 @@ import sys
 import logger
 import bcc
 
+LAST_LINE_UPON_SHUTDOWN = "Detaching DM devices" 
 
 class SerialConn( serial.Serial ):
     """Serial connection to a device.
@@ -85,11 +86,11 @@ class SerialConn( serial.Serial ):
             self._timeout = old_to
         return buf
 
-    def dump_receive_buffer ( self ):
+    def dump_receive_buffer(self):
         """ Return the contents of the serial input buffer """
-        return self.read( self.inWaiting() )        
+        return self.read(self.inWaiting())
 
-    def readline_until( self, target, trigger_write="\n" ):
+    def readline_until(self, target, trigger_write="\n"):
         """ Read up to a trigger text, read the whole line, then stop.
 
             This method works just like :py:meth:`read_until` with the exception that 
@@ -104,17 +105,32 @@ class SerialConn( serial.Serial ):
         buf += self.readline()
         return buf
 
-    def __boot_state( self ):
-        """ Return the current system state.
-            :return: string containing  "bootloader", "login", "shell", or 
-                     "UNKNOWN"
+    @property
+    def __boot_state(self):
+        """ The current system state.
+
+            :return: string "bootloader", "login", "shell", or "UNKNOWN"
         """
         buf = self.read_until( "\n", timeout=3 )
 
-        return "shell"  if self._login[0] + "@" in buf \
+        ret = "shell"  if self._login[0] + "@" in buf \
                         else "login" if "login:" in buf \
                         else "bootloader" if self._boot_prompt in buf \
                         else "UNKNOWN"
+        self._logger.debug("Current system stae is %s" % ret)
+
+        return ret
+
+    def __wait_for_known_boot_state(self):
+        """ Wait for a KNOWN boot state. """
+        self._logger.debug("Waiting for a known system state...")
+
+        while self.__boot_state == "UNKNOWN":
+            pass
+
+        self._logger.debug("Got system state %s" % self.__boot_state)
+        return self.__boot_state
+
 
     def login( self ):
         """ Login to a device.
@@ -124,14 +140,13 @@ class SerialConn( serial.Serial ):
             whether we're currently in the boot loader (in which case the 
             method will boot the device, then log in)."""
 
-        while self.__boot_state() == "UNKNOWN":
-            self._logger.debug("Waiting for a known system state...")
+        state = self.__wait_for_known_boot_state()
 
-        if self.__boot_state() == "shell":
+        if state == "shell":
             self._logger.debug("Already logged in.")
             return
 
-        if self.__boot_state( ) == "bootloader":
+        if state == "bootloader":
             self._logger.debug( "System has stopped at"
                                 + " bootloader; booting..." )
             # the bootloader loses bytes on the serial line, so repeat this 
@@ -221,7 +236,7 @@ class SerialConn( serial.Serial ):
 
     def logout( self ):
         """ Log out of the system. """
-        if self.__boot_state() == "shell":
+        if self.__boot_state == "shell":
             self._logger.debug( "Logging out." )
             self.write("\nexit\n")
             self.read_until("login:")
@@ -250,14 +265,18 @@ class SerialConn( serial.Serial ):
         """
         self._logger.info( "Rebooting %s" % ("and stopping at bootloader" if
                 stop_at_bootloader else "synchronously" if sync else ".") )
-        self.login()
-        self.write( "\n" + reboot_cmd + "\n" )
+
+        state = self.__wait_for_known_boot_state()
+
         buf = ""
-        if self._reset_cb:
-            buf += self.readline_until( "Detaching DM devices" )
-            self._reset_cb()
+        if state in ("shell", "login"):
+            self.login()
+            self.write( "\n" + reboot_cmd + "\n" )
+            if self._reset_cb:
+                buf += self.readline_until(LAST_LINE_UPON_SHUTDOWN)
+                self._reset_cb()
+
         if stop_at_bootloader:
-            buf += self.read_until("U-Boot")
             buf += self.read_until(self._boot_prompt, ".\n", 0.001)
         elif sync:
             buf += self.readline_until("login:")
@@ -287,7 +306,7 @@ class SerialConn( serial.Serial ):
                                 + " (kernel: mtd%s, rootfs: mtd%s)."
                                 % (kernel_partition, rootfs_partition) )
 
-        buf += self.reboot( sync=True, stop_at_bootloader = True )
+        buf += self.reboot(sync=True, stop_at_bootloader=True)
 
         self.flushInput( )
         self.flushOutput( )

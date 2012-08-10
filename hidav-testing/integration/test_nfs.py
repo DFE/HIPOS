@@ -21,10 +21,11 @@ import time
 
 import device
 import logger
+import devicetestcase
 
                                   # TestCase has too many public methods.
-class TestNFS(unittest.TestCase): # pylint: disable-msg=R0904
-    """ The NFS tests class. There's onlyone for now. """
+class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
+    """ The NFS tests class. """
 
     def test_exports(self):
         """ Test exported NFS shares.
@@ -51,7 +52,7 @@ class TestNFS(unittest.TestCase): # pylint: disable-msg=R0904
                 prog_num, 
                 version]
 
-        self._logger.debug("Running %s" % cmd)
+        self.logger.debug("Running %s" % cmd)
 
         result = subprocess.check_output(cmd)
         self.assertEqual(result, expected)
@@ -96,7 +97,7 @@ class TestNFS(unittest.TestCase): # pylint: disable-msg=R0904
 
     def __cmd(self, cmd, expected=0):
         """ Helper to run a command and check its return value """
-        ret, output = self._dev.conn.cmd(cmd)
+        ret, output = self.dev.conn.cmd(cmd)
 
         if expected is not None:
             self.assertEqual( ret, expected, msg=
@@ -133,18 +134,9 @@ class TestNFS(unittest.TestCase): # pylint: disable-msg=R0904
 
     def setUp(self): # I didn't come up with this! pylint: disable-msg=C0103
         """ Test setup routine: prepare the NFS exports used by the tests. """
-        self._dev = device.Device( devtype="hidav" )
-        print "Waiting for Networking to come up..."
-        max_wait = 120
-        while not self._dev.conn.has_networking():
-            time.sleep(1)
-            print ("wait {0}s".format(max_wait))
-            max_wait -= 1
-            if max_wait == 0:
-                break
 
-        self._remote = self._dev.conn.host
-        self._logger = logger.init()
+        self.wait_for_network()
+        self._remote = self.dev.conn.host
 
         self.__cmd( "mkdir -p /media/sda1/nfs-allowed "
                             +"/media/sda1/nfs-forbidden "
@@ -160,17 +152,16 @@ class TestNFS(unittest.TestCase): # pylint: disable-msg=R0904
         my_exports.write("/media/sda1/nfs-forbidden 1.1.1.2(rw)\n")
         my_exports.write("/ *(ro)\n")
 
-        self._dev.conn.cmd("cp /etc/exports /etc/exports.orig")
-        self._dev.conn._ssh.put(my_exports, "/etc/exports")
-        self._dev.conn.cmd("exportfs -ra")
+        self.dev.conn.cmd("cp /etc/exports /etc/exports.orig")
+        self.dev.conn._ssh.put(my_exports, "/etc/exports")
+        self.dev.conn.cmd("exportfs -ra")
 
 
     def tearDown( self ): # Wrong Naming (CamelCase) pylint: disable-msg=C0103
         """ After-Test restore routine: restore device's original exports. """
-        self._dev.conn.cmd("rm -f /media/sda1/nfs-mount/blob")
-        self._dev.conn.cmd("rm -f /media/sda1/nfs-mount/blob.md5")
-        self._dev.conn.cmd("mv /etc/exports.orig /etc/exports")
-        del self._logger
+        self.dev.conn.cmd("rm -f /media/sda1/nfs-mount/blob")
+        self.dev.conn.cmd("rm -f /media/sda1/nfs-mount/blob.md5")
+        self.dev.conn.cmd("mv /etc/exports.orig /etc/exports")
 
 if __name__ == '__main__':
     unittest.main()

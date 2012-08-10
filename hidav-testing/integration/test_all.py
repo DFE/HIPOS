@@ -17,8 +17,8 @@ import unittest
 
 from test_samba import TestSamba
 from test_webdav import TestWebDAV
-# from test_nfs import TestNFS
-# from test_http import TestHTTP
+from test_nfs import TestNFS
+from test_http import TestHTTP
 
 if __name__ == '__main__':
     """ start all tests """

@@ -18,19 +18,14 @@ import device
 import httplib
 import unittest
 
+import devicetestcase
+
 test_html = "<html><body><h1>It works!</h1></body></html>" #default from lighty
 
-class TestHTTP(unittest.TestCase):
+class TestHTTP(devicetestcase.DeviceTestCase):
     def test_complex(self):
         #prepare
-        print "Autodetect ServerIP"
-        dev = device.Device( devtype = "hidav" )
-        print "Waiting for Networking to come up..."
-        while not dev.conn.has_networking():
-            sys.stdout.write(".")
-            sys.stdout.flush()
-            time.sleep(1)
-        server=dev.conn.host
+        server = self.dev.conn.host
         print( "Server: {0}".format(server) )
         url=server
         expected = test_html
@@ -42,6 +37,9 @@ class TestHTTP(unittest.TestCase):
         self.assertEquals(expected,result)
         #cleanup
         connection.close()
+
+    def setUp(self):
+        self.wait_for_network()
 
 def main():
     if len(sys.argv) == 1:

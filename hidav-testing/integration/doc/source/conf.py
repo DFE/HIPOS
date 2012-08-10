@@ -193,7 +193,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'HidavIntegrationTestTooling.tex', u'Hidav Integration Test Tooling Documentation',
-   u'Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknecht, Angelika Tobisch', 'manual'),
+   u'Erik Bernoth\\\\ Eik Binschek\\\\ Thilo Fromm\\\\ Mario Schuknecht\\\\ Angelika Tobisch', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

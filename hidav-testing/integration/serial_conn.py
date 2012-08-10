@@ -126,7 +126,7 @@ class SerialConn(serial.Serial):
                         else "login" if "login:" in buf \
                         else "bootloader" if self._boot_prompt in buf \
                         else "UNKNOWN"
-        self._logger.debug("Current system stae is %s" % ret)
+        self._logger.debug("Current system state is %s" % ret)
 
         return ret
 

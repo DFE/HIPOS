@@ -1,4 +1,4 @@
-.. _integration-test-framework:            
+.. _integration-test-framework:
 
 Integration Test Framework
 **************************
@@ -15,6 +15,7 @@ off, to install packages, or to run generic commands.
      "device" -> "connection";
      "connection" -> "serial_conn";
      "connection" -> "ssh_conn";
+     "logger";
 
 Device
 ======
@@ -45,4 +46,11 @@ Serial Connection
 .. automodule:: serial_conn
    :members:
    :undoc-members:
+
+Logger
+======
+.. automodule:: logger
+   :members: 
+   :special-members: __new__
+   :private-members: __create_instance
 

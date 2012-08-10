@@ -13,36 +13,63 @@
 
 """ Logging helper Package """
 
-import logging, datetime
+import logging
+import datetime
+import threading
 
-logger = None
-filename = None
+class Logger(logging.Logger):
+    """ The Logger class singleton. 
+        This class will create exactly one logger
+        for the whole test suite."""
 
-def init( stdout_too = False ):
-    """ Initalise logging
-        @return: logger instance """
+    __instance = None
+    __lock     = threading.Lock()
 
-    global logger, filename
+    @classmethod
+    def __new__(cls, *args, **kwargs):
+        """ This method returns the logger singleton or creates one
+            if none is available as of yet.
 
-    if logger:
+            This class method is called by the python runtime to create an
+            instance. It will be run transparently to any user instanciating
+            a logger simply by
+            
+            .. code-block:: python
+                
+                loggy = Logger()
+                
+
+            :return: logger instance """
+
+        if not Logger.__instance:
+            Logger.__lock.acquire()
+            try:
+                if not Logger.__instance:
+                    Logger.__instance = cls.__create_instance()
+            finally:
+                Logger.__lock.release()
+
+        return Logger.__instance
+
+    @classmethod
+    def __create_instance(cls):
+        """ This method actully instanciates the logger handler. 
+
+            :return: logger instance
+        """
+        logger = logging.getLogger("Hidav-Integration")
+        logger.setLevel(logging.DEBUG)
+
+        filename = "run-%s.log" % datetime.datetime.now()
+
+        handler = logging.FileHandler( filename, mode='w+')
+        handler.setFormatter(logging.Formatter(
+            "%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): "
+            + "%(message)s"))
+        logger.addHandler(handler)
+
         return logger
 
-    logger = logging.getLogger( __name__  )
-    logger.setLevel( logging.DEBUG )
-
-    filename = "run-%s.log" % datetime.datetime.now()
-
-    handler = logging.FileHandler( filename, mode='w+')
-    handler.setFormatter( logging.Formatter(
-        "%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): "
-        + "%(message)s" ) )
-    logger.addHandler( handler )
-
-    if stdout_too:
-        handler = logging.StreamHandler()
-        handler.setFormatter( logging.Formatter(
-            "%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): "
-            + "%(message)s" ) )
-        logger.addHandler( handler )
-    return logger
-
+def init():
+    """ Legacy interface to get a logger instance. """
+    return Logger()

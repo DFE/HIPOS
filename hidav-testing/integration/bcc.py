@@ -144,6 +144,7 @@ class Bcc( object ):
 
     @hddpower.setter
     def hddpower( self, power ):
+        """" Setter for the hddpower property. """
         ps = "1" if power else "0"
         self.cmd( "hdpower " + ps )
 
@@ -168,10 +169,15 @@ class Bcc( object ):
 
     @heartbeat.setter
     def heartbeat( self, seconds ):
+        """" Setter for the heartbeat property. """
         self.cmd( "heartbeat %s" % seconds )
 
 
 def main():
+    """ Standalone function; only defined if the class is run by itself. 
+        This function uses some basic capabilities of the class. It is
+        thought to be used for interactive testing during development,
+        and for a showcase on how to use the class. """
     b = Bcc()
 
     if len(sys.argv) > 1:

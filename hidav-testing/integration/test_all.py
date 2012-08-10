@@ -21,7 +21,6 @@ from test_webdav import TestWebDAV
 # from test_http import TestHTTP
 
 if __name__ == '__main__':
-    """ start all impoted tests """
-    
+    """ start all tests """
     unittest.main()
-
+    

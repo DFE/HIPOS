@@ -135,7 +135,7 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
     def setUp(self): # I didn't come up with this! pylint: disable-msg=C0103
         """ Test setup routine: prepare the NFS exports used by the tests. """
 
-        self.wait_for_network()
+        self.dev.wait_for_network()
         self._remote = self.dev.conn.host
 
         self.__cmd( "mkdir -p /media/sda1/nfs-allowed "

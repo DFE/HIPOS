@@ -25,7 +25,6 @@ class TestWebDAV(devicetestcase.DeviceTestCase):
         #prepare
         print "Autodetect ServerIP"
         dev = self.dev
-        self.wait_for_network()
         
         server=dev.conn.host
         print( "Server: {0}".format(server) )
@@ -42,6 +41,9 @@ class TestWebDAV(devicetestcase.DeviceTestCase):
         self.assertEquals(expected,result)
         #cleanup
         r.delete()
+
+    def setUp(self):
+        self.wait_for_network()
     
 if __name__ == '__main__':
     unittest.main()

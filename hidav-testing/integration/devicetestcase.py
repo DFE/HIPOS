@@ -3,8 +3,6 @@
 """
 Created on Thu Aug  9 09:43:34 2012
 
-    
-
 @author: binschek
 """
 

@@ -95,6 +95,22 @@ class Device(object):
         return self.conn._serial.reboot( sync=True )
 
 
+    def wait_for_network(self, max_wait=120):
+        """Wait for networking to come up.
+        
+            :param max_wait: max time in seconds to wait
+            :return: True if networking is available, False if timeout
+                occurred."""
+        self._logger.debug("Waiting for Networking to come up...")
+        while not self.conn.has_networking():
+            time.sleep(1)
+            self._logger.debug("wait {0}s".format(max_wait))
+            max_wait -= 1
+            if max_wait == 0:
+                break
+        return (max_wait > 0)
+
+
     @property
     def firmware_version( self ):
         """ Firmware version property. This is the device's

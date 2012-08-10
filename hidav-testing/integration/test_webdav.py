@@ -43,7 +43,7 @@ class TestWebDAV(devicetestcase.DeviceTestCase):
         r.delete()
 
     def setUp(self):
-        self.wait_for_network()
+        self.dev.wait_for_network()
     
 if __name__ == '__main__':
     unittest.main()

@@ -87,12 +87,9 @@ class Device(object):
             :return: Buffer containing all the messages from the reboot.
             """
         if to_nand:
-            return self.conn._serial.boot_to_nand( 
-                    sync = True,
-                    kernel_partition = self.bootconfig["kernel"],
-                    rootfs_partition = self.bootconfig["rootfs"] )
+            return self.conn._serial.boot_to_nand(sync=True )
 
-        return self.conn._serial.reboot( sync=True )
+        return self.conn._serial.reboot(sync=True)
 
 
     def wait_for_network(self, max_wait=120):

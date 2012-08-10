@@ -29,7 +29,6 @@ def update_device(dev):
         :param dev: devive instance
     """
     print "Boot to SD"
-    dev.reboot()
     dev.wait_for_network()
     print "erase /dev/mtd6"
     retc, msg = dev.conn.cmd("flash_erase /dev/mtd6 0 0")
@@ -37,9 +36,7 @@ def update_device(dev):
         print msg
         sys.exit(255)
     print "Boot to NAND ..."
-    dev.conn._serial.boot_to_nand(sync = False,
-                                  kernel_partition = None,
-                                  rootfs_partition = None )
+    dev.reboot(to_nand=True)
     dev.wait_for_network()
 
     print "Connecting to device..."
@@ -63,9 +60,7 @@ def update_device(dev):
     print "  epoch :             #%s" % dev.bootconfig["epoch"]
     print "reboot ..."
     print "Boot to NAND ..."
-    dev.conn._serial.boot_to_nand(sync = False,
-                                  kernel_partition = None,
-                                  rootfs_partition = None )
+    dev.reboot(to_nand=True)
                                 
                                 
 def format_device(dev):
@@ -152,7 +147,7 @@ def mount(dev):
 if __name__ == '__main__':
     """ start all tests 
     """
-    dev = DeviceTestCase.get_device()
+    dev = DeviceTestCase.get_device(nand_boot=False)
     update_device(dev)
     mount(dev)
     unittest.main()

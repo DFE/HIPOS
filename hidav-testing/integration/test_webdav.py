@@ -11,32 +11,22 @@
 # 2 of the License, or (at your option) any later version.
 #
 
-import os
-import sys
-import time
-import device
-
+import devicetestcase
 import unittest
+
 from webdav.WebdavClient import ResourceStorer
 
 webdav_path = "webdav" #also needs to be adapted for target usage
 test_file = "davtest.txt"
 test_content = "testtext"
 
-class TestWebDAV(unittest.TestCase):
+class TestWebDAV(devicetestcase.DeviceTestCase):
     def test_complex(self):
         #prepare
         print "Autodetect ServerIP"
-        dev = device.Device( devtype = "hidav" )
-        print "Waiting for Networking to come up..."
-        max_wait=120
-        while not dev.conn.has_networking():
-            time.sleep(1)
-            print ("wait {0}s".format(max_wait))
-            sys.stdout.flush()
-            max_wait -= 1
-            if max_wait == 0:
-                break
+        dev = self.dev
+        self.wait_for_network()
+        
         server=dev.conn.host
         print( "Server: {0}".format(server) )
         host=server
@@ -52,14 +42,6 @@ class TestWebDAV(unittest.TestCase):
         self.assertEquals(expected,result)
         #cleanup
         r.delete()
-
-def main():
-    if len(sys.argv) == 1:
-        unittest.main()
-    else:
-        print("usage: {0}".format(sys.argv[0]))
-        sys.exit(2)
-    sys.exit(0)
     
 if __name__ == '__main__':
-    main()
+    unittest.main()

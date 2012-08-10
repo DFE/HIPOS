@@ -12,14 +12,41 @@ import sys
 import time
 import unittest
 import device
+import threading
 
+import logger
 
 class DeviceTestCase(unittest.TestCase):
 
-    def __init__(self):
-        """ boot HidaV-divice to NAND """
-        self.dev = device.Device( devtype = "hidav" )
+    __dev = None
+    __devsem = threading.Lock()
     
+    @classmethod
+    def get_device(cls):
+        if not cls.__dev:
+            cls.__devsem.acquire()
+            if not cls.__dev:
+                cls.__create_device()
+            cls.__devsem.release()
+        return cls.__dev
+
+    @classmethod        
+    def __create_device(cls):
+        """ boot HidaV-divice to NAND """
+        cls.__dev = device.Device( devtype = "hidav" )
+        print "Boot to NAND ..."
+        cls.__dev.conn._serial.boot_to_nand(sync = False,
+                                      kernel_partition = None,
+                                      rootfs_partition = None )
+
+    def __init__(self, *args, **kwargs):
+        """ open unit-test """
+        super(DeviceTestCase, self).__init__(*args, **kwargs)
+        self.dev = DeviceTestCase.get_device()
+        self.logger = logger.init()
+        
+        
+    def wait_for_network(self):
         print "Waiting for Networking to come up..."
         max_wait = 120
         while not self.dev.conn.has_networking():
@@ -29,6 +56,14 @@ class DeviceTestCase(unittest.TestCase):
             max_wait -= 1
             if max_wait == 0:
                 break
+
+    def update(self):
+        """ This function install ketnel and roootfs to a HidaV-divice """
+
+        self.wait_for_network()
+        print "Boot to SD"
+        self.dev.conn._serial.reboot()
+        self.wait_for_network()
         print "erase /dev/mtd6"
         retc, msg = self.dev.conn.cmd("flash_erase /dev/mtd6 0 0")
         if retc != 0:
@@ -38,19 +73,7 @@ class DeviceTestCase(unittest.TestCase):
         self.dev.conn._serial.boot_to_nand(sync = False,
                                       kernel_partition = None,
                                       rootfs_partition = None )
-
-    def update(self):
-        """ This function install ketnel and roootfs to a HidaV-divice """
-    
-        print "Waiting for Networking to come up..."
-        max_wait = 120
-        while not self.dev.conn.has_networking():
-            time.sleep(1)
-            print ("wait {0}s".format(max_wait))
-            sys.stdout.flush()
-            max_wait -= 1
-            if max_wait == 0:
-                break
+        self.wait_for_network()
 
         print "Connecting to device..."
         print "Firmware version: %s" % self.dev.firmware_version
@@ -122,15 +145,7 @@ EOF
     def mount(self):
         """ This function format /dev/sda1 on a HidaV-divice """
 
-        print "Waiting for Networking to come up..."
-        max_wait = 120
-        while not self.dev.conn.has_networking():
-            time.sleep(1)
-            print ("wait {0}s".format(max_wait))
-            sys.stdout.flush()
-            max_wait -= 1
-            if max_wait == 0:
-                break
+        self.wait_for_network()
         self.__format__()
         print "mount /dev/sda1"
         retc, msg = self.dev.conn.cmd( "mount | grep /dev/sda1" )
@@ -163,10 +178,6 @@ EOF
 if __name__ == '__main__':
 
     def standalone():
-        mydev = DeviceTestCase()
-        mydev.update()
-        mydev.mount()
-        
         sys.exit(0)
         
     standalone()

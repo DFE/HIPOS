@@ -16,23 +16,19 @@ import smbc
 import os
 import sys
 import time
-import device
 
+import devicetestcase
 import unittest
 
-class TestSamba(unittest.TestCase):
+
+class TestSamba(devicetestcase.DeviceTestCase):
+    """ test SAMBA class """
 
     def test_complex(self):
+        """ write and read a SAMBA share """
         print "Autodetect ServerIP"
-        dev = device.Device( devtype = "hidav" )
-        print "Waiting for Networking to come up..."
-        max_wait=120
-        while not dev.conn.has_networking():
-            time.sleep(1)
-            print ("wait {0}s".format(max_wait))
-            max_wait -= 1
-            if max_wait == 0:
-                break
+        dev = self.dev
+        self.wait_for_network()
 
         server=dev.conn.host
         print( "Server: {0}".format(server) )
@@ -62,19 +58,10 @@ class TestSamba(unittest.TestCase):
         retc, msg = dev.conn.cmd( "rm /mnt/pub/{0}test.txt".format(self._PID) )
         retc, msg = dev.conn.cmd( "umount /mnt/pub" )
 
-
         print( "testing..." )
         self.assertEquals(self._smb_string,read_data)
 
-def main():
-	if len(sys.argv) == 1:
-		unittest.main()
-	else:
-		print("usage: {0}".format(sys.argv[0]))
-		sys.exit(2)
-	sys.exit(0)
 
 if __name__ == '__main__':
-	main()
-
-
+    unittest.main()
+    

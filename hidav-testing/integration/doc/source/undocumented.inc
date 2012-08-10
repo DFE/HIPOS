@@ -3,12 +3,6 @@
 	These objects, classes, functions and methods are currently UNDOCUMENTED
 	(i.e. these are lacking DOC strings)
 
-	module :py:mod:`bcc`
-
-	* :py:meth:`bcc.Bcc.hddpower` (C:146,4:Bcc.hddpower: Missing docstring)
-	* :py:meth:`bcc.Bcc.heartbeat` (C:170,4:Bcc.heartbeat: Missing docstring)
-	* :py:func:`bcc.main` (C:174,0:main: Missing docstring)
-
 	module :py:mod:`test_all`
 
 	* :py:func:`test_all.Test` (C: 26,0:Test: Missing docstring)

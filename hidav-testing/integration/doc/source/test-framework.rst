@@ -9,8 +9,14 @@ off, to install packages, or to run generic commands.
 .. toctree::
    :maxdepth: 2
 
-.. warning::
-   TODO: class diagram
+.. graphviz::
+
+   digraph i {
+     "device" -> "bcc";
+     "device" -> "connection"
+     "connection" -> "serial_conn";
+     "connection" -> "ssh_conn";
+   }
 
 Device
 ======

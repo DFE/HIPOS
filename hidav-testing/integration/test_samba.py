@@ -26,7 +26,6 @@ class TestSamba(devicetestcase.DeviceTestCase):
         """ write and read a SAMBA share """
         print "Autodetect ServerIP"
         dev = self.dev
-        self.wait_for_network()
 
         server=dev.conn.host
         print( "Server: {0}".format(server) )
@@ -59,6 +58,8 @@ class TestSamba(devicetestcase.DeviceTestCase):
         print( "testing..." )
         self.assertEquals(self._smb_string,read_data)
 
+    def setUp(self):
+        self.dev.wait_for_network()
 
 if __name__ == '__main__':
     unittest.main()

@@ -39,7 +39,7 @@ class TestHTTP(devicetestcase.DeviceTestCase):
         connection.close()
 
     def setUp(self):
-        self.wait_for_network()
+        self.dev.wait_for_network()
 
 def main():
     if len(sys.argv) == 1:

@@ -14,8 +14,6 @@
 
 import smbc
 import os
-import sys
-import time
 
 import devicetestcase
 import unittest

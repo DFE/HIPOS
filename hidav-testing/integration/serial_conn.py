@@ -326,11 +326,12 @@ def main():
         This function uses some basic capabilities of the class. It is
         thought to be used for interactive testing during development,
         and for a showcase on how to use the class. """
+    b = bcc.Bcc()
     if len(sys.argv) < 3:
         print "Usage: %s <username> <password> [<command>]" % sys.argv[0]
         sys.exit()
     scn = SerialConn( logger.init(), (sys.argv[1], sys.argv[2] ),
-            reset_cb=rst )
+            reset_cb=b.reset )
     scn.port     = "/dev/ttyUSB1"
     scn.baudrate = 115200
     scn.bytesize = 8
@@ -375,10 +376,6 @@ def main():
 
 
 if __name__ == '__main__':
-    b = bcc.Bcc()
-    def rst():
-        b.reset = 1
-
     main()
 
 

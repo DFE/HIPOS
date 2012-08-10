@@ -6,11 +6,7 @@
 Welcome to Hidav Integration Test Tooling's documentation!
 **********************************************************
 
-.. warning::
-    These objects, classes, functions and methods are currently UNDOCUMENTED
-    (i.e. these are lacking DOC strings)
-
-    .. include:: undocumented.inc
+.. include:: undocumented.inc
 
 Integration Test Implementations
 ================================

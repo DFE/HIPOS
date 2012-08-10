@@ -43,9 +43,32 @@ clean:
 	-rm -rf $(BUILDDIR)/*
 
 undocumented:
-	@cd .. &&										\
-		pylint `ls -1 | grep -Ev '(uuid)|(webdav)'` 2>&1 \
-		| awk  '/^\*\*\*\*/ { mod=$$3 } /Missing docstring/ { if (old_mod != mod) { print "\nmodule :py:mod:`" mod "`\n"; old_mod = mod } print "* " $$0} END{ if (! old_mod) "Everything is documented!" }' \
+	@cd .. &&																\
+		pylint `ls -1 | grep -Ev '(uuid)|(webdav)'` 2>&1 					\
+		| awk  '/^\*\*\*\*/ 		{ mod=$$3 } 							\
+				/Missing docstring/ {										\
+					if (old_mod != mod) { 									\
+						if(!old_mod){										\
+							print ".. warning::\n";							\
+							print "\tThese objects, classes, functions and methods are currently UNDOCUMENTED"; \
+							print "\t(i.e. these are lacking DOC strings)";	\
+						}													\
+						print "\n\tmodule :py:mod:`" mod "`\n";				\
+						old_mod = mod; 										\
+						delete seen;										\
+					} 														\
+					split($$0, res, ":"); r=res[3];							\
+					if (r in seen)											\
+						next;												\
+					seen[r] = 1;											\
+					type="meth";											\
+					if (0 == index(r, "."))									\
+						type="func";										\
+					if (0 < index(r, "Missing docstring"))					\
+						print "\t* :py:mod:`" mod "` (" $$0 ")";	\
+					else													\
+						print "\t* :py:" type ":`" mod "." r "` (" $$0 ")";	\
+				}' 															\
 		| tee doc/source/undocumented.inc
 
 html: undocumented

@@ -186,10 +186,10 @@ EOF
                 sys.exit(255)
 
 
-if __name__ == '__main__':
+def main():
+    mytest = Test()
 
-    def standalone():
-        mytest = Test()
-        
-    standalone()
+
+if __name__ == '__main__':
+    main()
 

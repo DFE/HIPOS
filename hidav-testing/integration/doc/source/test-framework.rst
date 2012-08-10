@@ -17,6 +17,12 @@ off, to install packages, or to run generic commands.
      "connection" -> "ssh_conn";
      "logger";
 
+Device Test
+===========
+.. automodule:: devicetestcase
+   :members:
+   :undoc-members:
+
 Device
 ======
 .. automodule:: device

@@ -1,9 +1,7 @@
 #!/usr/bin/python -tt
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug  9 09:43:34 2012
-
-@author: binschek
+Package for HidaV integration test case generic test classes
 """
 
 import sys
@@ -16,12 +14,35 @@ import logger
 
 
 class DeviceTestCase(unittest.TestCase):
+    """ This class is the base class for all HidaV integration test. It takes
+        care of basic device initialisation and guarantees that there's only
+        one instance of :py:class:`Device` active at a time. 
+        Classes inheriting from :py:class:`DeviceTestCase` will automatically
+        win a logger object and a device object upon initialisation. These two
+        instance objects are provided by :py:class:`DeviceTestCase` :
+
+        .. code-block:: python
+                
+                import devicetestcase
+
+                class MyTest(devicetestcase.DeviceTestCase):
+
+                      ....
+
+                    def setUp(self):
+                        self.dev.wait_for_network()
+                        self.logger.debug("Device IP is: %s." % self.dev.host)
+
+                      ....
+        """
 
     __dev = None
     __devsem = threading.Lock()
     
     @classmethod
     def get_device(cls):
+        """ Get the :py:class:`Device` singleton instance. A new instance will
+            be created if none is available yet. """
         if not cls.__dev:
             cls.__devsem.acquire()
             if not cls.__dev:
@@ -33,13 +54,14 @@ class DeviceTestCase(unittest.TestCase):
     def __create_device(cls):
         """ boot HidaV-divice to NAND """
         cls.__dev = device.Device( devtype = "hidav" )
-        print "Boot to NAND ..."
+        logger.init().debug("Boot to NAND ...")
         cls.__dev.conn._serial.boot_to_nand(sync = False,
                                       kernel_partition = None,
                                       rootfs_partition = None )
 
     def __init__(self, *args, **kwargs):
-        """ open unit-test """
+        """The class will create and add to self logger and dev objects upon
+        instanciation."""
         super(DeviceTestCase, self).__init__(*args, **kwargs)
         self.dev = DeviceTestCase.get_device()
         self.logger = logger.init()

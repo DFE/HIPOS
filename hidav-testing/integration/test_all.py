@@ -29,7 +29,7 @@ def update_device(dev):
         :param dev: devive instance
     """
     print "Boot to SD"
-    dev.conn._serial.reboot()
+    dev.reboot()
     dev.wait_for_network()
     print "erase /dev/mtd6"
     retc, msg = dev.conn.cmd("flash_erase /dev/mtd6 0 0")

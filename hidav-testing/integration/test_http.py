@@ -26,7 +26,7 @@ class TestHTTP(devicetestcase.DeviceTestCase):
     def test_complex(self):
         #prepare
         server = self.dev.conn.host
-        print( "Server: {0}".format(server) )
+        self.logger.info("Server: {0}".format(server))
         url=server
         expected = test_html
         connection = httplib.HTTPConnection(url)
@@ -41,14 +41,6 @@ class TestHTTP(devicetestcase.DeviceTestCase):
     def setUp(self):
         self.dev.wait_for_network()
 
-def main():
-    if len(sys.argv) == 1:
-        unittest.main()
-    else:
-        print("usage: {0}".format(sys.argv[0]))
-        sys.exit(2)
-    sys.exit(0)
-    
 if __name__ == '__main__':
-    main()
+    unittest.main()
 

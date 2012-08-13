@@ -4,8 +4,6 @@
 Package for HidaV integration test case generic test classes
 """
 
-import sys
-import time
 import unittest
 import device
 import threading

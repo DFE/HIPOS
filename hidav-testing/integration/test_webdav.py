@@ -23,15 +23,15 @@ test_content = "testtext"
 class TestWebDAV(devicetestcase.DeviceTestCase):
     def test_complex(self):
         #prepare
-        print "Autodetect ServerIP"
+        self.logger.info("Autodetect ServerIP")
         dev = self.dev
         
         server=dev.conn.host
-        print( "Server: {0}".format(server) )
+        self.logger.info( "Server: {0}".format(server) )
         host=server
         url = "davs://{0}/{1}/{2}".format(
                 host,webdav_path,test_file,test_content)
-        print url
+        self.logger.info(url)
         expected = test_content+'\n'
         #execute
         r = ResourceStorer(url)

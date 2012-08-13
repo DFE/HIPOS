@@ -18,17 +18,17 @@ import os
 import devicetestcase
 import unittest
 
-
 class TestSamba(devicetestcase.DeviceTestCase):
     """ test SAMBA class """
 
     def test_complex(self):
         """ write and read a SAMBA share """
-        print "Autodetect ServerIP"
+        
+        self.logger.info("Autodetect ServerIP")
         dev = self.dev
 
         server=dev.conn.host
-        print( "Server: {0}".format(server) )
+        self.logger.info("Server: {0}".format(server) )
 
         self._PID    = os.getpid()
 
@@ -40,14 +40,14 @@ class TestSamba(devicetestcase.DeviceTestCase):
 
         self._smb_string = "smb://{0}/{1}/{2}test.txt".format(self._server,self._share,self._PID)
 
-        print( "Testfile: {0}".format(self._smb_string))
-        print( "writing..." )
+        self.logger.info("Testfile: {0}".format(self._smb_string))
+        self.logger.info("writing..." )
         ctx = smbc.Context()
         file_write = ctx.open(self._smb_string, os.O_CREAT | os.O_WRONLY)
         file_write.write( self._smb_string )
         file_write.close()
 
-        print( "reading..." )
+        self.logger.info("reading...")
         file = ctx.open( self._smb_string )
         read_data = file.read()
         file.close()
@@ -55,7 +55,7 @@ class TestSamba(devicetestcase.DeviceTestCase):
         retc, msg = dev.conn.cmd( "rm /mnt/pub/{0}test.txt".format(self._PID) )
         retc, msg = dev.conn.cmd( "umount /mnt/pub" )
 
-        print( "testing..." )
+        self.logger.info("testing...")
         self.assertEquals(self._smb_string,read_data)
 
     def setUp(self):

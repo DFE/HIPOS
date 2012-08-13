@@ -73,6 +73,7 @@ class SerialConn( serial.Serial ):
             if ret == "":
                 self._logger.debug( "Triggering with [%s]" 
                                         % urllib.quote( trigger_write ) )
+                time.sleep(0.25)
                 self.write( trigger_write )
             else:
                 buf += ret

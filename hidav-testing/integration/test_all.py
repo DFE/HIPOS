@@ -94,8 +94,13 @@ class TestDevice(object):
         """
         
         dev = self.dev
-        retc, msg = dev.conn.cmd( "mount | grep /dev/sda1" )
+        retc, msg = dev.conn.cmd( "mount | grep /media/sda1" )
         if retc == 0:
+            retc, msg = dev.conn.cmd("chmod 777 /media/sda1")
+            if (retc != 0):
+                self.logger.warn(msg)
+                self.logger.error("chmod 777 /media/sda1 failed")
+                sys.exit(255)
             return
         retc, msg = dev.conn.cmd( "ls /dev/sda" )
         if retc != 0:
@@ -143,8 +148,13 @@ EOF
         dev.wait_for_network()
         self.format_device()
         self.logger.info("mount /dev/sda1")
-        retc, msg = dev.conn.cmd( "mount | grep /dev/sda1" )
+        retc, msg = dev.conn.cmd( "mount | grep /media/sda1" )
         if retc == 0:
+            retc, msg = dev.conn.cmd("chmod 777 /media/sda1")
+            if (retc != 0):
+                self.logger.warn(msg)
+                self.logger.error("chmod 777 /media/sda1 failed")
+                sys.exit(255)
             return
         retc, msg = dev.conn.cmd( "mount /dev/sda1 /media/sda1" )
         if (retc != 0):
@@ -161,6 +171,11 @@ EOF
                 self.logger.error(msg)
                 self.logger.error("error: mount /dev/sda1 failed")
                 sys.exit(255)
+        retc, msg = dev.conn.cmd("chmod 777 /media/sda1")
+        if (retc != 0):
+            self.logger.warn(msg)
+            self.logger.error("chmod 777 /media/sda1 failed")
+            sys.exit(255)
         retc, msg = dev.conn.cmd( "grep /dev/sda1 /etc/fstab" )
         if retc != 0:
             retc, msg = dev.conn.cmd( 'echo "/dev/sda1            ' \
@@ -170,7 +185,7 @@ EOF
                 self.logger.error("error: unable to add " 
                                 + "/dev/sda1 to /etc/fstab")
                 sys.exit(255)
-
+                
 
 if __name__ == '__main__':
     """ start all tests 

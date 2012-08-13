@@ -10,7 +10,8 @@
 # as published by the Free Software Foundation; either version
 # 2 of the License, or (at your option) any later version.
 #
-""" Package for HidaV integration http """
+""" Package for HidaV integration http 
+"""
 
 import httplib
 import unittest
@@ -20,9 +21,12 @@ import devicetestcase
 test_html = "<html><body><h1>It works!</h1></body></html>" #default from lighty
 
 class TestHTTP(devicetestcase.DeviceTestCase):
-    """ Class to test http """
+    """ Class to test http 
+    """
     
     def test_complex(self):
+        """ test function of http
+        """
         #prepare
         server = self.dev.conn.host
         self.logger.info("Server: {0}".format(server))
@@ -38,6 +42,8 @@ class TestHTTP(devicetestcase.DeviceTestCase):
         connection.close()
 
     def setUp(self):
+        """ setup http test
+        """
         self.dev.wait_for_network()
 
 if __name__ == '__main__':

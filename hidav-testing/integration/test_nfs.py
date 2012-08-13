@@ -29,6 +29,7 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
 
     def test_exports(self):
         """ Test exported NFS shares.
+            
             This test checks whether the NFS shares exported in setUp
             are listed. The command line tool 'showmounts -e' is used for
             this.
@@ -48,9 +49,9 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
 
         # call: rpcinfo -T <p> <ip> <prognum> <v>
         cmd = ['rpcinfo', '-T{}'.format(proto), 
-                self._remote, 
-                prog_num, 
-                version]
+               self._remote, 
+               prog_num, 
+               version]
 
         self.logger.debug("Running %s" % cmd)
 
@@ -68,8 +69,7 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
                 - http://nfsv4.bullopensource.org/doc/nfs_ipv6.php
                 - http://docs.fedoraproject.org/en-US/Fedora/14/html/Storage_Administration_Guide/ch-nfs.html#s2-nfs-how-daemons
                 - http://www.iana.org/assignments/rpc-program-numbers/rpc-program-numbers.xml
-        """
-        
+        """        
         services = []
 
         # all services, protocols, and versions to be tested
@@ -97,16 +97,18 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
 
     def __cmd(self, cmd, expected=0):
         """ Helper to run a command and check its return value """
+        
         ret, output = self.dev.conn.cmd(cmd)
 
         if expected is not None:
-            self.assertEqual( ret, expected, msg=
+            self.assertEqual(ret, expected, msg=
                 "Command [%s] failed; ret #%s:\n%s" 
-                % ( cmd, ret, output ) )
+                % (cmd, ret, output))
 
 
     def test_mount_cpy(self) :
         """ Mount a NFS share, copy a file, and check it's contents. """
+        
         self.__cmd("mount -t nfs "
                     +"%s:/media/sda1/nfs-allowed " % self._remote
                     +"/media/sda1/nfs-mount")
@@ -126,6 +128,7 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
 
     def test_invalid_mount(self) :
         """ Try to mount a NFS share we're not allowed to mount. """
+
         self.__cmd("mount -t nfs "
                     +"%s:/media/sda1/nfs-illegal " % self._remote
                     +"/media/sda1/nfs-mount",
@@ -157,12 +160,13 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
         self.dev.conn.cmd("exportfs -ra")
 
 
-    def tearDown( self ): # Wrong Naming (CamelCase) pylint: disable-msg=C0103
+    def tearDown(self): # Wrong Naming (CamelCase) pylint: disable-msg=C0103
         """ After-Test restore routine: restore device's original exports. """
+        
         self.dev.conn.cmd("rm -f /media/sda1/nfs-mount/blob")
         self.dev.conn.cmd("rm -f /media/sda1/nfs-mount/blob.md5")
         self.dev.conn.cmd("mv /etc/exports.orig /etc/exports")
 
+
 if __name__ == '__main__':
     unittest.main()
-

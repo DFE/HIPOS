@@ -19,19 +19,19 @@ import threading
 
 class Logger(logging.Logger):
     """ The Logger class singleton. 
-        This class will create exactly one logger
-        for the whole test suite."""
+        This class will create exactly one logger for the whole test suite.
+    """
 
     __instance = None
     __lock     = threading.Lock()
 
     @classmethod
     def __new__(cls, *args, **kwargs):
-        """ This method returns the logger singleton or creates one
-            if none is available as of yet.
+        """ This method returns the logger singleton or creates one if none is a
+            vailable as of yet.
 
             This class method is called by the python runtime to create an
-            instance. It will be run transparently to any user instanciating
+            instance. It will be run transparently to any user instantiating
             a logger simply by
             
             .. code-block:: python
@@ -39,7 +39,8 @@ class Logger(logging.Logger):
                 loggy = Logger()
                 
 
-            :return: logger instance """
+            :return: logger instance 
+        """
 
         if not Logger.__instance:
             Logger.__lock.acquire()
@@ -53,7 +54,7 @@ class Logger(logging.Logger):
 
     @classmethod
     def __create_instance(cls):
-        """ This method actully instanciates the logger handler. 
+        """ This method actually instantiates the logger handler. 
 
             :return: logger instance
         """
@@ -62,7 +63,7 @@ class Logger(logging.Logger):
 
         filename = "run-%s.log" % datetime.datetime.now()
 
-        handler = logging.FileHandler( filename, mode='w+')
+        handler = logging.FileHandler(filename, mode='w+')
         handler.setFormatter(logging.Formatter(
             "%(asctime)s %(levelname)s %(filename)s::%(funcName)s(): "
             + "%(message)s"))

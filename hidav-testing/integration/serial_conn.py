@@ -56,11 +56,11 @@ class SerialConn(serial.Serial):
     def read_until (self, target, trigger_write="\n", timeout=None):
         """ Read up to a trigger text, then stop.
 
-            :param target: Target string to match
-            :param trigger_write: string to be sent via serial if a read timeout 
-                occurs
+            :param target: target string to match
+            :param trigger_write: 
+                string to be sent via serial if a read timeout occurs
             :param timeout: custom timeout for :py:obj:`trigger_write`
-            :return: all the text read up to the point where :py:obj:`target`
+            :return: all text read up to the point where :py:obj:`target` 
                 appeared, including :py:obj:`target`
         """
         self._logger.debug("reading 'til [%s], triggering output with [%s]" 
@@ -102,11 +102,11 @@ class SerialConn(serial.Serial):
             This method works just like :py:meth:`read_until` with the exception 
             that it will read the whole last line containing the target string.
             
-            :param target: target string to match
-            :param trigger_write:
-                string to be sent via serial if a read timeout occurs
-            :return: all the text read up to the point where :py:obj:`target`
-                appeared, including :py:obj:`target`
+            :param target:        target string to match
+            :param trigger_write: string to be sent via serial if a read timeout 
+                occurs
+            :return:              all text read up to the point where 
+                :py:obj:`target` appeared, including :py:obj:`target`
         """
         buf = self.read_until( target, trigger_write )
         buf += self.readline()
@@ -263,7 +263,7 @@ class SerialConn(serial.Serial):
             By default the method will issue a reboot command and then return 
             immediately.
 
-            :param reboot_cmd:  actual command to trigger the reboot; 
+            :param reboot_cmd: actual command to trigger the reboot; 
                 Defaults to "halt" since most of our systems are self-resetting :)
 
             :param sync: Wait for the reboot to happen; return only after the 

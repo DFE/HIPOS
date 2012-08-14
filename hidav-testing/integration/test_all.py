@@ -12,7 +12,10 @@
 # 2 of the License, or (at your option) any later version.
 #
 
-""" Tool to start all available test on a HidaV-device """
+""" This module implements integration tests for the device's 
+    NAS functions.
+"""
+
 import sys
 import unittest
 import logger
@@ -26,10 +29,10 @@ from devicetestcase import DeviceTestCase
 
 
 class TestDevice(object):
-    """ class to handle update and mount of HidaV device """
+    """ Class to handle update and mount of HidaV device. """
     
     def __init__(self, dev):
-        """ init device
+        """ Init device.
         
             :param dev: handle of DeviceTestCase.get_device()
         """
@@ -38,7 +41,7 @@ class TestDevice(object):
     
     
     def update_device(self):
-        """ update HidaV device
+        """ Update HidaV device.
         
             :param dev: device instance
         """        
@@ -88,7 +91,7 @@ class TestDevice(object):
                                     
                                     
     def format_device(self):
-        """ format HidaV device
+        """ Format HidaV device.
         
             :param dev: device instance
         """        
@@ -139,7 +142,7 @@ EOF
                    
                    
     def mount(self):
-        """ format /dev/sda1 on a HidaV-device 
+        """ Format /dev/sda1 on a HidaV device.
         
             :param dev: device instance
         """        

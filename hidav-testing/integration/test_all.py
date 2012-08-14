@@ -1,6 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python -tt
+# -*- coding: utf-8 -*-
 #
-# HidaV automated nas test
+# HidaV automated test framework NAS tests.
 #
 # Copyright (C) 2012 DResearch Fahrzeugelektronik GmbH
 # Written and maintained by Eik Binschek <binschek@dresearch-fe.de>
@@ -199,3 +200,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

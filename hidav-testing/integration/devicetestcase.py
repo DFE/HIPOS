@@ -38,6 +38,7 @@ class DeviceTestCase(unittest.TestCase):
     __dev = None
     __devsem = threading.Lock()
     
+    
     @classmethod
     def get_device(cls, nand_boot=True):
         """ Get the :py:class:`Device` singleton instance. A new instance will
@@ -50,6 +51,7 @@ class DeviceTestCase(unittest.TestCase):
             cls.__devsem.release()
         return cls.__dev
 
+
     @classmethod        
     def __create_device(cls, nand_boot=True):
         """ boot HidaV-device to NAND """
@@ -58,6 +60,7 @@ class DeviceTestCase(unittest.TestCase):
             logger.init().debug("Boot to NAND ...")
             cls.__dev.reboot(to_nand=True)
 
+
     def __init__(self, *args, **kwargs):
         """ The class will create and add to self logger and dev objects upon
             instantiation.
@@ -65,3 +68,4 @@ class DeviceTestCase(unittest.TestCase):
         super(DeviceTestCase, self).__init__(*args, **kwargs)
         self.dev = DeviceTestCase.get_device()
         self.logger = logger.init()
+        

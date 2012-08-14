@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/python -tt
+# -*- coding: utf-8 -*-
 #
 # HidaV automated test framework logging helper
 #
@@ -24,6 +25,7 @@ class Logger(logging.Logger):
 
     __instance = None
     __lock     = threading.Lock()
+
 
     @classmethod
     def __new__(cls, *args, **kwargs):
@@ -52,6 +54,7 @@ class Logger(logging.Logger):
 
         return Logger.__instance
 
+
     @classmethod
     def __create_instance(cls):
         """ This method actually instantiates the logger handler. 
@@ -71,6 +74,8 @@ class Logger(logging.Logger):
 
         return logger
 
+
 def init():
     """ Legacy interface to get a logger instance. """
     return Logger()
+    

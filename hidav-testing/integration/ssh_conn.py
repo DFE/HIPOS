@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/python -tt
+# -*- coding: utf-8 -*-
 #
 # HidaV automated test framework ssh connection handling
 #
@@ -46,7 +47,7 @@ class SshConn(object):
             :return: the session (which will be created if it isn't there yet)
         """
         self._logger.info("Opening session for user %s to %s" 
-                            % (self._login[0], self._host))
+                           % (self._login[0], self._host))
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect( (self._host, 22) )
         sock.setblocking(1)
@@ -94,7 +95,7 @@ class SshConn(object):
 
             :param local_file:  file-like object for storing the file
             :param remote_path: path to the file (including file name) 
-                on the remote system
+                                on the remote system
             :return:            None 
         """
         self._logger.info("Receiving file [%s] from device" % (remote_path))
@@ -111,7 +112,7 @@ class SshConn(object):
         """ Return a buffer containing the contents of a remote file.
 
             :param remote_path: path to the file (including file name) 
-                on the remote system
+                                on the remote system
             :return:            buffer containing the file's contents 
         """
         tfl = tempfile.TemporaryFile()
@@ -125,7 +126,7 @@ class SshConn(object):
 
             :param local_file:  file-like object to be sent
             :param remote_path: path to the file (including file name) 
-                on the remote system
+                                on the remote system
             :return:            None 
         """
         local_file.seek(0, os.SEEK_END)
@@ -165,3 +166,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

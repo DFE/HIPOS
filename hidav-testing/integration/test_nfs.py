@@ -1,6 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python -tt
+# -*- coding: utf-8 -*-
 #
-# HidaV automated test framework NFS services tests
+# HidaV automated test framework NFS services tests.
 #
 # Copyright (C) 2012 DResearch Fahrzeugelektronik GmbH
 # Written and maintained by Thilo Fromm <fromm@dresearch-fe.de>
@@ -14,6 +15,7 @@
 """ This module implements integration tests for the device's 
     NFS server functions.
 """
+
 import unittest
 import tempfile
 import subprocess
@@ -25,7 +27,7 @@ import devicetestcase
 
                                   # TestCase has too many public methods.
 class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
-    """ The NFS tests class. """
+    """ Class to test NFS. """
 
     def test_exports(self):
         """ Test exported NFS shares.
@@ -136,7 +138,7 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
 
 
     def setUp(self): # I didn't come up with this! pylint: disable-msg=C0103
-        """ Test setup routine: prepare the NFS exports used by the tests. """
+        """ Set up NFS test: prepare the NFS exports used by the tests. """
 
         self.dev.wait_for_network()
         self._remote = self.dev.conn.host
@@ -170,3 +172,4 @@ class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904
 
 if __name__ == '__main__':
     unittest.main()
+    

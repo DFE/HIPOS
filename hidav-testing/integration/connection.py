@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/python -tt
+# -*- coding: utf-8 -*-
 #
 # HidaV automated test framework abstract connection 
 #
@@ -58,11 +59,14 @@ class Connection(object):
             self.__ssh = ssh_conn.SshConn( # pylint: disable-msg=W0201
                     self._logger, self.host, self._login ) 
         return self.__ssh
+    
+    
     @_ssh.deleter # new-style properties unknown to pylint: disable-msg=E1101
     def _ssh(self): # pylint: disable-msg=E0102
         """ SSH connection property deleter. Deletes the property. """
         del self.__ssh
 
+    
     def _serial_setup(self, port, baud, byte, parity, stop, timeout_sec, 
                       skip_pass, boot_prompt, reset_cb):
         """ Set up the serial communication back-end. """
@@ -105,10 +109,12 @@ class Connection(object):
                     % self._serial.port)
         return self._host
 
+
     @host.setter # new-style properties unknown to pylint: disable-msg=E1101
     def host(self, value): # pylint: disable-msg=E0102,E0202
         """ Set the Host property. """
         self._host = value # pylint: disable-msg=W0201
+
 
     @host.deleter # new-style properties unknown to pylint: disable-msg=E1101
     def host(self): # pylint: disable-msg=E0102,E0202
@@ -138,6 +144,7 @@ class Connection(object):
             self._logger.info("Falling back to serial for cmd [%s]" % cmd)
             return self._serial.cmd(cmd)
 
+
     def has_networking(self):
         """ (Actively) Check whether we currently have networking, i.e.
             whether the address of the remote device is known.
@@ -150,6 +157,7 @@ class Connection(object):
         except: 
             return False
         return True
+    
     
 def main():
     """ Standalone function; only defined if the class is run by itself. 
@@ -185,3 +193,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

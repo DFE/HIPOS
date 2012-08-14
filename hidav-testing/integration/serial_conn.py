@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/python -tt
+# -*- coding: utf-8 -*-
 #
 # HidaV automated test framework serial connection handling
 #
@@ -410,3 +411,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

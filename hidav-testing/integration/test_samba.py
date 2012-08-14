@@ -1,6 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python -tt
+# -*- coding: utf-8 -*-
 #
-# HidaV automated short samba test
+# HidaV automated test framework SAMBA test (short).
 #
 # Copyright (C) 2012 DResearch Fahrzeugelektronik GmbH
 # Written and maintained by Eik Binschek <binschek@dresearch-fe.de>
@@ -10,7 +11,10 @@
 # as published by the Free Software Foundation; either version
 # 2 of the License, or (at your option) any later version.
 #
-""" Package for HidaV integration test of SAMBA """
+
+""" This module implements integration tests for the device's 
+    SAMBA functions.
+"""
 
 import smbc
 import os
@@ -19,16 +23,19 @@ import devicetestcase
 import unittest
 
 class TestSamba(devicetestcase.DeviceTestCase):
-    """ test SAMBA class """
+    """ Class to test SAMBA. """
 
     def test_complex(self):
-        """ write and read a SAMBA share """
+        """ Test a SAMBA share.
+        
+            This test writes and reads a SAMBA share.
+        """
         
         self.logger.info("Autodetect ServerIP")
         dev = self.dev
 
         server = dev.conn.host
-        self.logger.info("Server: {0}".format(server) )
+        self.logger.info("Server: {0}".format(server))
 
         self._PID    = os.getpid()
         self._server = server
@@ -37,7 +44,9 @@ class TestSamba(devicetestcase.DeviceTestCase):
         retc, msg = dev.conn.cmd("mount /dev/sda1 /mnt/pub")
         retc, msg = dev.conn.cmd("chmod 777 /mnt/pub")
 
-        self._smb_string = "smb://{0}/{1}/{2}test.txt".format(self._server,self._share,self._PID)
+        self._smb_string = "smb://{0}/{1}/{2}test.txt".format(self._server,
+                                                              self._share,
+                                                              self._PID)
 
         self.logger.info("Testfile: {0}".format(self._smb_string))
         self.logger.info("writing...")
@@ -59,7 +68,10 @@ class TestSamba(devicetestcase.DeviceTestCase):
 
 
     def setUp(self):
+        """ Set up SAMBA test. """
         self.dev.wait_for_network()
+
 
 if __name__ == '__main__':
     unittest.main()
+    

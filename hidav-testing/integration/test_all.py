@@ -183,13 +183,19 @@ EOF
                 self.logger.error("error: unable to add " 
                                   + "/dev/sda1 to /etc/fstab")
                 sys.exit(255)
-                
 
-if __name__ == '__main__':
-    """ start all tests 
+
+def main():
+    """ Standalone function; only defined if the class is run by itself.
+
+        Starts all tests.
     """
     dev = DeviceTestCase.get_device(nand_boot=False)
     testdev = TestDevice(dev)
     testdev.update_device()
     testdev.mount()
-    unittest.main()
+    unittest.main()    
+            
+
+if __name__ == '__main__':
+    main()

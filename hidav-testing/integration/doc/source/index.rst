@@ -23,7 +23,7 @@ Test Framework
 Main page: :ref:`integration-test-framework`
 
 In order to run the tests this suite provides a basic framework to
-completelyremote-control a device. This framework is applied by all the
+completely remote-control a device. This framework is applied by all the
 integration tests to actually perform the tests.
 
 

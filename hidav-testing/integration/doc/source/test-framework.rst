@@ -2,8 +2,8 @@
 
 Integration Test Framework
 **************************
-The framework allows for automati remote control operations on a device. It is
-used by the integration tests to e.g. connect to a device, ito switch it on or 
+The framework allows for automatic remote control operations on a device. It is
+used by the integration tests to e.g. connect to a device, to switch it on or 
 off, to install packages, or to run generic commands.
                                           
 .. toctree::

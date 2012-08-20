@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r25"
+PR_append = "+r26"
 
 IMAGE_FEATURES += " package-management "
 
@@ -25,6 +25,7 @@ IMAGE_INSTALL += "  \
   mtd-utils         \
   mc                \
   nano              \
+  screen            \
 "
 
 # system / plumbing level tools
@@ -61,5 +62,12 @@ IMAGE_INSTALL += "    \
     iscsi-target      \
     open-iscsi-kernel \
     open-iscsi-user   \
+"
+
+# file system tools
+IMAGE_INSTALL += "      \
+    e2fsprogs           \
+    e2fsprogs-mke2fs    \
+    parted              \
 "
 

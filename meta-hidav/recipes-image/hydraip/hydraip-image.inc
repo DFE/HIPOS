@@ -58,10 +58,11 @@ IMAGE_INSTALL += "         \
 "
 
 # iscsi support
-IMAGE_INSTALL += "    \
-    iscsi-target      \
-    open-iscsi-kernel \
-    open-iscsi-user   \
+IMAGE_INSTALL += "              \
+    iscsi-target                \
+    open-iscsi-kernel           \
+    open-iscsi-user             \
+    open-iscsi-user-systemd     \
 "
 
 # file system tools

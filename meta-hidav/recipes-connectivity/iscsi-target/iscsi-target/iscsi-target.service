@@ -1,0 +1,14 @@
+[Unit]
+Description=iSCSI target (i.e. server) service
+After=syslog.target
+
+[Service]
+EnvironmentFile=/etc/default/iscsi-target
+ExecStartPre=/sbin/modprobe crc32c
+ExecStartPre=/sbin/modprobe iscsi_trgt
+ExecStart=/sbin/ietd -f $OPTS_IETD
+ExecStopPost=/sbin/modprobe -r iscsi_trgt
+
+[Install]
+WantedBy=multi-user.target
+

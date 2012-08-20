@@ -3,7 +3,7 @@ HOMEPAGE = "http://iscsitarget.sourceforge.net/"
 LICENSE = "GPL"
 DEPENDS = "openssl"
 RRECOMMENDS_${PN} = "kernel-module-crc32c kernel-module-libcrc32c"
-PR = "r1"
+PR = "r2"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6e233eda45c807aa29aeaa6d94bc48a2"
 
@@ -58,3 +58,22 @@ FILES_${PN} += " ${base_sbindir}"
 CFLAGS = "-isystem${STAGING_KERNEL_DIR}/include -I${STAGING_INCDIR} -L${STAGING_LIBDIR}"
 LDFLAGS = "-L${STAGING_LIBDIR}"
 
+# systemd support
+inherit systemd
+
+PACKAGES =+ "${PN}-systemd"
+SRC_URI_append = "  file://iscsi-target             \
+                    file://iscsi-target.service     \
+                 "
+RDEPENDS_${PN}-systemd += "${PN}"
+FILES_${PN}-systemd +=  "   ${base_libdir}/systemd                  \
+                            ${sysconfdir}/default/iscsi-target      \
+                        "
+SYSTEMD_PACKAGES = "${PN}-systemd"
+SYSTEMD_SERVICE = " iscsi-target.service "
+
+
+do_install_append () {
+        install -d ${D}${sysconfdir}/default/
+        install -m 0644 ${WORKDIR}/iscsi-target ${D}${sysconfdir}/default/
+}

@@ -1,0 +1,3 @@
+# default command line settings for iscsi-target's ietd
+
+OPTS_IETD=""

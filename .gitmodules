@@ -22,3 +22,9 @@
 [submodule "meta-hidav-ti81xx"]
 	path = meta-hidav-ti81xx
 	url = git://github.com/DFE/meta-hidav-ti81xx.git
+[submodule "meta-hidav-intel"]
+	path = meta-hidav-intel
+	url = git://github.com/DFE/meta-hidav-intel.git
+[submodule "meta-intel"]
+	path = meta-intel
+	url = git://git.yoctoproject.org/meta-intel

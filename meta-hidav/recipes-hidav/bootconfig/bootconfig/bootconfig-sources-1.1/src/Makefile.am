@@ -29,7 +29,8 @@ TESTS = test-lowlevel-init \
 		test-lowlevel-setpartition-illegalpart \
 		test-lowlevel-sethealthy \
 		test-lowlevel-alloc-bootblock-fail	\
-		test-lowlevel-write-block-alloc-fail
+		test-lowlevel-write-block-alloc-fail	\
+		test-lowlevel-double-epoch
 
 # TFM: this needs some rework: BUILD_CC is only available
 # when building w/ openembedded, so this should default to

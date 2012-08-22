@@ -1,0 +1,11 @@
+[Unit]
+Description=Lightning Fast Webserver With Light System Requirements
+After=syslog.target
+
+[Service]
+EnvironmentFile=/etc/default/lighttpd
+ExecStart=/usr/sbin/lighttpd -D -f /etc/lighttpd.conf $OPTS_LIGHTTPD
+
+[Install]
+WantedBy=multi-user.target
+

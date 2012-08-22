@@ -1,0 +1,3 @@
+# default command line options for the lighttpd service
+
+OPTS_LIGHTTPD=""

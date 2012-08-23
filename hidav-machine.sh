@@ -14,6 +14,7 @@ function usage() {
     echo ""
     echo "   Available machine types are"
     echo "   hidav-machine.sh ti81xx     - build HidaV for Texas Instruments' DaVinci DM814x / DM816x"
+    echo "   hidav-machine.sh cedartrail - build HidaV for Intel Cedartrail (Atom N2x00 + NM10)"
     echo ""
 }
 # ---
@@ -25,6 +26,7 @@ function xtract_current() {
 
     case "$tmp" in
         "hidav-ti81xx")   current="ti81xx";;
+        "cedartrail")     current="cedartrail";;
         *)        echo "" >&2
                   echo "    ERROR: unsupported value '$tmp' for MACHINE field in configuration file at" >&2
                       echo "    $this/build/conf/local.conf" >&2
@@ -42,7 +44,8 @@ function set_new() {
     local new=""
 
     case "$tmp" in
-        "ti81xx")   new="hidav-ti81xx";;
+        "ti81xx")      new="hidav-ti81xx";;
+        "cedartrail")  new="cedartrail";;
         *)        echo "" >&2
                   echo "    ERROR: unsupported machine '$tmp'." >&2
                       echo -n "    Supported machine is 'ti81xx'." >&2;

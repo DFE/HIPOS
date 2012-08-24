@@ -34,6 +34,13 @@ int main( int argc, char ** argv)
     struct bootconfig bc;
     int ret;
 
+    {
+        uint32_t channels, levels;
+        get_log_config(&channels, &levels);
+        set_log_config(channels, BC_LOG_STDERR);
+    }
+
+
     bc.dev = "/test/device";
     bc.info.eb_cnt = 6;
     bc.info.min_io_size = 9876;

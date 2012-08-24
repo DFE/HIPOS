@@ -15,15 +15,16 @@
 
 #include "logging.h"
 
-uint32_t bc_log_channels = ( BC_LOG_STDERR );
+uint32_t bc_log_channels = ( BC_LOG_SYSLOG );
 uint32_t bc_log_levels   =    LOG_MASK( LOG_EMERG ) 
                             | LOG_MASK( LOG_ALERT )
                             | LOG_MASK( LOG_CRIT )
-                            | LOG_MASK( LOG_ERR ); /*
+                            | LOG_MASK( LOG_ERR ) 
                             | LOG_MASK( LOG_WARNING )
                             | LOG_MASK( LOG_NOTICE )
-                            | LOG_MASK( LOG_INFO )
-                            | LOG_MASK( LOG_DEBUG ); */
+                            | LOG_MASK( LOG_INFO ) 
+                            | LOG_MASK( LOG_DEBUG ) 
+			  ;
 
 void get_log_config ( uint32_t * channels, uint32_t * levels )
 {

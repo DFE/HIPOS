@@ -52,6 +52,12 @@ int main( int argc, char ** argv)
     void* mtd_hdl         = (void*) 23;
     const char * test_dev = "/test/device";
 
+    {
+        uint32_t channels, levels;
+        get_log_config(&channels, &levels);
+        set_log_config(channels, BC_LOG_STDERR);
+    }
+
     MOCK_2_CALL( dev_fd,  my_open,             test_dev, O_RDWR );
     MOCK_0_CALL( mtd_hdl, libmtd_open );
     MOCK_3_CALL( 0,       mtd_get_dev_info, mtd_hdl,  test_dev, &bc.info );

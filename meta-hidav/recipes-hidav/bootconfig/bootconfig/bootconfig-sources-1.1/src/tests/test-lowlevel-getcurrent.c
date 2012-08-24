@@ -29,6 +29,13 @@ int main( int argc, char ** argv)
     uint32_t idx;
     struct btblock * res;
 
+    {
+        uint32_t channels, levels;
+        get_log_config(&channels, &levels);
+        set_log_config(channels, BC_LOG_STDERR);
+    }
+
+
     initialised = 1;
 
     /* first pass: w/ index pointer */

@@ -31,6 +31,13 @@ int main( int argc, char ** argv)
     unsigned int i, j;
     int res;
 
+    {
+        uint32_t channels, levels;
+        get_log_config(&channels, &levels);
+        set_log_config(channels, BC_LOG_STDERR);
+    }
+
+
     initialised = 1;
 
     bc.info.eb_cnt = 33;

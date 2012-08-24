@@ -39,6 +39,14 @@ static void my_exit_cb( int retcode )
 
 int main( int argc, char ** argv)
 {
+
+    {
+        uint32_t channels, levels;
+        get_log_config(&channels, &levels);
+        set_log_config(channels, BC_LOG_STDERR);
+    }
+
+
     MOCK_1V_CALL(       my_exit,  1 );
     _my_exit_cb = my_exit_cb;
 

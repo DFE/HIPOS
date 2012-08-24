@@ -41,6 +41,12 @@ int main( int argc, char ** argv)
 {
     struct bootconfig bc;
 
+    {
+        uint32_t channels, levels;
+        get_log_config(&channels, &levels);
+        set_log_config(channels, BC_LOG_STDERR);
+    }
+
     MOCK_1V_CALL(       my_exit,  1 );
     _my_exit_cb = my_exit_cb;
     bc_ll_get_current( &bc, NULL );

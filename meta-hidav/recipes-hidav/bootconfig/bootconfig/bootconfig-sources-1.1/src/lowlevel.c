@@ -269,6 +269,8 @@ int bc_ll_reread( struct bootconfig * bc )
         exit(1);
     }
 
+    memset( bc->blocks , 0x00, bc->info.eb_cnt * sizeof( bc->blocks ) );
+
     return _read_bootconfig( bc );
 }
 /* -- */
@@ -344,6 +346,8 @@ int bc_ll_set_partition( struct bootconfig * bc, enum bt_ll_parttype which, unsi
         bc_log( LOG_ERR, "Error writing new boot block.\n");
         return -1;
     }
+
+    bc_ll_reread(bc); 
 
     return 0;
 }

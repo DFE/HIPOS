@@ -11,8 +11,6 @@ RDEPENDS = " mtd-utils "
 # no -dbg, -dev, -locale
 PACKAGES = " ${PN} "
 
-COMPATIBLE_MACHINE = "hidav-ti81xx|hidav-kirkwood"
-
 SRC_URI=" file://rootfs-overlay-tools-sources/* \
 "
 

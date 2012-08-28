@@ -2,12 +2,12 @@ DESCRIPTION = "Open-iSCSI project is a high performance, transport independent, 
 HOMEPAGE = "http://www.open-iscsi.org/"
 LICENSE = "GPL"
 MACHINE_KERNEL_PR_append = "a"
-PR = "r1"
+PR = "r2"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=393a5ca445f6965873eca0259a17f833"
 
-SRC_URI = "http://www.open-iscsi.org/bits/open-iscsi-${PV}.tar.gz \
-           file://2.6.37-compat.patch"
+SRC_URI = " http://www.open-iscsi.org/bits/open-iscsi-${PV}.tar.gz "
+
 
 S = "${WORKDIR}/open-iscsi-${PV}"
 TARGET_CC_ARCH += "${LDFLAGS}"

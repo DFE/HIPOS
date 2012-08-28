@@ -16,22 +16,22 @@ do_compile() {
 }
 
 do_install () {
-	install -d ${D}${sysconfdir}/opkg
-	install -m 0644  ${S}/${sysconfdir}/opkg/* ${D}${sysconfdir}/opkg/
+    install -d ${D}${sysconfdir}/opkg
+    install -m 0644  ${S}/${sysconfdir}/opkg/* ${D}${sysconfdir}/opkg/
 }
 
 
 FILES_${PN} = "${sysconfdir}/opkg/all-feed.conf \
-			   ${sysconfdir}/opkg/${FEED_ARCH}-feed.conf \
-			   ${sysconfdir}/opkg/${MACHINE}-feed.conf \
-			   "
+               ${sysconfdir}/opkg/${FEED_ARCH}-feed.conf \
+               ${sysconfdir}/opkg/${MACHINE}-feed.conf \
+               "
 
 CONFFILES_${PN} = "${sysconfdir}/opkg/all-feed.conf \
-			       ${sysconfdir}/opkg/${FEED_ARCH}-feed.conf \
-			       ${sysconfdir}/opkg/${MACHINE}-feed.conf \
-			       "
+                   ${sysconfdir}/opkg/${FEED_ARCH}-feed.conf \
+                   ${sysconfdir}/opkg/${MACHINE}-feed.conf \
+                   "
 
 
 python populate_packages_prepend () {
-	etcdir = bb.data.expand('${sysconfdir}/opkg', d)
+    etcdir = bb.data.expand('${sysconfdir}/opkg', d)
 }

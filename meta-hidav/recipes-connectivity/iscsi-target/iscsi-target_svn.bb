@@ -5,21 +5,19 @@ PR = "r14"
 
 DEFAULT_PREFERENCE = "-1"
 
-SRC_URI = "svn://svn.berlios.de/iscsitarget/;module=trunk;rev=HEAD \
-	   file://libs.patch \
-	   file://init \
-	   file://ietd.conf \
-		"
+SRC_URI = "svn://iscsitarget.svn.sourceforge.net/svnroot/iscsitarget;module=trunk;rev=HEAD;protocol=http \
+           file://init \
+           file://ietd.conf \
+            "
 
 DEPENDS = " openssl"
 RRECOMMENDS_${PN} = "kernel-module-crc32c kernel-module-libcrc32c"
 
+LIC_FILES_CHKSUM = "file://COPYING;md5=6e233eda45c807aa29aeaa6d94bc48a2"
+
 S = "${WORKDIR}/trunk"
 
 inherit module
-
-do_configure() {
-}
 
 CFLAGS  = "-isystem${STAGING_KERNEL_DIR}/include -I${STAGING_INCDIR} -L${STAGING_LIBDIR}"
 LDFLAGS = "-L${STAGING_LIBDIR}"

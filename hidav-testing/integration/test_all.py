@@ -77,7 +77,7 @@ class TestDevice(object):
         self.logger.info("  epoch :             #%s" 
                         % dev.bootconfig["epoch"])
         self.logger.info("Update: kernel")
-        dev.install_package( "kernel-image-2.6.37" )
+        dev.install_package( "kernel-image-2.6.37", force = True )
         self.logger.info("Boot config:")
         self.logger.info("  Kernel:      /dev/mtd%s" 
                         % dev.bootconfig["kernel"])

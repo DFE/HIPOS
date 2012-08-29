@@ -72,6 +72,25 @@ update_bblayers_conf()
   echo "\"" >> ${BB_LAYER_CONF}
 }
 
+update_local_conf()
+{
+  # update local conf with local parallism settings
+  LOCAL_CONF="build/conf/local.conf"
+  PARALLEL_CONF="build/conf/parallel.conf"
+
+  if [ -f ${PARALLEL_CONF} ]; then
+    log "I: updating ${LOCAL_CONF}"
+
+    SED_THREADS=`sed -n '/^[[:space:]]*BB_NUMBER_THREADS[?:[:space:]]*=.*/p' ${PARALLEL_CONF}`
+    SED_PAR_MAKE=`sed -n '/^[[:space:]]*PARALLEL_MAKE[?:[:space:]]*=.*/p' ${PARALLEL_CONF}`
+
+    sed -i "s/^[[:space:]]*BB_NUMBER_THREADS[?:[:space:]]*=.*/$SED_THREADS/" ${LOCAL_CONF}
+    sed -i "s/^[[:space:]]*PARALLEL_MAKE[?:[:space:]]*=.*/$SED_PAR_MAKE/" ${LOCAL_CONF}
+  else
+    log "I: ${PARALLEL_CONF} not found, BB_NUMBER_THREADS and PARALLEL_MAKE will use values from ${LOCAL_CONF}"
+  fi
+}
+
 update_submodules()
 {
   log "I: updating submodules (OE layers + bitbake)"
@@ -96,6 +115,7 @@ init()
   fi
 
   update_bblayers_conf
+  update_local_conf
 
   return 0
 }

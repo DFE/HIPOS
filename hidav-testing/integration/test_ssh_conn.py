@@ -16,7 +16,7 @@ import unittest
 
 import paramiko
 
-import ssh_conn_new
+import ssh_conn
 
 class TestSshConn(unittest.TestCase):
     """ Class to test ssh-connectivity. """

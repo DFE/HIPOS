@@ -19,7 +19,10 @@ import paramiko
 import ssh_conn
 
 class TestSshConn(unittest.TestCase):
-    """ Class to test ssh-connectivity. """
+    """ Class to test ssh-connectivity.
+    
+        FIXME: Rewrite for libssh2
+    """
     
     def test_ssh_connectivity(self):
         """ Test ssh establish and closing connection

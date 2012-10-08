@@ -153,15 +153,16 @@ def main():
     ssh = SshConn(logger.init(), sys.argv[1], (sys.argv[2], sys.argv[3]))
     print ssh.cmd("echo $PATH")[1]
     print ssh.cmd("ls /")[1]
-    print ssh.cat("/etc/resolv.conf")
-    print ssh.cmd("dd if=/dev/zero of=/tmp/z bs=1024 count=1")[1]
-    print ssh.cmd("depmod")[1]
-    print ssh.cmd("nandwrite")[1]
-    print ssh.cmd("flash_erase")[1]
-    tfl = tempfile.TemporaryFile()
-    tfl.write("This is an example file transmission.")
-    ssh.put(tfl, "/home/root/test")
-    print ssh.cat("/home/root/test")
+    print ssh.cmd("uptime")[1]
+#    print ssh.cat("/etc/resolv.conf")
+#    print ssh.cmd("dd if=/dev/zero of=/tmp/z bs=1024 count=1")[1]
+#    print ssh.cmd("depmod")[1]
+#    print ssh.cmd("nandwrite")[1]
+#    print ssh.cmd("flash_erase")[1]
+#    tfl = tempfile.TemporaryFile()
+#    tfl.write("This is an example file transmission.")
+#    ssh.put(tfl, "/home/root/test")
+#    print ssh.cat("/home/root/test")
 
 
 if __name__ == '__main__':

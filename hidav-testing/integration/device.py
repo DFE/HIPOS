@@ -26,6 +26,17 @@ import bcc
 class Device(object):
     """ This class abstracts access to a device, i.e. one single
         physical system.
+
+        Bsp: 
+            >>> import device
+            >>> d = device.Device()
+            >>> d.wait_for_network()
+            login
+            True
+            >>> d.conn.host
+            '172.29.21.174'
+
+        FIXME bcc integrieren
     """
 
     DEVICE_TYPES = {
@@ -44,7 +55,7 @@ class Device(object):
     }
 
 
-    def __init__(self, devtype = "HidaV"):
+    def __init__(self, devtype = "hipox"):
         """ Initialize a device instance.
 
             :param devtype: Device type, either "hidav" or "hipox"
@@ -54,8 +65,9 @@ class Device(object):
         except KeyError:
             raise Exception("Unknown device type %s." % devtype)
 
-        self.bcc = bcc.Bcc()
-        rst = self.bcc.reset if self._setup["reset_cb"] == True else None
+        #self.bcc = bcc.Bcc()
+        #rst = self.bcc.reset if self._setup["reset_cb"] == True else None
+        rst = None #FIXME work around!!!!!
         atexit.register(self.__shutdown)
 
         self.conn = connection.Connection(
@@ -245,7 +257,7 @@ def main():
         intended to be used for interactive testing during development,
         and as a showcase on how to use the class.
     """
-    dev = Device(devtype = "hidav")
+    dev = Device(devtype = "hipox")
 
     while not dev.bcc.ignition:
         print "Please switch on the device."

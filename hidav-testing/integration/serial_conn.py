@@ -28,11 +28,16 @@ LAST_LINE_UPON_SHUTDOWN = "Detaching DM devices"
 class SerialConn(serial.Serial):
     """Serial connection to a device.
        The serial class implements device access via the serial port.
+
+       Beispielaufruf für Hipox: c = sc.SerialConn(logger.Logger(),login=('root','hydra01'),args=['/dev/ttyUSB1',115200],kwargs={'timeout':3})
+
+       FIXME: *args nach benannten Parametern funktioniert nicht. Lösung bereits unsauber implementiert.
+       FIXME: bei Problemen im Login kann es sein, dass die while Loop in __wait_for_known_boot_state() nicht aufhört!
     """
     
     def __init__(self, logger, login = ("root", ""), 
                  skip_pass = True, boot_prompt="HidaV boot on", 
-                 reset_cb = None, *args, **kwargs):
+                 reset_cb = None, args=None, kwargs=None):
         """Initialize a new instance of the serial communication class.
 
            :param logger:      log object to be used by this class
@@ -44,8 +49,10 @@ class SerialConn(serial.Serial):
                                is rebooted
         """
         self._logger = logger
+        self.__args = args if args is not None else []
+        self.__kwargs = kwargs if kwargs is not None else {}
         try:    
-            super(SerialConn, self).__init__(*args, **kwargs)
+            super(SerialConn, self).__init__(*self.__args, **self.__kwargs)
         except AttributeError: 
             pass
         self._login = login
@@ -135,11 +142,12 @@ class SerialConn(serial.Serial):
         """ Wait for a KNOWN boot state. """
         self._logger.debug("Waiting for a known system state...")
 
-        while self.__boot_state == "UNKNOWN":
-            pass
+        state = "UNKNOWN"
+        while state == "UNKNOWN":
+            state = self.__boot_state
 
-        self._logger.debug("Got system state %s" % self.__boot_state)
-        return self.__boot_state
+        self._logger.debug("Got system state %s" % state)
+        return state
 
 
     def login(self):
@@ -150,8 +158,7 @@ class SerialConn(serial.Serial):
             whether we're currently in the boot loader (in which case the 
             method will boot the device, then log in).
         """
-
-        state = self.__wait_for_known_boot_state()
+        state = self.__wait_for_known_boot_state(); print state,
 
         if state == "shell":
             self._logger.debug("Already logged in.")

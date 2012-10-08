@@ -14,7 +14,7 @@
 
 import unittest
 
-import paramiko
+import libssh2
 
 import ssh_conn
 
@@ -31,7 +31,7 @@ class TestSshConn(unittest.TestCase):
         server = '172.29.21.366'
         username = 'heins'
         password = 'hans'
-        mock = MockSshConn(server, username, password)
+        mock = MockLibsshConn(server, username, password)
         #execute
         ssh = ssh_conn.SshConn(server, username, password, mock)
         del ssh
@@ -47,7 +47,7 @@ class TestSshConn(unittest.TestCase):
         password = 'hans'
         cmd = 'uptime'
         expected = 'ret_val'
-        mock = MockSshConn(server, username, password, cmd, expected)
+        mock = MockLibsshConn(server, username, password, cmd, expected)
         #execute
         ssh = ssh_conn.SshConn(server, username, password, mock)
         result = ssh.cmd(cmd)
@@ -56,35 +56,10 @@ class TestSshConn(unittest.TestCase):
         self.assertEquals(expected, result)
 
 
-class MockSshConn(object):
+class MockLibsshConn(object):
     """Class to mock paramiko-ssh-client"""
 
     def __init__(self, server, username, password, cmd = None, ret_val = None):
-        self.__check_policy = False
-        self.__check_connect = False
-        self.__check_close = False
-        self.__def_server = server
-        self.__def_username = username
-        self.__def_password = password
-        self.__def_cmd = cmd
-        self.__def_exec_return_val = ret_val
-
-    def set_missing_host_key_policy(self, val):
-        self.__check_policy = isinstance(val, paramiko.MissingHostKeyPolicy)
-
-    def connect(self, server, username, password):
-        self.__check_connect = self.__def_server == server \
-                and self.__def_username == username \
-                and self.__def_password == password
-
-    def close(self):
-        self.__check_close = True
-
-    def exec_command(self, cmd):
-        return self.__def_exec_return_val
-
-    def check_usage(self):
-        return self.__check_policy and self.__check_connect and self.__check_close
 
 
 if __name__ == '__main__':

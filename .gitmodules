@@ -28,3 +28,6 @@
 [submodule "meta-intel"]
 	path = meta-intel
 	url = git://git.yoctoproject.org/meta-intel
+[submodule "hidav-testing/integration"]
+	path = hidav-testing/integration
+	url = git://github.com/DFE/Gordon.git

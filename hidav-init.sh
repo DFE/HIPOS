@@ -48,11 +48,14 @@ sanity()
 update_bblayers_conf()
 {
   # update layer conf
+  BB_LAYER_CONF_TEMPLATE="build/conf/bblayers.conf.template"
   BB_LAYER_CONF="build/conf/bblayers.conf"
 
-  log "I: updating ${BB_LAYER_CONF}"
+  log "I: generating ${BB_LAYER_CONF}"
 
-  "${GIT}" checkout ${BB_LAYER_CONF}
+  "${GIT}" checkout ${BB_LAYER_CONF_TEMPLATE}
+
+  cp ${BB_LAYER_CONF_TEMPLATE} ${BB_LAYER_CONF}
 
   echo "BBLAYERS = \" \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-hidav \\" >> ${BB_LAYER_CONF}

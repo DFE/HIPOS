@@ -1,3 +1,4 @@
+build/conf/bblayers.conf
 build/conf/parallel.conf
 *~
 *.log

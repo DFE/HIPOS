@@ -68,6 +68,8 @@ update_bblayers_conf()
   echo "${BASE}/meta-angstrom \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-openembedded/meta-oe \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-openembedded/meta-systemd \\" >> ${BB_LAYER_CONF}
+  echo "${BASE}/meta-openembedded/meta-multimedia \\" >> ${BB_LAYER_CONF}
+  echo "${BASE}/meta-openembedded/meta-networking \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-openembedded/meta-efl \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-openembedded/meta-gnome \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/openembedded-core/meta \\" >> ${BB_LAYER_CONF}

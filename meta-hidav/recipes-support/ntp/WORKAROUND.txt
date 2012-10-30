@@ -1,0 +1,12 @@
+
+This recipe is a workaround for an outdated ntpdate.bbappend (4.2.6p3) in
+meta-openembedded/meta-systemd/meta-oe/recipes-support/ntp/ntp_4.2.6p3.bbappend.
+
+To work around this inconsistency the contents of this recipe have been copied 
+from meta-openembedded/meta-networking/recipes-support/ntp/,
+and the recipe ntp-4.2.6p5.bb was *simply renamed* to ...p3.bb. Also, the
+package ntp-date has been renamed to ntpdate in ntp.inc in order to solve a
+naming issue in the systemd layer's .bbappend.
+
+This recipe can be completely removed after the systemd layer dependency has
+been updated.

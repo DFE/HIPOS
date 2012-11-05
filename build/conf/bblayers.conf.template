@@ -2,4 +2,5 @@
 # changes incompatibly
 LCONF_VERSION = "5"
 
+BBPATH = "${TOPDIR}"
 BBFILES ?= ""

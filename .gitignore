@@ -2,3 +2,11 @@ build/conf/bblayers.conf
 build/conf/parallel.conf
 *~
 *.log
+build/bitbake.lock
+build/conf/sanity_info
+build/downloads/
+build/pseudodone
+build/sstate-cache/
+build/tmp-eglibc/
+init.sh
+

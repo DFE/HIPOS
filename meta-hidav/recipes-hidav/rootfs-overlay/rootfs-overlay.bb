@@ -5,7 +5,7 @@ PACKAGE_ARCH = "all"
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
 PV = "0.1.1"
-PR = "r30"
+PR = "r31"
 
 # ubi tooling from mtd-utils
 RDEPENDS = " mtd-utils "

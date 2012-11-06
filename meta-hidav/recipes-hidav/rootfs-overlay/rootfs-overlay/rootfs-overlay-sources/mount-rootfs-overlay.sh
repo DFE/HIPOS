@@ -140,6 +140,9 @@ list_moveable_mounts() {
 #  M A I N
 #
 
+# systemd makes root directory as "shared". mount --move does not work with shared mounts.
+# Change the default to "private". HYP-4959
+mount --make-private /
 cd /
 source /etc/default/rootfs-overlay
 modprobe ubifs || true > /dev/null

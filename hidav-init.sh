@@ -63,6 +63,7 @@ update_bblayers_conf()
   echo "${BASE}/meta-intel \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-intel/meta-cedartrail \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-hidav-intel \\" >> ${BB_LAYER_CONF}
+  echo "${BASE}/meta-hidav-kirkwood \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-java \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-texasinstruments \\" >> ${BB_LAYER_CONF}
   echo "${BASE}/meta-angstrom \\" >> ${BB_LAYER_CONF}

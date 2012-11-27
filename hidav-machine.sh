@@ -3,7 +3,7 @@
 # HidaV machine changer script
 # maintained by tfm <fromm@dresearch-fe.de>
 #
-
+ 
 this=`dirname $0`
 
 function usage() {
@@ -15,6 +15,7 @@ function usage() {
     echo "   Available machine types are"
     echo "   hidav-machine.sh ti81xx     - build HidaV for Texas Instruments' DaVinci DM814x / DM816x"
     echo "   hidav-machine.sh cedartrail - build HidaV for Intel Cedartrail (Atom N2x00 + NM10)"
+    echo "   hidav-machine.sh kirkwood   - build HidaV for Marvell Kirkwood"
     echo ""
 }
 # ---
@@ -27,6 +28,7 @@ function xtract_current() {
     case "$tmp" in
         "hidav-ti81xx")   current="ti81xx";;
         "cedartrail")     current="cedartrail";;
+        "hidav-kirkwood") current="kirkwood";;
         *)        echo "" >&2
                   echo "    ERROR: unsupported value '$tmp' for MACHINE field in configuration file at" >&2
                       echo "    $this/build/conf/local.conf" >&2
@@ -46,6 +48,7 @@ function set_new() {
     case "$tmp" in
         "ti81xx")      new="hidav-ti81xx";;
         "cedartrail")  new="cedartrail";;
+        "kirkwood")    new="hidav-kirkwood";;
         *)        echo "" >&2
                   echo "    ERROR: unsupported machine '$tmp'." >&2
                       echo -n "    Supported machine is 'ti81xx'." >&2;

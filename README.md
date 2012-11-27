@@ -5,7 +5,8 @@ This project does OpenEmbedded platform integration and optimization
 for the HidaV platform.
 
 HidaV is a robust, low power, embedded storage platform currently supporting
-Texas Instruments' DM8148 Cortex A8 CPU. The [Layer Architecture](https://github.com/DFE/HidaV/wiki/Hidav-oe-layers),
+Texas Instruments' DM8148 Cortex A8 CPU, Marvell Kirkwood, Intel Cedartrail.
+The [Layer Architecture](https://github.com/DFE/HidaV/wiki/Hidav-oe-layers),
 however, enables for BSP support of arbitrary hardware platforms.
 
 HidaV provides development support, application lifecycle management, and a 

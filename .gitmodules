@@ -31,3 +31,6 @@
 [submodule "meta-hidav-kirkwood"]
 	path = meta-hidav-kirkwood
 	url = git://github.com/DFE/meta-hidav-kirkwood.git
+[submodule "hidav-testing/integration/Gordon"]
+	path = hidav-testing/integration/Gordon
+	url = git://github.com/DFE/Gordon.git

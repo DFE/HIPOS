@@ -25,7 +25,7 @@ from test_webdav import TestWebDAV
 from test_nfs import TestNFS
 from test_http import TestHTTP
 
-from Gordon.devicetestcase import DeviceTestCase
+from monk.devicetestcase import DeviceTestCase
 
 
 class TestDevice(object):

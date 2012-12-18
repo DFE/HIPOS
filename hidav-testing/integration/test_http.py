@@ -18,7 +18,7 @@
 import httplib
 import unittest
 
-from Gordon import devicetestcase
+from monk import devicetestcase
 
 test_html = "<html><body><h1>It works!</h1></body></html>" #default from lighty
 

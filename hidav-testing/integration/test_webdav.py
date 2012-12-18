@@ -16,7 +16,7 @@
     WebDAV functions.
 """
 
-from Gordon import devicetestcase
+from monk import devicetestcase
 import unittest
 
 from webdav.WebdavClient import ResourceStorer

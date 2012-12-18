@@ -20,7 +20,7 @@ import unittest
 import tempfile
 import subprocess
 
-from Gordon import devicetestcase
+from monk import devicetestcase
 
                                   # TestCase has too many public methods.
 class TestNFS(devicetestcase.DeviceTestCase): # pylint: disable-msg=R0904

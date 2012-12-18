@@ -16,7 +16,7 @@
     iSCSI functions.
 """
 
-from Gordon import devicetestcase
+from monk import devicetestcase
 import unittest
 
 class TestIscsi(devicetestcase.DeviceTestCase):

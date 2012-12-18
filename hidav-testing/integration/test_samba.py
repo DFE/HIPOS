@@ -19,7 +19,7 @@
 import smbc
 import os
 
-from Gordon import devicetestcase
+from monk import devicetestcase
 import unittest
 
 class TestSamba(devicetestcase.DeviceTestCase):

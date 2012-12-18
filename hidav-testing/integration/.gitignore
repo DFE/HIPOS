@@ -1,0 +1,14 @@
+# compiled python bytecode
+*.pyc
+
+# vim boo-boos
+*.swp
+
+# emacs boo-boos
+*~
+
+# log output
+*.log
+
+# coverage output
+.coverage

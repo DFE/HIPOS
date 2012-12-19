@@ -1,5 +1,7 @@
 build/conf/bblayers.conf
 build/conf/parallel.conf
+build/conf/private.conf
+build/conf/local.conf
 *~
 *.log
 build/bitbake.lock

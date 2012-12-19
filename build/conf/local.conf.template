@@ -1,4 +1,3 @@
-#
 # This file is your local configuration file and is where all local user settings
 # are placed. The comments in this file give some guide to the options a new user
 # to the system might want to change but pretty much any configuration option can
@@ -10,13 +9,11 @@
 # default values are provided as comments to show people example syntax. Enabling
 # the option is a question of removing the # character and making any change to the
 # variable as required.
-
 #
-# Parallelism Options
+# Private changes that should not be tracked via git may be made in a local file
+# called private.conf. Options set in private.conf will then override options
+# set in this template.
 #
-# CAUTION:
-# hidav-init.sh may overwrite BB_NUMBER_THREADS and PARALLEL_MAKE using
-# values from parallel.conf.
 #
 # These two options control how much parallelism BitBake should use. The first 
 # option determines how many tasks bitbake should run in parallel:
@@ -48,7 +45,7 @@ PARALLEL_MAKE = "-j 8"
 # Available option: 'hidav-ti81xx'
 #                   'cedartrail'
 #                   'kirkwood'
-MACHINE ?= "hidav-ti81xx"
+MACHINE ?= "hidav-kirkwood"
 
 # set a default machine kernel package revision since the
 # meta-texasinstruments layer tries to expand this value in

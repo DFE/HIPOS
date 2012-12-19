@@ -42,9 +42,11 @@ PARALLEL_MAKE = "-j 8"
 #
 
 # set machine
-# Available option: 'hidav-ti81xx'
-#                   'cedartrail'
-#                   'kirkwood'
+# Available options: 'hidav-ti81xx'   - Texas Instruments' DaVinci DM814x / DM816x
+#                    'cedartrail'     - Intel Cedartrail (Atom N2x00 + NM10)
+#                    'hidav-kirkwood' - Marvell Kirkwood
+#
+# Note: cedartrail is used without prepending hidav.
 MACHINE ?= "hidav-kirkwood"
 
 # set a default machine kernel package revision since the

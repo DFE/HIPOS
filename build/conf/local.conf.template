@@ -47,7 +47,7 @@ PARALLEL_MAKE = "-j 8"
 #                    'hidav-kirkwood' - Marvell Kirkwood
 #
 # Note: cedartrail is used without prepending hidav.
-MACHINE ?= "hidav-kirkwood"
+MACHINE ?= "hidav-ti81xx"
 
 # set a default machine kernel package revision since the
 # meta-texasinstruments layer tries to expand this value in

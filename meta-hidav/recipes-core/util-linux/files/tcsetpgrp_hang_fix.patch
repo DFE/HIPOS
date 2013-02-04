@@ -1,0 +1,13 @@
+diff --git a/term-utils/agetty.c b/term-utils/agetty.c
+index d9c9b05..beb1aff 100644
+--- a/term-utils/agetty.c
++++ b/term-utils/agetty.c
+@@ -966,7 +966,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
+ 	}
+ 
+ 	if (tcsetpgrp(STDIN_FILENO, pid))
+-		log_err("/dev/%s: cannot set process group: %m", tty);
++		log_warn("/dev/%s: cannot set process group: %m", tty);
+ 
+ 	/* Get rid of the present outputs. */
+ 	close(STDOUT_FILENO);

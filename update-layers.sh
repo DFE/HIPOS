@@ -21,7 +21,5 @@ update_layer openembedded-core
 update_layer meta-java
 update_layer night-owl
 update_layer meta-hidav-ti81xx
-update_layer meta-hidav-intel
 update_layer meta-hidav-kirkwood
-update_layer meta-intel
 update_layer hidav-testing/integration

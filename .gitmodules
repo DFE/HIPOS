@@ -20,17 +20,6 @@
 	path = night-owl
 	url = git://github.com/DFE/night-owl.git
 	pushURL = git@github.com:DFE/night-owl.git
-[submodule "meta-hidav-ti81xx"]
-	path = meta-hidav-ti81xx
-	url = git://github.com/DFE/meta-hidav-ti81xx.git
-	pushURL = git@github.com:DFE/meta-hidav-ti81xx.git
-[submodule "meta-hidav-intel"]
-	path = meta-hidav-intel
-	url = git://github.com/DFE/meta-hidav-intel.git
-	pushURL = git@github.com:DFE/meta-hidav-intel.git
-[submodule "meta-intel"]
-	path = meta-intel
-	url = git://git.yoctoproject.org/meta-intel
 [submodule "meta-hidav-kirkwood"]
 	path = meta-hidav-kirkwood
 	url = git://github.com/DFE/meta-hidav-kirkwood.git

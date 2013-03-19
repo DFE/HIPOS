@@ -16,10 +16,8 @@ update_layer()
 update_layer bitbake
 update_layer meta-angstrom
 update_layer meta-openembedded
-update_layer meta-texasinstruments
 update_layer openembedded-core
 update_layer meta-java
 update_layer night-owl
-update_layer meta-hidav-ti81xx
 update_layer meta-hidav-kirkwood
 update_layer hidav-testing/integration

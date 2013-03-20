@@ -8,9 +8,9 @@ LIC_FILES_CHKSUM = " file://../COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 # do not generate rc-links
 inherit systemd
 
-RDEPENDS = " bootconfig "
+RDEPENDS_${PN} = " bootconfig "
 
-PR = "r3"
+PR = "r4"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 

@@ -17,10 +17,10 @@
 	path = night-owl
 	url = git://github.com/DFE/night-owl.git
 	pushURL = git@github.com:DFE/night-owl.git
-[submodule "meta-hidav-kirkwood"]
-	path = meta-hidav-kirkwood
-	url = git://github.com/DFE/meta-hidav-kirkwood.git
-	pushURL = git@github.com:DFE/meta-hidav-kirkwood.git
+[submodule "meta-hipos-kirkwood"]
+	path = meta-hipos-kirkwood
+	url = git://github.com/DFE/meta-hipos-kirkwood.git
+	pushURL = git@github.com:DFE/meta-hipos-kirkwood.git
 [submodule "hidav-testing/integration/monk"]
 	path = hidav-testing/integration/monk
 	url = git://github.com/DFE/MONK.git

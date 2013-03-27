@@ -1,4 +1,4 @@
-DESCRIPTION = "Kernel driver for communication with serial attached HidaV Board Controller"
+DESCRIPTION = "Kernel driver for communication with serial attached HIPOS Board Controller"
 
 LICENSE = "GPLv2"
 PACKAGE_ARCH = "all"

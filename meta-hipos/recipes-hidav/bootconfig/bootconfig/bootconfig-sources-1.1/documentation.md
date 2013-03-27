@@ -1,7 +1,7 @@
-See [concept documentation](https://github.com/DFE/HidaV/wiki/Safe-Update-and-boot-fallbacks) for details.
+See [concept documentation](https://github.com/DFE/HIPOS/wiki/Safe-Update-and-boot-fallbacks) for details.
 
     $ bootconfig help
-      bootconfig - show and set HidaV boot configuration
+      bootconfig - show and set boot configuration
       Usage:
       bootconfig                      Show current boot configuration
       bootconfig info                 Show detailed / raw boot config information

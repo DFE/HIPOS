@@ -48,7 +48,7 @@ chmod 777 /mnt/pub
 echo "
 
 [pub]
-comment = HidaV public share
+comment = HIPOS public share
 path = /mnt/pub
 public = yes
 writable = yes

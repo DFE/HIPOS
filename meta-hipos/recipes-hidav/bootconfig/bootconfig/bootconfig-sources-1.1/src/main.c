@@ -1,13 +1,12 @@
 /*
  *  Copyright (C) 2011, 2012 DResearch Fahrzeugelektronik GmbH   
- *  Written and maintained by Thilo Fromm <fromm@dresearch-fe.de>
  *                                                               
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License  
  *  as published by the Free Software Foundation; either version 
  *  2 of the License, or (at your option) any later version.     
  *
- *  HidaV boot configuration user space tooling.
+ *  Boot configuration user space tooling.
  */
 
 #include <time.h>
@@ -79,7 +78,7 @@ static void _print_info( struct bootconfig * bc )
 
 static void _print_help( void )
 {
-    printf("  bootconfig - show and set HidaV boot configuration\n");
+    printf("  bootconfig - show and set HIPOS boot configuration\n");
     printf("  Usage:\n");
     printf("  bootconfig                      Show current boot configuration\n");
     printf("  bootconfig info                 Show detailed / raw boot config information\n");

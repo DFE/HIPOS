@@ -1,4 +1,4 @@
-DESCRIPTION = "HidaV boot configuration user space tooling"
+DESCRIPTION = "Boot configuration user space tooling"
 
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = " file://COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "

@@ -21,7 +21,7 @@
 	path = meta-hipos-kirkwood
 	url = git://github.com/DFE/meta-hipos-kirkwood.git
 	pushURL = git@github.com:DFE/meta-hipos-kirkwood.git
-[submodule "hidav-testing/integration/monk"]
-	path = hidav-testing/integration/monk
+[submodule "hipos-testing/integration/monk"]
+	path = hipos-testing/integration/monk
 	url = git://github.com/DFE/MONK.git
 	pushURL = git@github.com:DFE/MONK.git

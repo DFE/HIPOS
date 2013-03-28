@@ -1,7 +1,7 @@
 #!/usr/bin/python -tt
 # -*- coding: utf-8 -*-
 #
-# HidaV automated test framework NAS tests.
+# Automated test framework NAS tests.
 #
 # Copyright (C) 2012 DResearch Fahrzeugelektronik GmbH
 # Written and maintained by Eik Binschek <binschek@dresearch-fe.de>
@@ -29,7 +29,7 @@ from monk.devicetestcase import DeviceTestCase
 
 
 class TestDevice(object):
-    """ Class to handle update and mount of HidaV device. """
+    """ Class to handle update and mount of device. """
     
     def __init__(self, dev):
         """ Init device.
@@ -41,7 +41,7 @@ class TestDevice(object):
     
     
     def update_device(self):
-        """ Update HidaV device.
+        """ Update device.
         
             :param dev: device instance
         """        
@@ -91,7 +91,7 @@ class TestDevice(object):
                                     
                                     
     def format_device(self):
-        """ Format HidaV device.
+        """ Format device.
         
             :param dev: device instance
         """        
@@ -142,7 +142,7 @@ EOF
                    
                    
     def mount(self):
-        """ Format /dev/sda1 on a HidaV device.
+        """ Format /dev/sda1 on a device.
         
             :param dev: device instance
         """        

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Hidav Integration Test Tooling documentation build configuration file, created by
+# Integration Test Tooling documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug  9 11:10:24 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -49,7 +49,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Hidav Integration Test Tooling'
+project = u'HIPOS Integration Test Tooling'
 copyright = u'2012, Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknecht, Angelika Tobisch'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -173,7 +173,7 @@ html_show_copyright = True
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'HidavIntegrationTestToolingdoc'
+htmlhelp_basename = 'HiposIntegrationTestToolingdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -192,7 +192,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'HidavIntegrationTestTooling.tex', u'Hidav Integration Test Tooling Documentation',
+  ('index', 'HiposIntegrationTestTooling.tex', u'Hipos Integration Test Tooling Documentation',
    u'Erik Bernoth\\\\ Eik Binschek\\\\ Thilo Fromm\\\\ Mario Schuknecht\\\\ Angelika Tobisch', 'manual'),
 ]
 
@@ -222,7 +222,7 @@ latex_show_urls = True
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'hidavintegrationtesttooling', u'Hidav Integration Test Tooling Documentation',
+    ('index', 'hiposintegrationtesttooling', u'Hipos Integration Test Tooling Documentation',
      [u'Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknecht, Angelika Tobisch'], 1)
 ]
 
@@ -236,8 +236,8 @@ man_show_urls = True
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'HidavIntegrationTestTooling', u'Hidav Integration Test Tooling Documentation',
-   u'Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknecht, Angelika Tobisch', 'HidavIntegrationTestTooling', 'One line description of project.',
+  ('index', 'HiposIntegrationTestTooling', u'Hipos Integration Test Tooling Documentation',
+   u'Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknecht, Angelika Tobisch', 'HiposIntegrationTestTooling', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -254,7 +254,7 @@ texinfo_documents = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'Hidav Integration Test Tooling'
+epub_title = u'Hipos Integration Test Tooling'
 epub_author = u'Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknecht, Angelika Tobisch'
 epub_publisher = u'Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknecht, Angelika Tobisch'
 epub_copyright = u'2012, Erik Bernoth, Eik Binschek, Thilo Fromm, Mario Schuknecht, Angelika Tobisch'

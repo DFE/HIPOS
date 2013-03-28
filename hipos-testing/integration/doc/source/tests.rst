@@ -1,6 +1,6 @@
 .. _integration-test-impl:
 
-HidaV Integration Test Implementations
+HIPOS Integration Test Implementations
 **************************************
 
 This is an overview of all automated integration tests of this suite.

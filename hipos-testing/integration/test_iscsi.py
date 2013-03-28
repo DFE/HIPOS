@@ -1,7 +1,7 @@
 #!/usr/bin/python -tt
 # -*- coding: utf-8 -*-
 #
-# HidaV automated test framework SAMBA test (short).
+# Automated test framework SAMBA test (short).
 #
 # Copyright (C) 2012 DResearch Fahrzeugelektronik GmbH
 # Written and maintained by Eik Binschek <binschek@dresearch-fe.de>

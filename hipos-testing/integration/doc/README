@@ -1,5 +1,5 @@
 
-This is the HidaV integration test suite documentation. We use Sphinx to
+This is the HIPOS integration test suite documentation. We use Sphinx to
 generate the docs semi-automatically.
 
 Some pointers for Sphinx:

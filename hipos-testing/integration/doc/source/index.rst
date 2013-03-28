@@ -1,9 +1,9 @@
-.. Hidav Integration Test Tooling documentation master file, created by
+.. Integration Test Tooling documentation master file, created by
    sphinx-quickstart on Thu Aug  9 11:10:24 2012.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Hidav Integration Test Tooling's documentation!
+Welcome to HIPOS Integration Test Tooling's documentation!
 **********************************************************
 
 .. include:: undocumented.inc
@@ -13,7 +13,7 @@ Integration Test Implementations
 
 Main page: :ref:`integration-test-impl`
 
-This suite implements a number of automated integration tests for the HidaV
+This suite implements a number of automated integration tests for the HIPOS
 platform. 
 
 Indices and tables

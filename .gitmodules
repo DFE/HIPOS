@@ -28,9 +28,6 @@
 [submodule "meta-intel"]
 	path = meta-intel
 	url = git://git.yoctoproject.org/meta-intel
-[submodule "meta-hidav-kirkwood"]
-	path = meta-hidav-kirkwood
-	url = git://github.com/DFE/meta-hidav-kirkwood.git
 [submodule "hidav-testing/integration/monk"]
 	path = hidav-testing/integration/monk
 	url = git://github.com/DFE/MONK.git

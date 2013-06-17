@@ -6,9 +6,11 @@ LIC_FILES_CHKSUM = "file://mmc.h;beginline=2;endline=15;md5=ee6d6c65ecf0c8a7c153
 
 SRCREV = "21bb473fc58366b872efe31e1da7831cad4b92fa"
 
-PR = "r0"
+PR = "r1"
 
-SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc-utils.git;protocol=git"
+SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc-utils.git;protocol=git \
+	file://command-userdata-enhance.patch \
+	"
 
 S = "${WORKDIR}/git"
 

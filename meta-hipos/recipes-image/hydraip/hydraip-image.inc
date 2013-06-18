@@ -71,5 +71,6 @@ IMAGE_INSTALL += "      \
     e2fsprogs           \
     e2fsprogs-mke2fs    \
     parted              \
+    mdadm               \
 "
 

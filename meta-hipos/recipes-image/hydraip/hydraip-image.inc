@@ -12,6 +12,7 @@ IMAGE_INSTALL += "          \
   bash                      \
   bootconfig                \
   healthy                   \
+  libdrbcc		    \
 "
 
 # profiling

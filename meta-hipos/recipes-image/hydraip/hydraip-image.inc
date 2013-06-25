@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r27"
+PR_append = "+r31"
 
 IMAGE_FEATURES += " package-management "
 
@@ -13,6 +13,7 @@ IMAGE_INSTALL += "          \
   bootconfig                \
   healthy                   \
   libdrbcc		    \
+  u-boot-fw-utils           \
 "
 
 # profiling
@@ -59,13 +60,13 @@ IMAGE_INSTALL += "         \
 "
 
 # iscsi support
-IMAGE_INSTALL += "              \
-    iscsi-target                \
-    iscsi-target-systemd        \
-    open-iscsi-kernel           \
-    open-iscsi-user             \
-    open-iscsi-user-systemd     \
-"
+#IMAGE_INSTALL += "              \
+#    iscsi-target                \
+#    iscsi-target-systemd        \
+#    open-iscsi-kernel           \
+#    open-iscsi-user             \
+#    open-iscsi-user-systemd     \
+#"
 
 # file system tools
 IMAGE_INSTALL += "      \

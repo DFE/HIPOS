@@ -16,5 +16,8 @@ IMAGE_INSTALL += " \
   git \
 "
 
-# DNS: deactivated temporary on build issues
-#IMAGE_INSTALL += "openjdk-6-jdk"
+# utils 
+IMAGE_INSTALL += " \
+  mmc-utils \
+"
+

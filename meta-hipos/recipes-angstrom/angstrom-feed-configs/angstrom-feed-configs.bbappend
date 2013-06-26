@@ -1,11 +1,11 @@
-PR_append = "+r7"
+PR_append = "+r8"
 
 
 do_compile() {
     mkdir -p ${S}/${sysconfdir}/opkg
 
     pkg_dir=`echo "${MACHINE}" | sed -e 's/-/-packages-/'`
-    URI="http://hydraip-integration:8080/userContent/$pkg_dir"
+    URI="http://hydraip-integration/jenkins/$pkg_dir"
 
     for feed in all ${MACHINE} ${FEED_ARCH} ; do
 
@@ -14,8 +14,14 @@ do_compile() {
             # package archive directories alike
             escaped_feed=`echo "${feed}" | sed -e 's/-/_/g'`
             echo "src/gz ${feed} ${URI}/${escaped_feed}" > ${S}/${sysconfdir}/opkg/${feed}-feed.conf
-        else
+        else if [ "${feed}" = "hipos-kirkwood" ]; then
+            # replace "-" in machine name with "_" since bitbake/OE will name the
+            # package archive directories alike
+            escaped_feed=`echo "${feed}" | sed -e 's/-/_/g'`
+            echo "src/gz ${feed} ${URI}/${escaped_feed}" > ${S}/${sysconfdir}/opkg/${feed}-feed.conf
+	else
             echo "src/gz ${feed} ${URI}/${feed}" > ${S}/${sysconfdir}/opkg/${feed}-feed.conf
+        fi
         fi
 
     done

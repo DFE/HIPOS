@@ -34,6 +34,8 @@ IMAGE_INSTALL += "  \
 IMAGE_INSTALL += "  \
     ethtool         \
     ltrace          \
+    strace          \
+    pciutils        \
 "
 
 # nfs support
@@ -74,5 +76,7 @@ IMAGE_INSTALL += "      \
     e2fsprogs-mke2fs    \
     parted              \
     mdadm               \
+    hdparm		\
+    smartmontools	\
 "
 

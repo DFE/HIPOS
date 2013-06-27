@@ -14,6 +14,7 @@ IMAGE_INSTALL += "          \
   healthy                   \
   libdrbcc		    \
   u-boot-fw-utils           \
+  network-setup             \
 "
 
 # profiling

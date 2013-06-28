@@ -9,33 +9,17 @@ fi
 
 echo "lanspeed=$lanspeed"
 
-if [ $lanspeed = "gg" ]
-        then
-                echo "use 1000MBit/s"
-                ethtool -s eth0 advertise 0xFF
-                ethtool -s eth1 advertise 0xFF
-                exit 0
-fi
-if [ $lanspeed = "fg" ]
-        then
-                echo "eth0: use 100MBit/s"
-                ethtool -s eth0 advertise 0xF
-                echo "eth1: use 1000MBit/s"
-                ethtool -s eth1 advertise 0xFF
-                exit 0
-fi
-if [ $lanspeed = "gf" ]
-        then
-                echo "eth0: use 1000MBit/s"
-                ethtool -s eth0 advertise 0xFF
-                echo "eth1: use 100MBit/s"
-                ethtool -s eth1 advertise 0xF
-                exit 0
-fi
-
-echo "use 100MBit/s"
-ethtool -s eth0 advertise 0xF
-ethtool -s eth1 advertise 0xF
+for (( i=0; i<${#lanspeed}; i++ ))
+do
+        if [ "${lanspeed:$i:1}" == "g" ]
+                then
+                        echo "eth$i: use 1000MBit/s"
+                        ethtool -s eth$i advertise 0xFF
+                else
+                        echo "eth$i: use 100MBit/s"
+                        ethtool -s eth$i advertise 0xF
+        fi
+done
 
 exit 0
 

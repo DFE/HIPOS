@@ -10,7 +10,7 @@ inherit systemd
 
 RDEPENDS_${PN} = " ethtool "
 
-PR = "r2"
+PR = "r3"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 

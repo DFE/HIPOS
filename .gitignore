@@ -5,6 +5,7 @@ build/conf/local.conf
 *~
 *.log
 build/bitbake.lock
+build/cache/
 build/conf/sanity_info
 build/downloads/
 build/pseudodone

@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r31"
+PR_append = "+r32"
 
 IMAGE_FEATURES += " package-management "
 
@@ -12,7 +12,8 @@ IMAGE_INSTALL += "          \
   bash                      \
   bootconfig                \
   healthy                   \
-  libdrbcc		    \
+  libdrbcc                  \
+  watchdog                  \
   u-boot-fw-utils           \
   network-setup             \
 "

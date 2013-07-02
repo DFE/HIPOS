@@ -3,8 +3,16 @@
 if [ -a /etc/hydraip-devid ]
         then
                 . /etc/hydraip-devid
-        else
-                lanspeed=ff
+fi
+
+if [ -z ${lanspeed} ]
+        then
+	        lanspeed=ff
+	else
+	if [ ${#lanspeed} = 1 ]
+		then
+			lanspeed=${lanspeed}f
+	fi
 fi
 
 echo "lanspeed=$lanspeed"

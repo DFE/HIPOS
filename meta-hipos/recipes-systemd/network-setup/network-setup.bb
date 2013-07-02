@@ -10,7 +10,7 @@ inherit systemd
 
 RDEPENDS_${PN} = " ethtool "
 
-PR = "r4"
+PR = "r5"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 
@@ -31,7 +31,7 @@ SYSTEMD_SERVICE = "network-setup.service"
 do_install () {
   install -d ${D}${base_libdir}/systemd/system
   install -m 0644 ${WORKDIR}/network-setup.service ${D}${base_libdir}/systemd/system/
-  install -d ${D}/etc
+  install -d ${D}${sysconfdir}
   install -m 0755 ${WORKDIR}/network-setup.sh ${D}${sysconfdir}
   install -d ${D}${base_libdir}/systemd/system/multi-user.target.wants
   cd '${D}${base_libdir}/systemd/system/multi-user.target.wants'

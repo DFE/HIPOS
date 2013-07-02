@@ -1,0 +1,17 @@
+[Unit]
+Description=watchdog service
+Requires=dev-serial-by\x2dpath-platform\x2dorion\x2dehci.0\x2dusb\x2d0:1.4:1.1\x2dport0.device
+After=dev-serial-by\x2dpath-platform\x2dorion\x2dehci.0\x2dusb\x2d0:1.4:1.1\x2dport0.device
+
+[Service]
+Type=oneshot
+# DRBCC_CMD is done in a roundabout way to handle the whitespace
+# simple use of "" within the ExecStart line did not work properly
+Environment="DRBCC_CMD=heartbeat 400"
+ExecStart=/usr/bin/drbcc --dev /dev/serial/by-path/platform-orion-ehci.0-usb-0:1.4:1.1-port0 --cmd=${DRBCC_CMD}
+RemainAfterExit=no
+RestartSec=120
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

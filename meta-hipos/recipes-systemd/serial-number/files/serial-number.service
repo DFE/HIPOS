@@ -1,0 +1,13 @@
+[Unit]
+Description=serial number service
+Requires=network.target
+Before=network-setup.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/serial-number.sh
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
+

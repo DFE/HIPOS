@@ -16,6 +16,7 @@ IMAGE_INSTALL += "          \
   watchdog                  \
   u-boot-fw-utils           \
   network-setup             \
+  serial-number		    \
 "
 
 # profiling

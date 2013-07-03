@@ -1,5 +1,5 @@
 [Unit]
-Description=watchdog service
+Description=hipos watchdog service
 Requires=dev-serial-by\x2dpath-platform\x2dorion\x2dehci.0\x2dusb\x2d0:1.4:1.1\x2dport0.device
 After=dev-serial-by\x2dpath-platform\x2dorion\x2dehci.0\x2dusb\x2d0:1.4:1.1\x2dport0.device
 

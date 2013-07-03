@@ -7,35 +7,34 @@ LIC_FILES_CHKSUM = " file://../COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
 # do not generate rc-links
 inherit systemd
+RDEPENDS_${PN} = " hipos-network-setup "
 
-RDEPENDS_${PN} = " network-setup "
-
-PR = "r4"
+PR = "r6"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 
-SRC_URI = " file://serial-number.service  \
-            file://serial-number.sh \
+SRC_URI = " file://hipos-serial-number.service  \
+            file://hipos-serial-number.sh \
 	    file://COPYING "
 
 # systemd
 PACKAGES = " ${PN} "
 
 FILES_${PN} = "${base_libdir}/systemd \
-               ${sysconfdir}/serial-number.sh \
+               ${sysconfdir}/hipos/scripts/hipos-serial-number.sh \
 		"
 
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE = "serial-number.service"
+SYSTEMD_SERVICE = "hipos-serial-number.service"
 
 do_install () {
   install -d ${D}${base_libdir}/systemd/system
-  install -m 0644 ${WORKDIR}/serial-number.service ${D}${base_libdir}/systemd/system/
-  install -d ${D}${sysconfdir}
-  install -m 0755 ${WORKDIR}/serial-number.sh ${D}${sysconfdir}
+  install -m 0644 ${WORKDIR}/hipos-serial-number.service ${D}${base_libdir}/systemd/system/
+  install -d ${D}${sysconfdir}/hipos/scripts
+  install -m 0755 ${WORKDIR}/hipos-serial-number.sh ${D}${sysconfdir}/hipos/scripts/
   install -d ${D}${base_libdir}/systemd/system/multi-user.target.wants
   cd '${D}${base_libdir}/systemd/system/multi-user.target.wants'
-  ln -s '../serial-number.service' 'serial-number.service'
+  ln -s '../hipos-serial-number.service' 'hipos-serial-number.service'
   cd -
 }
 

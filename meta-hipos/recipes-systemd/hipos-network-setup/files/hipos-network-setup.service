@@ -1,11 +1,10 @@
 [Unit]
-Description=serial number service
+Description=hipos network setup service
 Requires=network.target
-Before=network-setup.service
 
 [Service]
 Type=oneshot
-ExecStart=/etc/serial-number.sh
+ExecStart=/etc/hipos/scripts/hipos-network-setup.sh
 RemainAfterExit=no
 
 [Install]

@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r32"
+PR_append = "+r33"
 
 IMAGE_FEATURES += " package-management "
 
@@ -15,8 +15,8 @@ IMAGE_INSTALL += "          \
   libdrbcc                  \
   watchdog                  \
   u-boot-fw-utils           \
-  network-setup             \
-  serial-number		    \
+  hipos-network-setup       \
+  hipos-serial-number       \
 "
 
 # profiling

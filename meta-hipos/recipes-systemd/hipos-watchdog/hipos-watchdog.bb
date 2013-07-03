@@ -9,7 +9,7 @@ inherit systemd
 
 RDEPENDS_${PN} = " libdrbcc "
 
-PR = "r2"
+PR = "r4"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 
@@ -28,8 +28,10 @@ SYSTEMD_SERVICE = "hipos-watchdog.service"
 do_install () {
   install -d ${D}${base_libdir}/systemd/system
   install -m 0644 ${WORKDIR}/hipos-watchdog.service ${D}${base_libdir}/systemd/system/
+  
   install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
   cd '${D}${sysconfdir}/systemd/system/multi-user.target.wants'
-  ln -s '../../../../${base_libdir}/systemd/system/hipos-watchdog.service' 'hipos-watchdog.service'
+  ln -s '../../../..${base_libdir}/systemd/system/hipos-watchdog.service' 'hipos-watchdog.service'
+  
   cd -
 }

@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r33"
+PR_append = "+r34"
 
 IMAGE_FEATURES += " package-management "
 
@@ -13,6 +13,7 @@ IMAGE_INSTALL += "          \
   bootconfig                \
   healthy                   \
   libdrbcc                  \
+  hipos-time                \
   hipos-watchdog            \
   u-boot-fw-utils           \
   network-setup             \

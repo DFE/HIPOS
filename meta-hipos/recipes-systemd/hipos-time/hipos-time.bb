@@ -10,7 +10,7 @@ inherit systemd
 RDEPENDS_${PN} = " libdrbcc \
                    gawk "
 
-PR = "r4"
+PR = "r5"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 
@@ -23,7 +23,7 @@ PACKAGES = " ${PN} "
 
 FILES_${PN} = "${base_libdir}/systemd \
                ${sysconfdir}/systemd \
-               ${sysconfdir}/hipos/scripts/set-time.sh "
+               ${sysconfdir}/hipos/set-time.sh "
 
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE = "hipos-time.service"
@@ -36,8 +36,8 @@ do_install () {
   cd '${D}${sysconfdir}/systemd/system/multi-user.target.wants'
   ln -s '../../../..${base_libdir}/systemd/system/hipos-time.service' 'hipos-time.service'
   
-  install -d ${D}${sysconfdir}/hipos/scripts
-  install -m 0755 ${WORKDIR}/set-time.sh ${D}${sysconfdir}/hipos/scripts
+  install -d ${D}${sysconfdir}/hipos
+  install -m 0755 ${WORKDIR}/set-time.sh ${D}${sysconfdir}/hipos
   
   cd -
 }

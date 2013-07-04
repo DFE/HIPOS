@@ -7,34 +7,34 @@ LIC_FILES_CHKSUM = " file://../COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 
 # do not generate rc-links
 inherit systemd
-RDEPENDS_${PN} = " hipos-network-setup "
+RDEPENDS_${PN} = " libdrbcc "
 
-PR = "r6"
+PR = "r7"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 
-SRC_URI = " file://hipos-serial-number.service  \
-            file://hipos-serial-number.sh \
+SRC_URI = " file://hipos-device-info.service  \
+            file://hipos-device-info.sh \
 	    file://COPYING "
 
 # systemd
 PACKAGES = " ${PN} "
 
 FILES_${PN} = "${base_libdir}/systemd \
-               ${sysconfdir}/hipos/scripts/hipos-serial-number.sh \
+               ${sysconfdir}/hipos/hipos-device-info.sh \
 		"
 
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE = "hipos-serial-number.service"
+SYSTEMD_SERVICE = "hipos-device-info.service"
 
 do_install () {
   install -d ${D}${base_libdir}/systemd/system
-  install -m 0644 ${WORKDIR}/hipos-serial-number.service ${D}${base_libdir}/systemd/system/
-  install -d ${D}${sysconfdir}/hipos/scripts
-  install -m 0755 ${WORKDIR}/hipos-serial-number.sh ${D}${sysconfdir}/hipos/scripts/
+  install -m 0644 ${WORKDIR}/hipos-device-info.service ${D}${base_libdir}/systemd/system/
+  install -d ${D}${sysconfdir}/hipos
+  install -m 0755 ${WORKDIR}/hipos-device-info.sh ${D}${sysconfdir}/hipos/
   install -d ${D}${base_libdir}/systemd/system/multi-user.target.wants
   cd '${D}${base_libdir}/systemd/system/multi-user.target.wants'
-  ln -s '../hipos-serial-number.service' 'hipos-serial-number.service'
+  ln -s '../hipos-device-info.service' 'hipos-device-info.service'
   cd -
 }
 

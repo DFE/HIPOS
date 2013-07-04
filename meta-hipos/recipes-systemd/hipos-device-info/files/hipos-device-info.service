@@ -1,12 +1,12 @@
 [Unit]
-Description=hipos serial number service
+Description=hipos serial device info
 Requires=dev-serial-by\x2dpath-platform\x2dorion\x2dehci.0\x2dusb\x2d0:1.4:1.1\x2dport0.device
 Before=hipos-network-setup.service
 Before=hipos-watchdog.service
 
 [Service]
 Type=oneshot
-ExecStart=/etc/hipos/scripts/hipos-serial-number.sh
+ExecStart=/etc/hipos/hipos-device-info.sh
 RemainAfterExit=no
 
 [Install]

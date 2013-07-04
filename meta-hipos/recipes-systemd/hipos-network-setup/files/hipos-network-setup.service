@@ -4,7 +4,7 @@ Requires=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/etc/hipos/scripts/hipos-network-setup.sh
+ExecStart=/etc/hipos/hipos-network-setup.sh
 RemainAfterExit=no
 
 [Install]

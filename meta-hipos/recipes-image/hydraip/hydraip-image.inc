@@ -2,7 +2,7 @@
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r34"
+PR_append = "+r35"
 
 IMAGE_FEATURES += " package-management "
 
@@ -17,7 +17,7 @@ IMAGE_INSTALL += "          \
   hipos-watchdog            \
   u-boot-fw-utils           \
   hipos-network-setup       \
-  hipos-serial-number       \
+  hipos-device-info         \
 "
 
 # profiling

@@ -9,7 +9,7 @@ inherit systemd
 
 RDEPENDS_${PN} = " ethtool "
 
-PR = "r7"
+PR = "r8"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 
@@ -21,7 +21,7 @@ SRC_URI = " file://hipos-network-setup.service  \
 PACKAGES = " ${PN} "
 
 FILES_${PN} = "${base_libdir}/systemd \
-               ${sysconfdir}/hipos/scripts/hipos-network-setup.sh \
+               ${sysconfdir}/hipos/hipos-network-setup.sh \
 		"
 
 SYSTEMD_PACKAGES = "${PN}"
@@ -30,8 +30,8 @@ SYSTEMD_SERVICE = "hipos-network-setup.service"
 do_install () {
   install -d ${D}${base_libdir}/systemd/system
   install -m 0644 ${WORKDIR}/hipos-network-setup.service ${D}${base_libdir}/systemd/system/
-  install -d ${D}${sysconfdir}/hipos/scripts
-  install -m 0755 ${WORKDIR}/hipos-network-setup.sh ${D}${sysconfdir}/hipos/scripts
+  install -d ${D}${sysconfdir}/hipos
+  install -m 0755 ${WORKDIR}/hipos-network-setup.sh ${D}${sysconfdir}/hipos/
   install -d ${D}${base_libdir}/systemd/system/multi-user.target.wants
   cd '${D}${base_libdir}/systemd/system/multi-user.target.wants'
   ln -s '../hipos-network-setup.service' 'hipos-network-setup.service'

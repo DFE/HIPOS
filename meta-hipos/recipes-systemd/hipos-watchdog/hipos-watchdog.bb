@@ -9,7 +9,7 @@ inherit systemd
 
 RDEPENDS_${PN} = " libdrbcc "
 
-PR = "r4"
+PR = "r5"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 

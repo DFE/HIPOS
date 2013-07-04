@@ -6,9 +6,8 @@ Before=hipos-watchdog.service
 
 [Service]
 Type=oneshot
-ExecStart=/etc/hipos/scripts/set-time.sh
+ExecStart=/etc/hipos/set-time.sh
 RemainAfterExit=no
-Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

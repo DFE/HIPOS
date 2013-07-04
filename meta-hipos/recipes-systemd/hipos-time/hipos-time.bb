@@ -10,7 +10,7 @@ inherit systemd
 RDEPENDS_${PN} = " libdrbcc \
                    gawk "
 
-PR = "r3"
+PR = "r4"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 

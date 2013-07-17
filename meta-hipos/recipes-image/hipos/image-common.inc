@@ -1,8 +1,8 @@
-# common stuff for all HydraIP images
+# common stuff for all images
 
 require recipes-images/angstrom/systemd-image.bb
 
-PR_append = "+r35"
+PR_append = "+r1"
 
 IMAGE_FEATURES += " package-management "
 
@@ -13,11 +13,11 @@ IMAGE_INSTALL += "          \
   bootconfig                \
   healthy                   \
   libdrbcc                  \
+  u-boot-fw-utils           \
+  hipos-device-info         \
+  hipos-network-setup       \
   hipos-time                \
   hipos-watchdog            \
-  u-boot-fw-utils           \
-  hipos-network-setup       \
-  hipos-device-info         \
 "
 
 # profiling

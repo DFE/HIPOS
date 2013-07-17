@@ -1,8 +1,8 @@
-require hydraip-image.inc
+require hipos-image.inc
 
-PR_append = ".5"
+PR_append = ".1"
 
-export IMAGE_BASENAME = "hydraip-devimage"
+export IMAGE_BASENAME = "hipos-devimage"
 
 IMAGE_FSTYPES = "tar.bz2"
 
@@ -20,4 +20,3 @@ IMAGE_INSTALL += " \
 IMAGE_INSTALL += " \
   mmc-utils \
 "
-

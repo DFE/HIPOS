@@ -1,8 +1,8 @@
-require hydraip-image.inc
+require hipos-image.inc
 
-PR_append = ".9"
+PR_append = ".1"
 
-export IMAGE_BASENAME = "hydraip-image"
+export IMAGE_BASENAME = "hipos-prodimage"
 
 IMAGE_FSTYPES = "tar.bz2 squashfs"
 
@@ -11,4 +11,3 @@ IMAGE_FSTYPES = "tar.bz2 squashfs"
 #"
 
 addtask package_write after do_rootfs before do_build
-

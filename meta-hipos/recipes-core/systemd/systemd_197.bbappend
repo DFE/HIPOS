@@ -1,7 +1,10 @@
 # do not generate rc-links
-PR_append = "+r2"
+PR_append = "+r3"
 DEPENDS += " grep "
 
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+
+SRC_URI_append = " file://0001-systemd-halt.service-always-poweroff-on-halt.patch "
 
 # tfm:_temporary workaround for libkmod (package kmod, openembedded-core) putting its .pc file to /lib/pkgconfig
 #  instead of /usr/lib/pkgconfig or /usr/share/pkgconfig.

@@ -12,5 +12,6 @@ build/downloads/
 build/pseudodone
 build/sstate-cache/
 build/tmp-eglibc/
+build/pyshtables.py
 init.sh
 

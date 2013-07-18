@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " file://../COPYING;md5=9ac2e7cff1ddaf48b6eab6028f23ef88 "
 inherit systemd
 RDEPENDS_${PN} = " libdrbcc "
 
-PR = "r8"
+PR = "r10"
 
 FILESEXTRAPATHS := "${THISDIR}/files:"
 

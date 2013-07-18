@@ -4,6 +4,6 @@ require image-common.inc
 
 PR_append = ".1"
 
-#IMAGE_INSTALL += " \
-#  hipos-watchdog \
-#"
+IMAGE_INSTALL += " \
+  hipos-watchdog \
+"

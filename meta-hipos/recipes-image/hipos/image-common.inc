@@ -17,7 +17,6 @@ IMAGE_INSTALL += "          \
   hipos-device-info         \
   hipos-network-setup       \
   hipos-time                \
-  hipos-watchdog            \
 "
 
 # profiling

@@ -10,6 +10,7 @@
 #  or "sourceing" detection will fail. 
 
 script_name="hipos-init.sh"
+set -e
 
 
 #############################
@@ -45,7 +46,7 @@ update_bblayers_conf()
 {
   # generate layer conf from template
   
-  BB_LAYER_CONF_TEMPLATE="build/conf/bblayers.conf.template"
+  BB_LAYER_CONF_TEMPLATE="hipos-base/bblayers.conf.template"
   BB_LAYER_CONF="build/conf/bblayers.conf"
 
   log "I: generating ${BB_LAYER_CONF}"
@@ -81,7 +82,7 @@ update_local_conf()
   # (local.conf is tracked via git and thus not truly local)
   
   LOCAL_CONF="build/conf/local.conf"
-  LOCAL_CONF_TEMPLATE="build/conf/local.conf.template"
+  LOCAL_CONF_TEMPLATE="hipos-base/local.conf.template"
   PRIVATE_CONF="build/conf/private.conf"
 
   log "I: generating ${LOCAL_CONF}"
@@ -92,7 +93,7 @@ update_local_conf()
   fi
     
   if [ -f ${PRIVATE_CONF} ]; then
-    awk -f do_private_conf.awk ${PRIVATE_CONF} ${LOCAL_CONF_TEMPLATE} > ${LOCAL_CONF}
+    awk -f hipos-base/do_private_conf.awk ${PRIVATE_CONF} ${LOCAL_CONF_TEMPLATE} > ${LOCAL_CONF}
   else
     log "I: ${PRIVATE_CONF} not found, only ${LOCAL_CONF_TEMPLATE} is used"
     cp ${LOCAL_CONF_TEMPLATE} ${LOCAL_CONF}
@@ -116,6 +117,8 @@ init()
 
   update_submodules
 
+  mkdir -p build/conf
+
   if [ ! -h "${BB_LINK}" ]; then
     ln -s "../bitbake" "${BB_LINK}"
     if [ "$?" -ne "0" ]; then
@@ -134,7 +137,7 @@ echo -e "***"
 echo -e '***    $Id: hipos-init.sh $'
 echo -e "***"
 
-if [ "`basename $0`" != "$script_name" ]; then
+if [ "`basename -- \"$0\"`" != "$script_name" ]; then
   SOURCED=1
 fi
 
@@ -160,6 +163,7 @@ chmod +x ${INIT_SCRIPT}
 if [ "${SOURCED}" = "1" ]; then
   . ${INIT_SCRIPT}
 
+  set +e
   echo -e "***"
   echo -e "***"
   echo -e "***    You can now start building:"

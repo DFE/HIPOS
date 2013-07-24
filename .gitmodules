@@ -25,3 +25,11 @@
 	path = hipos-testing/integration/monk
 	url = git://github.com/DFE/MONK.git
 	pushURL = git@github.com:DFE/MONK.git
+[submodule "meta-hipos"]
+	path = meta-hipos
+	url = git://github.com/DFE/meta-hipos.git
+	pushURL = git@github.com:DFE/meta-hipos.git
+[submodule "hipos-base"]
+	path = hipos-base
+	url = git://github.com/DFE/hipos-base.git
+	pushURL = git@github.com:DFE/hipos-base.git

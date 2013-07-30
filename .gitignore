@@ -1,6 +1,6 @@
 *~
 *.log
 *.kate-swp
-build/
-init.sh
+build*/
+setup-build*.sh
 

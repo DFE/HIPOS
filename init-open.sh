@@ -21,7 +21,7 @@
 # This must _always_ be set to the name of this script 
 #  or "sourceing" detection will fail. 
 
-INIT_SCRIPT_NAME="hipos-init.sh"
+INIT_SCRIPT_NAME="init-open.sh"
 
 
 #############################
@@ -93,6 +93,7 @@ main_init()
 	# optional: modify layer and update variables here...
     #           BB_LAYERS_INCLUDED: ordered list of default layers
     #           BB_BUILD_DIR_BASE: temporary build directory
+	BB_BUILD_DIR_BASE=build-open
 
 	{ test "`basename -- \"$0\"`" != "$INIT_SCRIPT_NAME" && SCRIPT_SOURCED=true || SCRIPT_SOURCED=false; } &&
 	hipos_base_init ||

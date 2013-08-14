@@ -3,4 +3,16 @@
 *.kate-swp
 build*/
 setup-build*.sh
+init.sh
 
+# virtualenv related directories
+bin/
+include/
+lib/
+local/
+man/
+
+# nosetest related files
+coverage.xml
+nosetests.xml
+.coverage

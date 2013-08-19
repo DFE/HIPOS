@@ -12,6 +12,10 @@ lib/
 local/
 man/
 
+# Python specific
+*.pyc
+*.pyo
+
 # nosetest related files
 coverage.xml
 nosetests.xml

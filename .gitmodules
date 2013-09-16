@@ -35,3 +35,6 @@
 [submodule "meta-fsl-arm-extra"]
 	path = meta-fsl-arm-extra
 	url = git://github.com/Freescale/meta-fsl-arm-extra.git
+[submodule "meta-hipos-fsl"]
+	path = meta-hipos-fsl
+	url = https://github.com/DFE/meta-hipos-fsl.git

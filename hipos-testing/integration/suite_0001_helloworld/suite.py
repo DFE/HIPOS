@@ -1,0 +1,1 @@
+from tests.test_serial import test_serial_simple

@@ -17,10 +17,6 @@
 	path = night-owl
 	url = git://github.com/DFE/night-owl.git
 	pushURL = git@github.com:DFE/night-owl.git
-[submodule "meta-hipos-kirkwood"]
-	path = meta-hipos-kirkwood
-	url = git://github.com/DFE/meta-hipos-kirkwood.git
-	pushURL = git@github.com:DFE/meta-hipos-kirkwood.git
 [submodule "meta-hipos"]
 	path = meta-hipos
 	url = git://github.com/DFE/meta-hipos.git
@@ -35,10 +31,6 @@
 [submodule "meta-fsl-arm-extra"]
 	path = meta-fsl-arm-extra
 	url = git://github.com/Freescale/meta-fsl-arm-extra.git
-[submodule "meta-hipos-fsl"]
-	path = meta-hipos-fsl
-	url = https://github.com/DFE/meta-hipos-fsl.git
-        pushURL = git@github.com:DFE/meta-hipos-fsl.git
 [submodule "meta-qt5"]
 	path = meta-qt5
 	url = https://github.com/meta-qt5/meta-qt5.git

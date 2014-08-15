@@ -13,10 +13,6 @@
 [submodule "meta-java"]
 	path = meta-java
 	url = git://github.com/woglinde/meta-java.git
-[submodule "night-owl"]
-	path = night-owl
-	url = git://github.com/DFE/night-owl.git
-	pushURL = git@github.com:DFE/night-owl.git
 [submodule "meta-hipos"]
 	path = meta-hipos
 	url = git://github.com/DFE/meta-hipos.git

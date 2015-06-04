@@ -10,9 +10,6 @@
 [submodule "meta-openembedded"]
 	path = meta-openembedded
 	url = git://git.openembedded.org/meta-openembedded
-[submodule "meta-java"]
-	path = meta-java
-	url = git://github.com/woglinde/meta-java.git
 [submodule "meta-hipos"]
 	path = meta-hipos
 	url = git://github.com/DFE/meta-hipos.git

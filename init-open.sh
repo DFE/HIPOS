@@ -48,7 +48,7 @@ sanity()
 	log "I: linux sanity check"
 
 	if  test -z "$GIT" || ! $GIT --version > /dev/null; then
-		export GIT=`which git`
+		export GIT=`\which git`
 	fi
 	if  test -z "$GIT" || ! $GIT --version > /dev/null; then
 		log "E: couldn't find git" && return 1;

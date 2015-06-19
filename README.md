@@ -51,11 +51,48 @@ in the repository root. All the git submodules (i.e. the other OE layers we're u
 Building and Debugging
 ----------------------
 
-tbd
+### Initialize your build environment
 
-Supported Machines
-------------------
+**1. Build environment is set up**
+If you did not set up your build environment and you need to start from scratch please work through **Getting started** first.
 
+**2. A command shell is open in the repository root**
+
+You cloned the HIPOS repository in the first step, and you `cd`'d into the directory created.
+
+**3. source `setup-build-open.sh`**
+
+If you re-visit the HIPOS folder later, you need to execute this script in order to re-init the build environment.
+
+The script will respond:
+<pre>
+### Shell environment set up for builds. ###
+...
+</pre>
+
+**Note** that this script will put you in the subdirectory `build-open/`. This is your work / scratch directory.
+
+You're now ready to bitbake your first HIPOS target. Do not build one of the targets mentioned in the setup script. Instead, bake a real HIPOS image like that:
+
+```
+bitbake hipos-devimage
+```
+
+Because the first build takes a really long time, it's now a good idea to inspect the created HIPOS sub-folders and recipes.
+
+### Select a machine
+The target machine is determined by the value assigned to `MACHINE` in `build/conf/local.conf`.
+This configuration file is automatically generated from `build/conf/local.conf.template` and an optional file
+`build/conf/private.conf` containing private settings.
+
+The default machine should be set in the template, temporary changes should be made in private.conf or by setting the `MACHINE` environment variable.
+
+You need to execute `hipos-init.sh` to apply your changes in one of configuration files.
+
+NOTE:
+Do not make any changes in `build/conf/local.conf` itself as they will be discarded the next time `hipos-init.sh` is executed.
+
+Supported machines are
 * **hikirk** - Marvell Kirkwood based NAS/IP Recorder hardware known as [MR4020](http://www.dresearch-fe.de/en/products/recorder/)
 * **himx0294** - FreeScale i.MX6 based hardware (details coming soon)
 

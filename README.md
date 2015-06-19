@@ -12,7 +12,7 @@ For documentation on HIPOS please have a look at our
 Getting Started
 ---------------
 
-You need to do this only *once* for every new build environment you're setting up. If you have done this already just continue to [[Building and Debugging]].
+You need to do this only *once* for every new build environment you're setting up.
 
 ### Prerequisites
 
@@ -20,7 +20,7 @@ You need to do this only *once* for every new build environment you're setting u
 
 Although OpenEmbedded builds sandboxes to be reproducible and build host independent you will need some tools to kick-start OpenEmbedded's first stage. After that OE will build an extensive set of tools for compilation and cross-compilation for itself. No matter what machine you've got, from-scratch builds will tend to take several hours (so try to build incrementally).
 
-For required packages at your build host see [[http://www.openembedded.org/wiki/Getting_started#Required_software]].
+For required packages at your build host see [OE wiki](http://www.openembedded.org/wiki/Getting_started#Required_software).
 
 ### Set up build environment from scratch
 

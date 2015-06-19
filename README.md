@@ -6,9 +6,6 @@ HIPOS is an Open Source,
 based Linux distribution for embedded devices mainly from the
 [DResearch Fahrzeugelektronik GmbH](http://www.dresearch-fe.de).
 
-For documentation on HIPOS please have a look at our
-[GitHub Wiki](https://github.com/DFE/HIPOS/wiki). 
-
 Getting Started
 ---------------
 

@@ -101,8 +101,8 @@ External Resources
 * [OpenEmbedded Home](http://openembedded.org)
 * [GNU Autoconf](http://www.gnu.org/software/autoconf/manual/autoconf.html), [Automake](http://www.gnu.org/software/automake/manual/automake.html) manuals
 
-Community
----------
+Mailing List
+------------
 
 If you're interested in HIPOS development just come over and say hello on our
 [mailing list](https://groups.google.com/a/dresearch-fe.de/group/hipos-devel-list/topics).

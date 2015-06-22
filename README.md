@@ -84,10 +84,10 @@ This configuration file is automatically generated from `build/conf/local.conf.t
 
 The default machine should be set in the template, temporary changes should be made in private.conf or by setting the `MACHINE` environment variable.
 
-You need to execute `hipos-init.sh` to apply your changes in one of configuration files.
+You need to execute `source ./init-open.sh` again to apply your changes in one of configuration files.
 
 NOTE:
-Do not make any changes in `build/conf/local.conf` itself as they will be discarded the next time `hipos-init.sh` is executed.
+Do not make any changes in `build/conf/local.conf` itself as they will be discarded the next time `source ./init-open.sh` is executed.
 
 Supported machines are
 * **hikirk** - Marvell Kirkwood based NAS/IP Recorder hardware known as [MR4020](http://www.dresearch-fe.de/en/products/recorder/)

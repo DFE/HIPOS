@@ -3,7 +3,7 @@ The HIPOS Platform Project
 
 HIPOS is an Open Source,
 [Yocto](https://www.yoctoproject.org)/[OpenEmbedded](http://openembedded.org)
-based Linux distribution for embedded devices mainly from the
+based BSP and Linux distribution for embedded devices mainly from the
 [DResearch Fahrzeugelektronik GmbH](http://www.dresearch-fe.de).
 
 Getting Started

@@ -1,9 +1,0 @@
-# default command line options for NFS services
-
-
-OPTS_RPC_NFSD=""
-OPTS_RPC_IDMAPD=""
-OPTS_RPC_MOUNTD=""
-OPTS_RPC_STATD=""
-OPTS_SMNOTIFY=""
-

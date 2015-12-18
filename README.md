@@ -28,7 +28,7 @@ You only need to do this once for every new from-scratch build. We've said that 
 **1. get HIPOS**
 
 ```
-git clone git://github.com/DFE/HIPOS.git`
+git clone git://github.com/DFE/HIPOS.git
 ```
 
 This will clone the HIPOS project into the local sub directory `HIPOS/`. Change into this directory by issuing 

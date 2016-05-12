@@ -84,11 +84,33 @@ main_init()
 	if [ ! -f hipos-base/init.sh ]; then
 		"${GIT}" submodule init hipos-base &&
 		"${GIT}" submodule sync hipos-base &&
-		"${GIT}" submodule update hipos-base ||
+		"${GIT}" submodule update --remote hipos-base ||
 		{ log "E: updating hipos-base failed"; return 1; }
 	fi &&
 	check_file hipos-base/init.sh &&
 	. hipos-base/init.sh &&
+
+	# overwrite update_submodules() from init.sh because we like
+	# to have some special handling for some submodules
+	update_submodules()
+	{
+		# <original function code>
+		log "I: updating submodules (OE layers + bitbake)"
+
+		"${GIT}" submodule init &&
+		"${GIT}" submodule sync &&
+		"${GIT}" submodule update ||
+		{ log "E: updating submodules failed"; return 1; }
+		# </original function code>
+
+		# <additional function code>
+		log "I: updating selected submodules which should track HEAD branches" &&
+
+		"${GIT}" submodule update --remote hipos-base &&
+		"${GIT}" submodule update --remote meta-hipos ||
+		{ log "E: updating selected submodules failed"; return 1; }
+		# </additional function code>
+	}
 
 	# optional: modify layer and update variables here...
     #           BB_LAYERS_INCLUDED: ordered list of default layers

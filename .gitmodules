@@ -32,3 +32,6 @@
 [submodule "meta-fsl-demos"]
 	path = meta-fsl-demos
 	url = https://github.com/Freescale/meta-fsl-demos.git
+[submodule "meta-telephony"]
+	path = meta-telephony
+	url = https://github.com/sysmocom/meta-telephony.git

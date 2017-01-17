@@ -35,3 +35,6 @@
 [submodule "meta-telephony"]
 	path = meta-telephony
 	url = https://github.com/sysmocom/meta-telephony.git
+[submodule "meta-qt4"]
+	path = meta-qt4
+	url = git://git.yoctoproject.org/meta-qt4

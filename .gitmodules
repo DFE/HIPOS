@@ -14,12 +14,12 @@
 	path = meta-hipos
 	url = git://github.com/DFE/meta-hipos.git
 	pushURL = git@github.com:DFE/meta-hipos.git
-	branch = krogoth
+	branch = morty
 [submodule "hipos-base"]
 	path = hipos-base
 	url = git://github.com/DFE/hipos-base.git
 	pushURL = git@github.com:DFE/hipos-base.git
-	branch = krogoth
+	branch = morty
 [submodule "meta-fsl-arm"]
 	path = meta-fsl-arm
 	url = git://git.yoctoproject.org/meta-fsl-arm

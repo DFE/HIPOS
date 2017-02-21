@@ -26,9 +26,6 @@
 [submodule "meta-qt5"]
 	path = meta-qt5
 	url = https://github.com/meta-qt5/meta-qt5.git
-[submodule "meta-fsl-demos"]
-	path = meta-fsl-demos
-	url = https://github.com/Freescale/meta-fsl-demos.git
 [submodule "meta-telephony"]
 	path = meta-telephony
 	url = https://github.com/sysmocom/meta-telephony.git

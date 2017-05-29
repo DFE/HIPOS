@@ -115,6 +115,7 @@ main_init()
 	# optional: modify layer and update variables here...
     #           BB_LAYERS_INCLUDED: ordered list of default layers
     #           BB_BUILD_DIR_BASE: temporary build directory
+	BB_LAYERS_INCLUDED="$BB_LAYERS_INCLUDED $BB_LAYERS_INCLUDED_DFE_EXTRAS"
 	BB_BUILD_DIR_BASE=build-open
 
 	{ test "`basename -- \"$0\"`" != "$INIT_SCRIPT_NAME" && SCRIPT_SOURCED=true || SCRIPT_SOURCED=false; } &&

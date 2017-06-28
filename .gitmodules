@@ -14,12 +14,12 @@
 	path = meta-hipos
 	url = git://github.com/DFE/meta-hipos.git
 	pushURL = git@github.com:DFE/meta-hipos.git
-	branch = morty
+	branch = pyro
 [submodule "hipos-base"]
 	path = hipos-base
 	url = git://github.com/DFE/hipos-base.git
 	pushURL = git@github.com:DFE/hipos-base.git
-	branch = morty
+	branch = pyro
 [submodule "meta-fsl-arm-extra"]
 	path = meta-fsl-arm-extra
 	url = git://github.com/Freescale/meta-fsl-arm-extra.git

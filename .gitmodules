@@ -34,7 +34,7 @@
 	url = https://github.com/Freescale/meta-fsl-demos.git
 [submodule "meta-telephony"]
 	path = meta-telephony
-	url = https://github.com/sysmocom/meta-telephony.git
+	url = https://git.osmocom.org/meta-telephony
 [submodule "meta-qt4"]
 	path = meta-qt4
 	url = git://git.yoctoproject.org/meta-qt4

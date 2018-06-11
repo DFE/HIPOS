@@ -26,9 +26,6 @@
 [submodule "meta-qt5"]
 	path = meta-qt5
 	url = https://github.com/meta-qt5/meta-qt5.git
-[submodule "meta-telephony"]
-	path = meta-telephony
-	url = https://git.osmocom.org/meta-telephony
 [submodule "meta-freescale"]
 	path = meta-freescale
 	url = https://git.yoctoproject.org/git/meta-freescale

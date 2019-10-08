@@ -32,6 +32,3 @@
 [submodule "meta-intel"]
 	path = meta-intel
 	url = git://git.yoctoproject.org/meta-intel.git
-[submodule "meta-congatec-x86"]
-	path = meta-congatec-x86
-	url = https://git.congatec.com/x86/meta-congatec-x86.git

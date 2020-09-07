@@ -32,3 +32,6 @@
 [submodule "meta-intel"]
 	path = meta-intel
 	url = git://git.yoctoproject.org/meta-intel.git
+[submodule "meta-python2"]
+	path = meta-python2
+	url = git://git.openembedded.org/meta-python2

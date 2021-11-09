@@ -3,7 +3,7 @@
 	url = git://git.openembedded.org/openembedded-core
 [submodule "meta-angstrom"]
 	path = meta-angstrom
-	url = git://github.com/Angstrom-distribution/meta-angstrom.git
+	url = https://github.com/Angstrom-distribution/meta-angstrom.git
 [submodule "bitbake"]
 	path = bitbake
 	url = git://git.openembedded.org/bitbake
@@ -12,17 +12,17 @@
 	url = git://git.openembedded.org/meta-openembedded
 [submodule "meta-hipos"]
 	path = meta-hipos
-	url = git://github.com/DFE/meta-hipos.git
+	url = https://github.com/DFE/meta-hipos.git
 	pushURL = git@github.com:DFE/meta-hipos.git
 	branch = hardknott
 [submodule "hipos-base"]
 	path = hipos-base
-	url = git://github.com/DFE/hipos-base.git
+	url = https://github.com/DFE/hipos-base.git
 	pushURL = git@github.com:DFE/hipos-base.git
 	branch = hardknott
 [submodule "meta-fsl-arm-extra"]
 	path = meta-fsl-arm-extra
-	url = git://github.com/Freescale/meta-fsl-arm-extra.git
+	url = https://github.com/Freescale/meta-fsl-arm-extra.git
 [submodule "meta-qt5"]
 	path = meta-qt5
 	url = https://github.com/meta-qt5/meta-qt5.git

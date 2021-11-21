@@ -1,9 +1,6 @@
 [submodule "openembedded-core"]
 	path = openembedded-core
 	url = git://git.openembedded.org/openembedded-core
-[submodule "meta-angstrom"]
-	path = meta-angstrom
-	url = https://github.com/Angstrom-distribution/meta-angstrom.git
 [submodule "bitbake"]
 	path = bitbake
 	url = git://git.openembedded.org/bitbake

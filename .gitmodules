@@ -32,3 +32,6 @@
 [submodule "meta-python2"]
 	path = meta-python2
 	url = git://git.openembedded.org/meta-python2
+[submodule "poky"]
+	path = poky
+	url = https://git.yoctoproject.org/git/poky

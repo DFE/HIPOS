@@ -11,12 +11,12 @@
 	path = meta-hipos
 	url = https://github.com/DFE/meta-hipos.git
 	pushURL = git@github.com:DFE/meta-hipos.git
-	branch = honister
+	branch = kirkstone
 [submodule "hipos-base"]
 	path = hipos-base
 	url = https://github.com/DFE/hipos-base.git
 	pushURL = git@github.com:DFE/hipos-base.git
-	branch = honister
+	branch = kirkstone
 [submodule "meta-fsl-arm-extra"]
 	path = meta-fsl-arm-extra
 	url = https://github.com/Freescale/meta-fsl-arm-extra.git

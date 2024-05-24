@@ -20,9 +20,6 @@
 [submodule "meta-fsl-arm-extra"]
 	path = meta-fsl-arm-extra
 	url = https://github.com/Freescale/meta-fsl-arm-extra.git
-[submodule "meta-qt5"]
-	path = meta-qt5
-	url = https://github.com/meta-qt5/meta-qt5.git
 [submodule "meta-freescale"]
 	path = meta-freescale
 	url = https://git.yoctoproject.org/git/meta-freescale
@@ -35,3 +32,7 @@
 [submodule "poky"]
 	path = poky
 	url = https://git.yoctoproject.org/git/poky
+[submodule "meta-qt6"]
+	path = meta-qt6
+	url = git://code.qt.io/yocto/meta-qt6.git
+

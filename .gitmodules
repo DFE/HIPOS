@@ -1,12 +1,12 @@
 [submodule "openembedded-core"]
 	path = openembedded-core
-	url = git://git.openembedded.org/openembedded-core
+	url = https://git.openembedded.org/openembedded-core
 [submodule "bitbake"]
 	path = bitbake
-	url = git://git.openembedded.org/bitbake
+	url = https://git.openembedded.org/bitbake.git
 [submodule "meta-openembedded"]
 	path = meta-openembedded
-	url = git://git.openembedded.org/meta-openembedded
+	url = https://git.openembedded.org/meta-openembedded.git
 [submodule "meta-hipos"]
 	path = meta-hipos
 	url = https://github.com/DFE/meta-hipos.git
@@ -25,14 +25,14 @@
 	url = https://git.yoctoproject.org/git/meta-freescale
 [submodule "meta-intel"]
 	path = meta-intel
-	url = git://git.yoctoproject.org/meta-intel.git
+	url = https://git.yoctoproject.org/meta-intel
 [submodule "meta-python2"]
 	path = meta-python2
-	url = git://git.openembedded.org/meta-python2
+	url = https://git.openembedded.org/meta-python2
 [submodule "poky"]
 	path = poky
 	url = https://git.yoctoproject.org/git/poky
 [submodule "meta-qt6"]
 	path = meta-qt6
-	url = git://code.qt.io/yocto/meta-qt6.git
+	url = https://code.qt.io/yocto/meta-qt6.git
 

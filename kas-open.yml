@@ -1,0 +1,80 @@
+#
+# Copyright (C) 2025 iris-GmbH infrared & intelligent sensors
+#
+header:
+  version: 11
+
+repos:
+  poky:
+    url: https://git.yoctoproject.org/git/poky
+    commit: 7500a08bd1eb77421364b661afc63d4042a6aa8c
+    layers:
+      meta:
+      meta-poky:
+
+  meta-openembedded:
+    url: https://git.openembedded.org/meta-openembedded.git
+    commit: 491671faee11ea131feab5a3a451d1a01deb2ab1
+    layers:
+      meta-oe:
+      meta-filesystems:
+      meta-multimedia:
+      meta-networking:
+      meta-webserver:
+      meta-python:
+      meta-gnome:
+      meta-xfce:
+
+  meta-qt6:
+    url: https://code.qt.io/yocto/meta-qt6.git
+    commit: b2987fff191f746eaadebb482120e0d387e1e4bc
+
+  meta-freescale:
+    url: https://git.yoctoproject.org/git/meta-freescale
+    commit: a82f138b140f613a06bf9ac60101e4bb511c309f
+
+  meta-fsl-arm-extra:
+    url: https://github.com/Freescale/meta-fsl-arm-extra.git
+    commit: 70c83e96c7f75e73245cb77f1b0cada9ed4bbc6d
+
+  meta-imx:
+    url: https://github.com/nxp-imx/meta-imx.git
+    commit: 013670cd6a6a7363d824b33816e87a520745bca4
+    layers:
+      meta-imx-ml:
+
+  meta-hipos:
+    url: https://github.com/DFE/meta-hipos.git
+    branch: scarthgap
+
+local_conf_header:
+  kas: |
+    PACKAGE_CLASSES ?= "package_ipk"
+    EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+    USER_CLASSES ?= "buildstats"
+    OE_TERMINAL ?= "tmux"
+    PATCHRESOLVE = "noop"
+    BB_DISKMON_DIRS ??= "\
+      STOPTASKS,${TMPDIR},1G,100K \
+      STOPTASKS,${DL_DIR},1G,100K \
+      STOPTASKS,${SSTATE_DIR},1G,100K \
+      STOPTASKS,/tmp,100M,100K \
+      HALT,${TMPDIR},100M,1K \
+      HALT,${DL_DIR},100M,1K \
+      HALT,${SSTATE_DIR},100M,1K \
+      HALT,/tmp,10M,1K"
+    CONF_VERSION = "2"
+    BUILDHISTORY_FEATURES ?= ""
+    # To use 'firmware-imx' you need to accept the Freescale EULA
+    ACCEPT_FSL_EULA = "1"
+    # add "ptest" to our DISTRO_FEATURES variable causes -ptest packages to be built.
+    DISTRO_FEATURES:append = " ptest"
+    # Disable qt ptest to avoid build problems with Yocto scarthgap release.
+    QT_PTEST_ENABLED = "0"
+
+distro: hipos
+
+machine: himx0294
+
+target: hipos-prodimage
+

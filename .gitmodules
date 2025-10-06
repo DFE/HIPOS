@@ -9,13 +9,13 @@
 	url = https://git.openembedded.org/meta-openembedded.git
 [submodule "meta-hipos"]
 	path = meta-hipos
-	url = https://github.com/DFE/meta-hipos.git
-	pushURL = git@github.com:DFE/meta-hipos.git
+	url = https://github.com/iris-GmbH/meta-hipos.git
+	pushURL = git@github.com:iris-GmbH/meta-hipos.git
 	branch = kirkstone
 [submodule "hipos-base"]
 	path = hipos-base
-	url = https://github.com/DFE/hipos-base.git
-	pushURL = git@github.com:DFE/hipos-base.git
+	url = https://github.com/iris-GmbH/hipos-base.git
+	pushURL = git@github.com:iris-GmbH/hipos-base.git
 	branch = kirkstone
 [submodule "meta-fsl-arm-extra"]
 	path = meta-fsl-arm-extra

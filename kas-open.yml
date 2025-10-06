@@ -44,7 +44,7 @@ repos:
       meta-imx-ml:
 
   meta-hipos:
-    url: https://github.com/DFE/meta-hipos.git
+    url: https://github.com/iris-GmbH/meta-hipos.git
     branch: scarthgap
 
 local_conf_header:

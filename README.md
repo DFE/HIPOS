@@ -25,7 +25,7 @@ For required packages at your build host see [OE wiki](http://www.openembedded.o
 **1. get HIPOS**
 
 ```
-git clone git://github.com/DFE/HIPOS.git
+git clone git://github.com/iris-GmbH/HIPOS.git
 ```
 
 This will clone the HIPOS project into the local sub directory `HIPOS/`. Change into this directory by issuing 
@@ -54,5 +54,5 @@ kas shell kas-open.yml
 ```
 **2. Execute a Yocto task**
 ```
-kas shell kas-open.yml  -c "MACHINE=himx0294 bitbake hipos-devimage"
+kas shell kas-open.yml -c "MACHINE=himx0294 bitbake hipos-devimage"
 ```

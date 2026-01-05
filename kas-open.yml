@@ -27,7 +27,7 @@ repos:
 
   meta-qt6:
     url: https://code.qt.io/yocto/meta-qt6.git
-    commit: b2987fff191f746eaadebb482120e0d387e1e4bc
+    commit: 41bf605d51adfba6ee6211fa5d14f88263242e25
 
   meta-freescale:
     url: https://git.yoctoproject.org/git/meta-freescale

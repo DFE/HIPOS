@@ -47,6 +47,10 @@ repos:
     url: https://github.com/iris-GmbH/meta-hipos.git
     branch: scarthgap
 
+  meta-iris-security:
+    url: https://github.com/iris-GmbH/meta-iris-security.git
+    commit: 6267aa497a00eec21bfe4c454645b3055f3d0378
+
 local_conf_header:
   kas: |
     PACKAGE_CLASSES ?= "package_ipk"

@@ -49,7 +49,7 @@ repos:
 
   meta-iris-security:
     url: https://github.com/iris-GmbH/meta-iris-security.git
-    commit: ec6b7d8c2330fe64a34168d4f93b74745e57f270
+    commit: f5e52306053807b22c54bebe87b397c0b13840bd
 
 local_conf_header:
   kas: |

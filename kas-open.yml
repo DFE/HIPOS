@@ -7,14 +7,14 @@ header:
 repos:
   poky:
     url: https://git.yoctoproject.org/git/poky
-    commit: 7500a08bd1eb77421364b661afc63d4042a6aa8c
+    commit: e306fa0fec72c6182e3e514ed3d1959ecaee8432
     layers:
       meta:
       meta-poky:
 
   meta-openembedded:
     url: https://git.openembedded.org/meta-openembedded.git
-    commit: 491671faee11ea131feab5a3a451d1a01deb2ab1
+    commit: 0f00f8b9a21950640da8c5707343e5540133f86e
     layers:
       meta-oe:
       meta-filesystems:
@@ -31,7 +31,7 @@ repos:
 
   meta-freescale:
     url: https://git.yoctoproject.org/git/meta-freescale
-    commit: a82f138b140f613a06bf9ac60101e4bb511c309f
+    commit: 114dda1a7639cac34e4e63c352e433d2d011a39c
 
   meta-fsl-arm-extra:
     url: https://github.com/Freescale/meta-fsl-arm-extra.git
@@ -39,7 +39,7 @@ repos:
 
   meta-imx:
     url: https://github.com/nxp-imx/meta-imx.git
-    commit: 013670cd6a6a7363d824b33816e87a520745bca4
+    commit: e1ec1a20d573e3913f4ad90fa36546ed2bc87715
     layers:
       meta-imx-ml:
 

@@ -1,58 +1,84 @@
-The HIPOS Platform Project
-==========================
+# The HIPOS Platform Project
 
-HIPOS is an Open Source,
-[Yocto](https://www.yoctoproject.org)/[Poky](https://github.com/yoctoproject/poky)
-based BSP and Linux distribution for embedded devices mainly from the
-[iris-GmbH infrared & intelligent sensors](https://www.iris-sensing.com/).
+HIPOS is an open-source BSP and Linux distribution for embedded devices, based on [Yocto](https://www.yoctoproject.org/) / [Poky](https://github.com/yoctoproject/poky).
 
-Getting Started
----------------
+It is primarily developed for embedded devices from [iris-GmbH infrared & intelligent sensors](https://www.iris-sensing.com/).
+
+## Getting Started
 
 ### Prerequisites
 
-**A powerful build machine with a lot of RAM, with fast and large HDDs (SSDs preferred)**
+A powerful build machine with sufficient RAM and fast, large storage (SSDs recommended).
 
-* git
-* python 3.x
-* [kas](https://github.com/siemens/kas) 
-* A Linux-based build host with Yocto dependencies installed
+Required software:
 
-For required packages at your build host see [OE wiki](http://www.openembedded.org/wiki/Getting_started#Required_software).
+- Git
+- Python 3
+- [kas](https://github.com/siemens/kas)
+- A Linux-based build host with the required Yocto dependencies installed
 
-### Building an image
+For the required packages, see the [OpenEmbedded Wiki](https://www.openembedded.org/wiki/Getting_started#Required_software).
 
-**1. get HIPOS**
+### Building an Image
 
-```
-git clone git://github.com/iris-GmbH/HIPOS.git
-```
+#### 1. Clone HIPOS
 
-This will clone the HIPOS project into the local sub directory `HIPOS/`. Change into this directory by issuing 
-
-```
+```bash
+git clone https://github.com/iris-GmbH/HIPOS.git
 cd HIPOS
 ```
 
-**2. start the Yocto build using kas**
+#### 2. Start the Yocto Build Using kas
 
-Run (exactly like this!):
-```
+Run the following command from the repository root:
+
+```bash
 kas build kas-open.yml
 ```
-in the repository root. All configured yocto layers we're using will be initialized. The script will also generate bblayers.conf and local.conf, after which the hipos-prodimage will be built.
 
+All configured Yocto layers will be initialized automatically. The build process also generates `bblayers.conf` and `local.conf`, and then builds the `hipos-prodimage` image.
 
-Debugging
----------
+## Debugging
 
-### build environment
+### Enter an Interactive Build Shell
 
-**1. Enter interactive build shell**
-```
+```bash
 kas shell kas-open.yml
 ```
-**2. Execute a Yocto task**
-```
+
+### Execute a Yocto Task
+
+For example, to build `hipos-devimage` for the `himx0294` machine:
+
+```bash
 kas shell kas-open.yml -c "MACHINE=himx0294 bitbake hipos-devimage"
+```
+
+## kas-container
+
+### Prerequisites
+
+- Git
+- Docker or Podman
+
+### Building an Image with kas-container
+
+#### 1. Initialize and Update Git Submodules
+
+```bash
+git submodule update --init
+```
+
+#### 2. Start the Yocto Build Using kas-container
+
+```bash
+./kas-container build kas-open.yml
+```
+
+### Useful kas-container Commands
+
+#### Enter an Interactive Build Shell
+
+```bash
+./kas-container shell kas-open.yml
 ```
